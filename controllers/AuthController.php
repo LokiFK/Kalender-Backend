@@ -12,7 +12,7 @@
 
         public function logout()
         {
-            print_r(Auth::user());
+            print_r(Auth::userID());
         }
     }
 
