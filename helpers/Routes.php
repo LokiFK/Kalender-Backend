@@ -9,12 +9,10 @@
 
 
         private $routes;
-        private $db;
 
-        public function __construct($db)
+        public function __construct()
         {
             $this->routes = array();
-            $this->db = $db;
         }
 
         public function add($route, $method, $activator)

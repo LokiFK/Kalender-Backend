@@ -25,6 +25,13 @@
             }
         }
 
+        public function queryColumns($tableName)
+        {
+            $stmt = $this->connection->prepare("DESCRIBE $tableName");
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_COLUMN);
+        }
+
         public static function db()
         {
             return new DB();
