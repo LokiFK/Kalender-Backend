@@ -32,6 +32,7 @@
                         $class = new $activator[0]();
                         $method = $activator[1];
                         $class->$method();
+                        return;
                     }
                 }
             }

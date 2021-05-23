@@ -5,24 +5,16 @@
 
         public function login()
         {
-            $test = Tests::where(
-                array(
-                    "control" => "1 AND 2",
-                    1 => new Condition("user_id", "=", "1"),
-                    2 => new Condition("token_id", "=", "2"),
-                ), 
-                Tests::INCLUDE_FOREIGN_DATA, 
-                ""
-            );
+            //$test = Tokens::where(['id', '=', 1], Tokens::INCLUDE_FOREIGN_DATA)->get();
+            $user = Auth::user();
+            print_r($user);
+            //print_r($test);
 
-            $f = Users::fetch(2);
-
-            print_r($f);
+            //Auth::login(4);
         }
 
         public function logout()
         {
-            print_r(Auth::userID());
         }
     }
 

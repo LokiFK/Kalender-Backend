@@ -34,6 +34,16 @@
             return parent::fetch($id, static::class);
         }
 
+        public static function insert($values=array(), $tableName="")
+        {
+            return parent::insert($values, static::class);
+        }
+
+        public static function delete($id, $tableName="")
+        {
+            return parent::delete($id, static::class);
+        }
+
         public static function drop($tableName="")
         {
             return parent::drop(static::class);

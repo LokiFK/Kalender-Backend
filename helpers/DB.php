@@ -10,26 +10,47 @@
 
         public function __construct()
         {
-            $pdo = new PDO('mysql:host=' . $this->host . ';dbname=' . $this->dbname . ';charset=utf8', $this->username, $this->password);
-            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->connection = $pdo;
+            try {
+                $pdo = new PDO('mysql:host=' . $this->host . ';dbname=' . $this->dbname . ';charset=utf8', $this->username, $this->password);
+                $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $this->connection = $pdo;
+            } catch (PDOException $e) {
+                UI::error(500, 'Error connecting to DB: ' . $e->getMessage());
+                exit;
+            }
         }
 
         public function query($query, $params = array())
         {
-            $stmt = $this->connection->prepare($query);
-            $stmt->execute($params);
+            try {
+                $stmt = $this->connection->prepare($query);
+                $stmt->execute($params);
 
-            if (explode(' ', $query)[0] == 'SELECT') {
-                return $stmt->fetchAll();
+                if (explode(' ', $query)[0] == 'SELECT') {
+                    $result = $stmt->fetchAll();
+                    if (isset($result)) {
+                        if (count($result) > 0) {
+                            return $result[0];
+                        }
+                        return $result;
+                    }
+                }
+            } catch (PDOException $e) {
+                UI::error(500, 'Error querying DB: ' . $e->getMessage());
+                exit;
             }
         }
 
         public function queryColumns($tableName)
         {
-            $stmt = $this->connection->prepare("DESCRIBE $tableName");
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_COLUMN);
+            try {
+                $stmt = $this->connection->prepare("DESCRIBE $tableName");
+                $stmt->execute();
+                return $stmt->fetchAll(PDO::FETCH_COLUMN);
+            } catch (PDOException $e) {
+                UI::error(500, 'Error querying DB: ' . $e->getMessage());
+                exit;
+            }
         }
 
         public static function db()

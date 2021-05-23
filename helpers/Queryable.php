@@ -20,8 +20,11 @@
                     $attributesString .= ", ";
                 }
             }
-            
-            DB::db()->query("CREATE TABLE $this->tableName ($attributesString);");
+            try {
+                DB::db()->query("CREATE TABLE $this->tableName ($attributesString);");
+            } catch (Exception $e) {
+
+            }
         }
 
         public function foreign(string $columnName, string $relatingTable, string $relatingColumn)
@@ -33,7 +36,7 @@
                 }
             }
             DB::db()->query("ALTER TABLE " . $this->tableName . " MODIFY " . $columnName . " " . $column->getType() . "(" . $column->getLenght() . ") UNSIGNED;");
-            DB::db()->query("ALTER TABLE `$this->tableName` ADD FOREIGN KEY (`$columnName`) REFERENCES `$relatingTable`(`$relatingColumn`);");
+            DB::db()->query("ALTER TABLE `$this->tableName` ADD FOREIGN KEY (`$columnName`) REFERENCES `$relatingTable`(`$relatingColumn`) ON DELETE CASCADE;");
         }
 
         public function primary(string $columnName)
