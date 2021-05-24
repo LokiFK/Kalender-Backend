@@ -29,13 +29,13 @@
                 if (explode(' ', $query)[0] == 'SELECT') {
                     $result = $stmt->fetchAll();
                     if (isset($result)) {
-                        if (count($result) > 0) {
-                            return $result[0];
-                        }
                         return $result;
                     }
+                } else if (explode(' ', $query)[0] == 'INSERT') {
+                    return $this->connection->lastInsertID();
                 }
             } catch (PDOException $e) {
+                echo $query;
                 UI::error(500, 'Error querying DB: ' . $e->getMessage());
                 exit;
             }

@@ -7,14 +7,13 @@
     require './helpers/index.php';
     require './models/UserModel.php';
     require './models/TokenModel.php';
-    require './models/TestModel.php';
-    require './controllers/AuthController.php';
 
   
     $routes = new Routes();
 
-    $routes->add('route', Routes::METHOD_GET, array('AuthController', 'login'));
-    $routes->add('route/new', Routes::METHOD_POST, array('AuthController', 'logout'));
+    /**
+     * Add routes here
+     */
 
     $routes->listen();
 

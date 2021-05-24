@@ -31,7 +31,7 @@
                         $activator = $this->routes[$i]->getActivator();
                         $class = new $activator[0]();
                         $method = $activator[1];
-                        $class->$method();
+                        $class->$method(new Request($_REQUEST, $_SERVER['REQUEST_METHOD']));
                         return;
                     }
                 }
@@ -67,5 +67,7 @@
             return $this->activator;
         }
     }
+
+    
 
 ?>

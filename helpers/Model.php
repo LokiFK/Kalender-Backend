@@ -42,7 +42,7 @@
             }
             $sql .= ");";
 
-            DB::db()->query($sql, $sqlParameters);
+            return DB::db()->query($sql, $sqlParameters);
         }
 
         public static function where($conditions, $withForeignRelations=false, $tableName="")
@@ -58,10 +58,15 @@
                     if (is_numeric($conditionsString[$i]) == 1) {
                         $currentNum = (int) $conditionsString[$i];
                         
-                        $toAdd = "$tableName." . $conditions[$currentNum]->getAttributeName() . " " . $conditions[$currentNum]->getCompareOperator() . " :a" . $i;
-                        $conditionsString = substr_replace($conditionsString, $toAdd, $i, 1);
-                        $conditionValues[":a".$i] = $conditions[$currentNum]->getComparingValue();
-                        $i += strlen($toAdd)-1;
+                        if (isset($conditions[$currentNum])) {
+                            $toAdd = "$tableName." . $conditions[$currentNum][0] . " " . $conditions[$currentNum][1] . " :a" . $i;
+                            $conditionsString = substr_replace($conditionsString, $toAdd, $i, 1);
+                            $conditionValues[":a".$i] = $conditions[$currentNum][2];
+                            $i += strlen($toAdd)-1;
+                        } else {
+                            UI::error(500, 'Error processing sql conditions');
+                            exit;
+                        }
                     }
                     $i++;
                 }
@@ -72,11 +77,14 @@
 
             $res = DB::db()->query("SELECT * FROM $tableName WHERE $conditionsString;", $conditionValues);
             $resColumns = DB::db()->queryColumns($tableName);
-            for ($i=0; $i < count($resColumns); $i++) {
-                if (isset($res[$i])) {
-                    $returnArr[$resColumns[$i]] = $res[$resColumns[$i]];
+            for ($i=0; $i < count($res); $i++) { 
+                for ($j=0; $j < count($resColumns); $j++) {
+                    if (isset($res[$i][$j])) {
+                        $returnArr[$i][$resColumns[$j]] = $res[$i][$resColumns[$j]];
+                    }
                 }
             }
+
             
             if ($withForeignRelations) {
                 $foreignData = array();
@@ -85,18 +93,18 @@
                     if (str_contains($columnNames[$i], "_id")) {
                         $tableColumnName = $columnNames[$i];
                         $foreignTableName = str_replace("_id", '', $columnNames[$i]) . "s";
-                        $data = DB::db()->query("SELECT $foreignTableName.* FROM $foreignTableName INNER JOIN $tableName ON $foreignTableName.id = $tableName.$tableColumnName");
+                        $data = DB::db()->query("SELECT $foreignTableName.* FROM $foreignTableName INNER JOIN $tableName ON $foreignTableName.id = :foreign_column_val LIMIT 1", [':foreign_column_val' => $res[0][$tableColumnName]]);
                         $data["return_array_relation_key"] = $tableColumnName;
                         array_push($foreignData, $data);
                     }
                 }
-
+    
                 for ($i=0; $i < count($foreignData); $i++) {
                     $key = $foreignData[$i]["return_array_relation_key"];
                     unset($foreignData[$i]["return_array_relation_key"]);
                     $returnArr[str_replace("_id", '', $key)] = $foreignData[$i];
                     unset($returnArr[$key]);
-                }
+                } 
             }
 
             return new QueryResult($returnArr);
@@ -120,49 +128,28 @@
         {
             if (count($columns) == 0) { return $this->result; }
 
-            if (count($columns) == 1 && isset($this->result[$columns[0]])) {
-                return $this->result[$columns[0]];
-            } else {
-                return;
+            $returnArr = array();
+            if (count($columns) == 1) {
+                for ($i=0; $i < count($this->result); $i++) {
+                    if (isset($this->result[$i][$columns[0]])) {
+                        $returnArr[$i][$columns[0]] = $this->result[$i][$columns[0]];
+                    }
+                }
+                return $returnArr;
             }
 
-            $returnArr = array();
-            for ($i=0; $i < count($columns); $i++) {
-                if (isset($this->result[$columns[$i]])) {
-                    array_push($returnArr, $this->result[$columns[$i]]);
+            for ($i=0; $i < count($this->result); $i++) { 
+                for ($j=0; $j < count($columns); $j++) {
+                    if (isset($this->result[$i][$columns[$j]])) {
+                        $returnArr[$i][$columns[$j]] = $this->result[$i][$columns[$j]];
+                    }
                 }
             }
+            
             return $returnArr;
         }
     }
 
-    class Condition {
-        private $attributeName;
-        private $compareOperator;
-        private $comparingValue;
-
-        public function __construct($attributeName, $compareOperator, $comparingValue)
-        {
-            $this->attributeName = $attributeName;
-            $this->compareOperator = $compareOperator;
-            $this->comparingValue = $comparingValue;
-        }
-
-        public function getAttributeName()
-        {
-            return $this->attributeName;
-        }
-
-        public function getCompareOperator()
-        {
-            return $this->compareOperator;
-        }
-
-        public function getComparingValue()
-        {
-            return $this->comparingValue;
-        }
-    }
 
 
 ?>
