@@ -48,7 +48,7 @@ Models are an abstraction of a database table. Using them you'll be able to easi
                     Tokens::IGNORE_FOREIGN_DATA
                 )->get(['user_id', 'token']);
                 - This query fetches all Tokens, that have an id of 2 or 5.
-                - The given array at index 0 now doesn't just have a column, a comparing sign and a value, but one item called `control`, which gives the program an idea of how you want the conditions to be combined. You can customize it in a way you could with SQL. Your conditions are named with numbers (![#f03c15](only with numbers and only from 0 to 9!)). Your conditons are formulated just like if you wouldn't have multiple ones.
+                - The given array at index 0 now doesn't just have a column, a comparing sign and a value, but one item called `control`, which gives the program an idea of how you want the conditions to be combined. You can customize it in a way you could with SQL. Your conditions are named with numbers (!!! Only with numbers and only from 0 to 9 !!!)). Your conditons are formulated just like if you wouldn't have multiple ones.
                 - IGNORE_FOREIGN_DATA implifies, that your query won't contain any foreign data.
                 - In this case, 2 columns (user_id and token) were specified in the `get()` method. This means, that only these 2 columns are returned.
     - `fetchAll()`
