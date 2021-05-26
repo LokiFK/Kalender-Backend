@@ -7,14 +7,15 @@
     require './helpers/index.php';
     require './controllers/RoutesController.php';
 
-  
+
     $routes = new Routes();
 
     /**
      * Add routes here
      */
 
-    $routes->add('route', Routes::METHOD_GET, ['RoutesController', 'a']);
+    $routes->get('/route', 'RoutesController@index');
+    $routes->get('/auth', 'RoutesController@auth');
 
     $routes->listen();
 

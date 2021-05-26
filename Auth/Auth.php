@@ -7,9 +7,10 @@
             $token = Auth::getToken();
             if (!isset($token)) { return; }
 
-            $tokenWithUser = DB::table('tokens')->where('token = :token', [':token' => $token])->get();
-            if (!isset($tokenWithUser)) { 
-                UI::error(401, 'Invalid Token');
+            $tokenWithUser = DB::table('tokens')->where('token = :token', [':token' => $token])->get([new ForeignDataKey('user_id', 'users', 'id')])[0];
+            if (!isset($tokenWithUser)) {
+                ErrorUI::errorCode(401);
+                ErrorUI::error('Invalid Token');
                 exit;
             }
 
@@ -43,11 +44,12 @@
             DB::query('DELETE FROM tokens WHERE id = :id', [':id' => $tokenID]);
         }
 
-        private static function isValidToken($token)
+        private static function isValidToken($token, $exitIfNot)
         {
-            $timestamp = DB::table('tokens')->where('token = :token', [':token' => $token])->get(['timestamp'])[0]['timestamp'];
-            if (!isset($timestamp)) {
-                UI::error(401, 'Invalid Token');
+            $timestamp = DB::table('tokens')->where('token = :token', [':token' => $token])->get([], ['timestamp'])[0]['timestamp'];
+            if (!isset($timestamp) && $exitIfNot) {
+                ErrorUI::errorCode(401);
+                ErrorUI::error('Invalid Token');
                 exit;
             }
             $lastLogin = new DateTime($timestamp);
@@ -57,10 +59,25 @@
 
         public static function getToken()
         {
-            $token = isset($_POST['token']) ? $_POST['token'] : $_GET['token'];
-            if (Auth::isValidToken($token)) {
+            $token = "";
+            if (isset($_POST['token'])) $token = $_POST['token'];
+            else if (isset($_GET['token'])) $token = $_GET['token'];
+            else { return false; }
+            if (Auth::isValidToken($token, true)) {
                 return $token;
             }
+        }
+
+        public static function isLoggedIn()
+        {
+            $token = "";
+            if (isset($_POST['token'])) $token = $_POST['token'];
+            else if (isset($_GET['token'])) $token = $_GET['token'];
+            else { return false; }
+
+            $isValid = Auth::isValidToken($token, false);
+            
+            return isset($isValid) && $isValid;
         }
     }
 

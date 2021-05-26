@@ -16,7 +16,8 @@
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 return $pdo;
             } catch (PDOException $e) {
-                UI::error(500, 'Error connecting to DB: ' . $e->getMessage());
+                ErrorUI::errorCode(500);
+                ErrorUI::error('Error connecting to DB: ' . $e->getMessage());
                 exit;
             }
         }
@@ -36,7 +37,8 @@
                     return DB::connect()->lastInsertID();
                 }
             } catch (PDOException $e) {
-                UI::error(500, 'Error querying DB: ' . $e->getMessage());
+                ErrorUI::errorCode(500);
+                ErrorUI::error('Error querying DB: ' . $e->getMessage());
                 exit;
             }
         }
@@ -53,7 +55,8 @@
                 $stmt->execute();
                 return $stmt->fetchAll(PDO::FETCH_COLUMN);
             } catch (PDOException $e) {
-                UI::error(500, 'Error querying DB: ' . $e->getMessage());
+                ErrorUI::errorCode(500);
+                ErrorUI::error('Error querying DB: ' . $e->getMessage());
                 exit;
             }
         }

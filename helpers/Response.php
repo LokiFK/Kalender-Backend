@@ -1,17 +1,20 @@
 <?php
 
-    class UI {
-        public static function send($input)
+    class Response {
+        public function send($input)
         {
             echo json_encode($input);
         }
 
-        public static function error($error, $msg)
+        public function errorCode($errorCode)
         {
-            http_response_code($error);
+            http_response_code($errorCode);
+        }
+
+        public function error($msg)
+        {
             echo json_encode(
                 array(
-                    'error' => $error,
                     'message' => $msg
                 )
             );

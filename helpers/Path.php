@@ -1,16 +1,21 @@
 <?php
 
+
     class Path {
         public static function getPath()
         {
-            if (isset($_GET['url'])) {
-                $url = $_GET['url'];
+            $url = $_SERVER['REQUEST_URI'];
+            if (isset($url)) {
                 if ($url[strlen($url)-1] == '/') {
                     $url = substr($url, 0, -1);
                 }
+                if (str_contains($url, '?')) {
+                    $url = substr($url, 0, strpos($url, "?"));
+                }
                 return $url;
             } else {
-                UI::error(404, 'Page not found');
+                ErrorUI::errorCode(404);
+                ErrorUI::error('Page not found');
             }
         }
     }
