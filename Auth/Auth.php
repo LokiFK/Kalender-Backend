@@ -7,7 +7,7 @@
             $token = Auth::getToken();
             if (!isset($token)) { return; }
 
-            $tokenWithUser = Tokens::where(['token', '=', $token], Tokens::INCLUDE_FOREIGN_DATA)->get();
+            $tokenWithUser = DB::table('tokens')->where('token = :token', [':token' => $token])->get();
             if (!isset($tokenWithUser)) { 
                 UI::error(401, 'Invalid Token');
                 exit;
@@ -19,14 +19,15 @@
         public static function userID()
         {
             $token = Auth::getToken();
-            return Tokens::where(['token', '=', $token])->get(['user_id']);
+            return DB::table('tokens')->where('token = :token', [':token' => $token])->get([], ['user_id'])[0]['user_id'];
         }
 
         public static function login($userID)
         {
             $token = bin2hex(random_bytes(64));
             $timestamp = date("Y-m-d");
-            Tokens::insert([$userID, $token, $timestamp]);
+
+            DB::query("INSERT INTO tokens (user_id, token, timestamp) VALUES (:userID, :token, :timestamp);", [':userID' => $userID, ':token' => $token, ':timestamp' => $timestamp]);
             return $token;
         }
 
@@ -38,23 +39,18 @@
             $userID = Auth::userID();
             if (!isset($userID)) { return; }
 
-            $tokenID = Tokens::where([
-                'control' => '1 AND 2',
-                1 => ['token', '=', $token],
-                2 => ['user_id', '=', $userID]
-            ], Tokens::IGNORE_FOREIGN_DATA)->get(['id']);
-
-            Tokens::delete($tokenID);
+            $tokenID = DB::table('tokens')->where('token = :token AND user_id = :user_id', [':token' => $token, ':user_id' => $userID])->get([], ['id'])[0]['id'];
+            DB::query('DELETE FROM tokens WHERE id = :id', [':id' => $tokenID]);
         }
 
         private static function isValidToken($token)
         {
-            $timestamp = Tokens::where(['token', '=', $token])->get(['timestamp']);
+            $timestamp = DB::table('tokens')->where('token = :token', [':token' => $token])->get(['timestamp'])[0]['timestamp'];
             if (!isset($timestamp)) {
                 UI::error(401, 'Invalid Token');
                 exit;
             }
-            $lastLogin = new DateTime($timestamp[0]['timestamp']);
+            $lastLogin = new DateTime($timestamp);
             $currentTime = new DateTime();
             return $lastLogin->diff($currentTime)->d < 10;
         }

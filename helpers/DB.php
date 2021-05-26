@@ -2,6 +2,8 @@
 
     class DB {
 
+        public const ASC = 0;
+        public const DESC = 1;
         const host = '127.0.0.1';
         const dbname = 'calendar';
         const username = 'root';
@@ -34,7 +36,6 @@
                     return DB::connect()->lastInsertID();
                 }
             } catch (PDOException $e) {
-                echo $query;
                 UI::error(500, 'Error querying DB: ' . $e->getMessage());
                 exit;
             }
@@ -42,7 +43,7 @@
 
         public static function table($tableName)
         {
-            
+            return new TableReturn($tableName);
         }
 
         public static function queryColumns($tableName)
@@ -59,55 +60,96 @@
     }
 
     class TableReturn {
-        public const ASC = 0;
-        public const DESC = 1;
 
         private $name;
         private $contents;
+        private $orderedBy;
+        private $orderedByDirection;
 
         public function __construct($name)
         {
             $this->name = $name;
-            $this->contents = DB::query("SELECT * FROM :tableName", array(':tableName' => $name));
+            $this->contents = DB::query("SELECT * FROM `$name`");
         }
 
-        public function orderBy($column = array(), $direction = 0)
+        public function where($query, $params = array())
         {
-            
+            $this->contents = DB::query("SELECT * FROM `$this->name` WHERE $query", $params);
+            return $this;
         }
 
-        public function get($columns = array())
+        public function orderBy($column, $direction = 0)
         {
-            if (count($columns) == 0) { return $this->contents; }
+            $this->orderedByDirection = $direction;
+            $this->orderedBy = $column;
+            usort($this->contents, function ($a, $b) {
+                return $this->orderedByDirection == 0
+                    ? (strtolower($a[$this->orderedBy]) <=> strtolower($b[$this->orderedBy]))
+                    : (strtolower($b[$this->orderedBy]) <=> strtolower($a[$this->orderedBy]));
+            });
+            return $this;
+        }
 
-            $returnArr = array();
-            if (count($columns) == 1) {
+        public function get($foreignData = array(), $columns = array())
+        {
+            $contentData = $this->contents;
+
+            if (count($foreignData) > 0) {
                 for ($i=0; $i < count($this->contents); $i++) {
-                    if (isset($this->contents[$i][$columns[0]])) {
-                        $returnArr[$i][$columns[0]] = $this->contents[$i][$columns[0]];
+                    for ($j=0; $j < count($foreignData); $j++) {
+                        $foreignTable = $foreignData[$j]->getRelationTable();
+                        $foreignColumn = $foreignData[$j]->getRelationColumn();
+                        $foreignKey = $foreignData[$j]->getKey();
+                        $data = DB::query("SELECT $foreignTable.* FROM $foreignTable INNER JOIN $this->name ON $foreignTable.$foreignColumn = :foreign_column_val LIMIT 1", [':foreign_column_val' => $this->contents[$i][$foreignKey]])[0];
+                        $contentData[$i][str_replace("_id", '', $foreignData[$j]->getKey())] = $data;
+                        unset($contentData[$i][$foreignData[$j]->getKey()]);
                     }
                 }
-                return $returnArr;
             }
 
-            for ($i=0; $i < count($this->contents); $i++) { 
+            if (count($columns) == 0) { return $contentData; }
+
+            $finalData = array();
+            for ($i=0; $i < count($contentData); $i++) {
                 for ($j=0; $j < count($columns); $j++) {
-                    if (isset($this->contents[$i][$columns[$j]])) {
-                        $returnArr[$i][$columns[$j]] = $this->contents[$i][$columns[$j]];
+                    $columnNameRelation = explode(".", $columns[$j]);
+                    if (isset($contentData[$i][$columns[$j]])) {
+                        $finalData[$i][$columns[$j]] = $contentData[$i][$columns[$j]];
+                    } else if (isset($contentData[$i][$columnNameRelation[0]][$columnNameRelation[1]])) {
+                        $finalData[$i][$columnNameRelation[0]][$columnNameRelation[1]] = $contentData[$i][$columnNameRelation[0]][$columnNameRelation[1]];
                     }
                 }
             }
-            
-            return $returnArr;
+            return $finalData;
         }
     }
 
+    class ForeignDataKey {
+        private $key = "";
+        private $relationTable = "";
+        private $relationColumn = "";
 
-    class TableContents {
-        private $contents;
-
-        public function __construct($contents)
+        public function __construct($key, $relationTable, $relationColumn)
         {
-            $this->contents = $contents;
+            $this->key = $key;
+            $this->relationTable = $relationTable;
+            $this->relationColumn = $relationColumn;
+        }
+
+        public function getKey()
+        {
+            return $this->key;
+        }
+
+        public function getRelationTable()
+        {
+            return $this->relationTable;
+        }
+
+        public function getRelationColumn()
+        {
+            return $this->relationColumn;
         }
     }
+
+?>

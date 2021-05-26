@@ -5,8 +5,7 @@
 
     require_once './Auth/Auth.php';
     require './helpers/index.php';
-    require './models/UserModel.php';
-    require './models/TokenModel.php';
+    require './controllers/RoutesController.php';
 
   
     $routes = new Routes();
@@ -14,6 +13,8 @@
     /**
      * Add routes here
      */
+
+    $routes->add('route', Routes::METHOD_GET, ['RoutesController', 'a']);
 
     $routes->listen();
 
