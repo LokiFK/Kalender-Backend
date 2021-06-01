@@ -19,4 +19,18 @@
                 )
             );
         }
+
+        public static function view(string $path, array $data)
+        {
+            if (is_file($path)) {
+                $content = file_get_contents($path);
+                foreach ($data as $key => $value) {
+                    $content = str_replace('{{ ' . $key . ' }}', $value, $content);
+                }
+                return $content;
+            }
+            $res = new Response();
+            $res->error('Error setting up HTML');
+            $res->errorCode(500);
+        }
     }

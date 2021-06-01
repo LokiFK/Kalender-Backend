@@ -22,7 +22,7 @@
             }
         }
 
-        public static function query($query, $params = array())
+        public static function query(string $query, array $params = array())
         {
             try {
                 $stmt = DB::connect()->prepare($query);
@@ -43,12 +43,12 @@
             }
         }
 
-        public static function table($tableName)
+        public static function table(string $tableName)
         {
             return new TableReturn($tableName);
         }
 
-        public static function queryColumns($tableName)
+        public static function queryColumns(string $tableName)
         {
             try {
                 $stmt = DB::connect()->prepare("DESCRIBE $tableName");
@@ -69,19 +69,19 @@
         private $orderedBy;
         private $orderedByDirection;
 
-        public function __construct($name)
+        public function __construct(string $name)
         {
             $this->name = $name;
             $this->contents = DB::query("SELECT * FROM `$name`");
         }
 
-        public function where($query, $params = array())
+        public function where(string $query, array $params = array())
         {
             $this->contents = DB::query("SELECT * FROM `$this->name` WHERE $query", $params);
             return $this;
         }
 
-        public function orderBy($column, $direction = 0)
+        public function orderBy(string $column, int $direction = 0)
         {
             $this->orderedByDirection = $direction;
             $this->orderedBy = $column;
@@ -93,7 +93,7 @@
             return $this;
         }
 
-        public function get($foreignData = array(), $columns = array())
+        public function get(array $foreignData = array(), array $columns = array())
         {
             $contentData = $this->contents;
 

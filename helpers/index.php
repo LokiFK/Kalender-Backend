@@ -6,5 +6,6 @@
     require_once './helpers/Request.php';
     require_once './helpers/Error.php';
     require_once './helpers/Middleware.php';
+    require_once './helpers/UI.php';
 
 ?>

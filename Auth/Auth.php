@@ -2,6 +2,11 @@
 
     class Auth {
 
+        const GUEST = 0;
+        const USER = 1;
+        const ADMIN = 2;
+        const DOCTOR = 3;
+
         public static function user()
         {
             $token = Auth::getToken();
@@ -78,6 +83,13 @@
             $isValid = Auth::isValidToken($token, false);
             
             return isset($isValid) && $isValid;
+        }
+
+        public static function getPermissions()
+        {
+            $userID = Auth::userID();
+            $permission = DB::query('SELECT permissions.permission FROM permissions INNER JOIN users ON permissions.user_id = :user_id', array(':user_id' => $userID));
+            return $permission[0]['permission'];
         }
     }
 
