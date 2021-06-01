@@ -27,6 +27,10 @@
         public function listen()
         {
             $path = Path::getPath();
+            
+            if (strpos($path, '/Calendar/server') !== false) {
+                $path = str_replace('/Calendar/server', '', $path);
+            }
 
             for ($i=0; $i < count($this->routes); $i++) {
                 if ($this->routes[$i]->getRoute() == $path) {

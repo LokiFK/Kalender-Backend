@@ -1,17 +1,17 @@
 <?php
 
     class Response {
-        public function send($input)
+        public function json(array $input)
         {
             echo json_encode($input);
         }
 
-        public function errorCode($errorCode)
+        public function errorCode(int $errorCode)
         {
             http_response_code($errorCode);
         }
 
-        public function error($msg)
+        public function error(string $msg)
         {
             echo json_encode(
                 array(
@@ -20,12 +20,21 @@
             );
         }
 
-        public static function view(string $path, array $data)
+        public static function view(string $component, array $data)
         {
-            if (is_file($path)) {
-                $content = file_get_contents($path);
+            $pathHTML = "./public/$component.html";
+            $pathCSS = "./public/css/$component.css";
+            $pathDefaultCSS = "./public/css/default-styles.css";
+            if (is_file($pathHTML)) {
+                $content = file_get_contents($pathHTML);
                 foreach ($data as $key => $value) {
                     $content = str_replace('{{ ' . $key . ' }}', $value, $content);
+                }
+                if (is_file($pathCSS)) {
+                    $styles = '<style>' . file_get_contents($pathCSS) . file_get_contents($pathDefaultCSS) . '</style>';
+                    $content = str_replace('{% styles %}', $styles, $content);
+                } else {
+                    $content = str_replace('{% styles %}', '', $content);
                 }
                 return $content;
             }

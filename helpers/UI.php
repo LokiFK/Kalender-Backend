@@ -4,19 +4,20 @@
 
         const TABLE_STYLE_DEFAULT = 0;
 
-        public static function table(array $data, array $headers, int $styleIndex)
+        public static function table(array $data, array $headers, int $style)
         {
-            $styleClasses = UI::getStyle($styleIndex);
-            $table = "<table class=$styleClasses[table]><thead class=$styleClasses[thead]><tr class=$styleClasses[row]>";
+            $styleClasses = UI::getStyle($style);
+            $table = "<table class=$styleClasses[table]><thead><tr class=$styleClasses[row]>";
             foreach ($headers as $head) {
                 $table .= "<th class=" . $styleClasses['item-head'] . ">" . $head . "</th>";
             }
-            $table .= "</tr></thead><tbody class=$styleClasses[tbody]>";
+            $table .= "</tr></thead><tbody>";
 
             foreach ($data as $row) {
                 $table .= "<tr class=$styleClasses[row]>";
                 foreach ($headers as $header) {
-                    $table .= "<td class=$styleClasses[item]>" . $row[$header] . "</td>";
+                    $insert = isset($row[$header]) ? $row[$header] : '';
+                    $table .= "<td class=$styleClasses[item]>" . $insert . "</td>";
                 }
                 $table .= "</tr>";
             }
@@ -31,9 +32,7 @@
                         'table' => 'table-default',
                         'row' => 'row-default',
                         'item' => 'item-default',
-                        'item-head' => 'item-head-default',
-                        'thead' => 'thead-default',
-                        'tbody' => 'tbody-default'
+                        'item-head' => 'item-head-default'
                     );
                 
                 default:
