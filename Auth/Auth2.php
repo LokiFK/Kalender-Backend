@@ -64,6 +64,14 @@
 			}
 			return false;
 		}
+
+public static function isAdmin($userid){
+  $res = DB::query("select count(*) as 'Anzahl' from admin where userid = :userid", [':userid'=>$userid]);
+  If($res[0]['Anzahl']==1){
+    return true;
+  }
+  return false;
+}
 	}
 
 ?>
