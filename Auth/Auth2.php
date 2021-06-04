@@ -41,7 +41,7 @@ public static function approveMail($userid,$code){
 public static function login($username, $password, $ip, $isEndless){
     $res = DB::query("select userid, password from account where username=:username;", [':username'=>$username]);
     if(count($res)==1){
-      if(verify($res[0]['password],$password)){  //hash überprüfen???
+      if(verify($res[0]['password'],$password)){  //hash überprüfen???
         login($res[0]['userid'],$ip,$IsEndless);
         return $res[0]['userid'];
       }
