@@ -14,7 +14,7 @@ public static function registerAccount($userId, $username, $email, $password, $a
     if($approvalNeeded){
       $date = null;
     }
-    $res = DB::query("insert into account(userid, username, email, password, erstellungsdatum) values :i,:u,:e,:p,:d;,[':i'=>$userid,':u'=>$username,':e'=>$email,':d'=>$date,':p'=>hash($password)]);  //hash???]);
+    $res = DB::query("insert into account(userid, username, email, password, erstellungsdatum) values :i,:u,:e,:p,:d;",[':i'=>$userid,':u'=>$username,':e'=>$email,':d'=>$date,':p'=>hash($password)]);  //hash???]);
     if($approvalNeeded){
       $code = bin2hex(random_bytes(50));
       DB::query("insert into notapproved(userid, code, datetime) values :u,:c,now();",[':u'=>$userid,':c'=>$code]);
@@ -25,6 +25,17 @@ public static function registerAccount($userId, $username, $email, $password, $a
     }
     return $res;
   }
+}
+public static function approveMail($userid,$code){
+  $res = DB::query("select code from notapproved where userid=:u order by datetime desc limit 1;",[':u'=>$userid]);
+  if(count($res)==1){
+    if($res[0]['code']==$code){
+      DB::query("update account set erstellungsdatum=now() where userid=:u;", [':u'=>$userid]);
+    } else {
+      return false;
+    }
+  }
+  return false;
 }
 
 public static function login($username, $password, $ip, $isEndless){
@@ -111,7 +122,14 @@ public static function isAdmin($userid){
   If($res[0]['Anzahl']==1){
     return true;
   }
-  return false;
+  return false; 
+}
+public static function isApproved($userid){
+  $res = DB::query("select erstellungsdatum from account where userid = :userid;", [':userid'=>$userid]);
+  If($res[0]['erstellungsdatum'] ==null){
+    return false;
+  }
+  return true; 
 }
 	}
 
