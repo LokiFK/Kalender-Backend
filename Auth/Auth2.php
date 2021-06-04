@@ -4,7 +4,18 @@
 
 		const DURATION = '30 Minutes';		
 
-		public static function login($userID, $isEndless){
+  public static function login($username, $password, $isEndless){
+    $res = DB::query("select userid, password from account where username=:username", [':username'=>$username]);
+    if(count($res)==1){
+      if(verify($res[0]['password],$password)){  //hash überprüfen???
+        login($res[0]['userid'],$IsEndless);
+        return $res[0]['userid'];
+      }
+    }
+    return false;
+  }
+
+		private static function login($userID, $isEndless){
 			$tmp = true;
 			while(tmp){
 				$token = bin2hex(random_bytes(64));
