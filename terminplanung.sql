@@ -104,7 +104,7 @@ CREATE TABLE `raum` (
 
 CREATE TABLE `session` (
   `userid` int(11) NOT NULL,
-  `token` varchar(50) NOT NULL,
+  `token` varchar(64) NOT NULL,
   `start` datetime DEFAULT NULL,
   `end` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
