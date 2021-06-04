@@ -7,6 +7,10 @@
     require './helpers/index.php';
     require './controllers/RoutesController.php';
 
+    $userid = Auth::getUserid();
+    if($userid!=null){
+      $isAdmin = Auth::isAdmin($userid);
+    }
 
     $routes = new Routes();
 
