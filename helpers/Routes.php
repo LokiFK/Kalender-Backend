@@ -14,20 +14,25 @@
 
         public function get($route, $activator)
         {
-            $newRoute = new Route($route, 'GET', $activator);
+            $newRoute = new Route('/api' . $route, 'GET', $activator);
             array_push($this->routes, $newRoute);
         }
 
         public function post($route, $activator)
         {
-            $newRoute = new Route($route, 'POST', $activator);
+            $newRoute = new Route('/api' . $route, 'POST', $activator);
+            array_push($this->routes, $newRoute);
+        }
+
+        public function view($route, $activator)
+        {
+            $newRoute = new Route($route, 'GET', $activator);
             array_push($this->routes, $newRoute);
         }
 
         public function listen()
         {
             $path = Path::getPath();
-            
             if (strpos($path, '/Calendar/server') !== false) {
                 $path = str_replace('/Calendar/server', '', $path);
             }

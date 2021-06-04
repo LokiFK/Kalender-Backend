@@ -20,7 +20,7 @@
             );
         }
 
-        public static function view(string $component, array $data)
+        public static function view(string $component, array $data = array())
         {
             $pathHTML = "./public/$component.html";
             $pathCSS = "./public/css/$component.css";
