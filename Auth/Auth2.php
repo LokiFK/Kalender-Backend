@@ -14,7 +14,7 @@
 				if($approvalNeeded){
 				   $date = null;
 				}
-				$res = DB::query("insert into account(userid, username, email, password, erstellungsdatum) values :i,:u,:e,:p,:d;",[':i'=>$userid,':u'=>$username,':e'=>$email,':d'=>$date,':p'=>hash($password)]);  //hash???]);
+				$res = DB::query("insert into account(userid, username, email, password, erstellungsdatum) values :i,:u,:e,:p,:d;",[':i'=>$userid,':u'=>$username,':e'=>$email,':d'=>$date,':p'=>password_hash($password, PASSWORD_DEFAULT)]);  //hash???]);
 				if($approvalNeeded){
 					$code = bin2hex(random_bytes(50));
 					DB::query("insert into notapproved(userid, code, datetime) values :u,:c,now();",[':u'=>$userid,':c'=>$code]);
@@ -41,7 +41,7 @@
 		public static function login($username, $password, $ip, $isEndless){
 			$res = DB::query("select userid, password from account where username=:username;", [':username'=>$username]);
 			if(count($res)==1){
-				if(verify($res[0]['password'],$password)){  //hash überprüfen???
+				if(password_verify($password,$res[0]['password'])){  //hash überprüfen???
 					login($res[0]['userid'],$ip,$IsEndless);
 					return $res[0]['userid'];
 				}
