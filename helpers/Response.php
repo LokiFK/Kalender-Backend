@@ -56,10 +56,18 @@
                }    
                $i = $k;
                $path = substr($component, $j, $k-$j);
-               if(is_file($path)){
+               if(substr($component, -2)=="()"){
+                   $activator = substr($component, 0, -2);
+                   $activator = explode('@', $activator);
+                        $class = new $activator[0]();
+                        $method = $activator[1];
+                        $content = $class->$method();
+                   $component = substr_replace($component, $content, $j-3, $k-$j+6);
+               }elseif(is_file($path)){
                  $content = replaceFiles( file_getcontents($path) );
-                 $component = substr_replace($component, $content, $j, $k-$j);
+                 $component = substr_replace($component, $content, $j-3, $k-$j+6);
+               }    
                }    
             }   
-        }    
+        }
     }
