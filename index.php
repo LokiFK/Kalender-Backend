@@ -13,6 +13,11 @@
 
     $routes->get('', 'GeneralController@startPage');
 
+    //user
+    $routes->get('/user/appointmentMaking', 'UserController@appointmentMaking');
+    $routes->get('/user/appointmentOverview', 'UserController@appointmentOverview');
+    $routes->get('/user/profile', 'UserController@profile');
+
     // Register
     $routes->view('/users/register', 'AuthController@register');
     $routes->post('/users/createUser', 'AuthController@createUser');

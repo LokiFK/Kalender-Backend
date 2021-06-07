@@ -1,0 +1,10 @@
+#nav{
+    background-color:green;
+    margin-top:0;
+    height:20px;
+}
+#content{
+    background-color:lightgreen;
+    margin-top:0;
+    height:80%;
+}

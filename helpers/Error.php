@@ -3,6 +3,7 @@
     class ErrorUI {
         public static function errorCode($errorCode)
         {
+            echo "Error 404";
             http_response_code($errorCode);
         }
 
