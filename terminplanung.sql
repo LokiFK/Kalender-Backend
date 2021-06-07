@@ -139,10 +139,10 @@ CREATE TABLE `appointment_admin` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `user`
+-- Tabellenstruktur für Tabelle `users`
 --
 
-CREATE TABLE `user` (
+CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `firstname` varchar(50) DEFAULT NULL,
   `lastname` varchar(50) DEFAULT NULL,
@@ -160,19 +160,19 @@ CREATE TABLE `user` (
 -- Indizes für die Tabelle `account`
 --
 ALTER TABLE `account`
-  ADD PRIMARY KEY (`userid`),
+  ADD PRIMARY KEY (`userID`),
   ADD UNIQUE KEY `username` (`username`);
 
 --
 -- Indizes für die Tabelle `admin`
 --
 ALTER TABLE `admin`
-  ADD PRIMARY KEY (`userid`);
+  ADD PRIMARY KEY (`userID`);
 
 --
 -- Indizes für die Tabelle `behandlung`
 --
-ALTER TABLE `behandlung`
+ALTER TABLE `treatment`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -180,14 +180,14 @@ ALTER TABLE `behandlung`
 --
 ALTER TABLE `notapproved`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `userid` (`userid`);
+  ADD KEY `userID` (`userID`);
 
 --
 -- Indizes für die Tabelle `passwordreset`
 --
 ALTER TABLE `passwordreset`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `userid` (`userid`);
+  ADD KEY `userID` (`userID`);
 
 --
 -- Indizes für die Tabelle `raum`
@@ -206,21 +206,21 @@ ALTER TABLE `session`
 --
 ALTER TABLE `termin`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `userid` (`userid`),
-  ADD KEY `behandlungsid` (`behandlungsid`),
-  ADD KEY `raumid` (`raumid`);
+  ADD KEY `userID` (`userID`),
+  ADD KEY `treatmentID` (`treatmentID`),
+  ADD KEY `roomID` (`roomID`);
 
 --
 -- Indizes für die Tabelle `terminmitarbeiter`
 --
-ALTER TABLE `terminmitarbeiter`
-  ADD PRIMARY KEY (`terminid`,`adminid`),
-  ADD KEY `adminid` (`adminid`);
+ALTER TABLE `appointment_admin`
+  ADD PRIMARY KEY (`terminID`,`adminID`),
+  ADD KEY `adminID` (`adminID`);
 
 --
--- Indizes für die Tabelle `user`
+-- Indizes für die Tabelle `users`
 --
-ALTER TABLE `user`
+ALTER TABLE `users`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -230,7 +230,7 @@ ALTER TABLE `user`
 --
 -- AUTO_INCREMENT für Tabelle `behandlung`
 --
-ALTER TABLE `behandlung`
+ALTER TABLE `treatment`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT für Tabelle `notapproved`
@@ -250,12 +250,12 @@ ALTER TABLE `raum`
 --
 -- AUTO_INCREMENT für Tabelle `termin`
 --
-ALTER TABLE `termin`
+ALTER TABLE `appointment`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
--- AUTO_INCREMENT für Tabelle `user`
+-- AUTO_INCREMENT für Tabelle `users`
 --
-ALTER TABLE `user`
+ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- Constraints der exportierten Tabellen
@@ -265,46 +265,46 @@ ALTER TABLE `user`
 -- Constraints der Tabelle `account`
 --
 ALTER TABLE `account`
-  ADD CONSTRAINT `account_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`id`);
+  ADD CONSTRAINT `account_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`);
 
 --
 -- Constraints der Tabelle `admin`
 --
 ALTER TABLE `admin`
-  ADD CONSTRAINT `admin_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`id`);
+  ADD CONSTRAINT `admin_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`);
 
 --
 -- Constraints der Tabelle `notapproved`
 --
 ALTER TABLE `notapproved`
-  ADD CONSTRAINT `notapproved_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`id`);
+  ADD CONSTRAINT `notapproved_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`);
 
 --
 -- Constraints der Tabelle `passwordreset`
 --
 ALTER TABLE `passwordreset`
-  ADD CONSTRAINT `passwordreset_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`id`);
+  ADD CONSTRAINT `passwordreset_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`);
 
 --
 -- Constraints der Tabelle `session`
 --
 ALTER TABLE `session`
-  ADD CONSTRAINT `session_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`id`);
+  ADD CONSTRAINT `session_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`);
 
 --
 -- Constraints der Tabelle `termin`
 --
-ALTER TABLE `termin`
-  ADD CONSTRAINT `termin_ibfk_1` FOREIGN KEY (`userid`) REFERENCES `user` (`id`),
-  ADD CONSTRAINT `termin_ibfk_2` FOREIGN KEY (`behandlungsid`) REFERENCES `behandlung` (`id`),
-  ADD CONSTRAINT `termin_ibfk_3` FOREIGN KEY (`raumid`) REFERENCES `raum` (`id`);
+ALTER TABLE `appointment`
+  ADD CONSTRAINT `appointment_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `appointment_ibfk_2` FOREIGN KEY (`treatmentID`) REFERENCES `treatment` (`id`),
+  ADD CONSTRAINT `appointment_ibfk_3` FOREIGN KEY (`roomID`) REFERENCES `room` (`id`);
 
 --
 -- Constraints der Tabelle `terminmitarbeiter`
 --
-ALTER TABLE `terminmitarbeiter`
-  ADD CONSTRAINT `terminmitarbeiter_ibfk_1` FOREIGN KEY (`terminid`) REFERENCES `termin` (`id`),
-  ADD CONSTRAINT `terminmitarbeiter_ibfk_2` FOREIGN KEY (`adminid`) REFERENCES `admin` (`userid`);
+ALTER TABLE `appointment_admin`
+  ADD CONSTRAINT `appointment_admin_ibfk_1` FOREIGN KEY (`appointmentID`) REFERENCES `termin` (`id`),
+  ADD CONSTRAINT `appointment_admin_ibfk_2` FOREIGN KEY (`adminID`) REFERENCES `admin` (`userID`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
