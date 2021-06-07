@@ -3,6 +3,7 @@
     class ErrorUI {
         public static function errorCode($errorCode)
         {
+            echo Response::view("general/error404");
             http_response_code($errorCode);
         }
 

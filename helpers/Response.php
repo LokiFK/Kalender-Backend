@@ -20,7 +20,7 @@
             );
         }
 
-        public static function view(string $component, array $data = array())
+        public static function view(string $component, array $data = array())       //dont allow other userinput than $data without checking loadingWithPHP
         {
             //echo "view: $component <br>";
             $pathHTML = "./public/html/$component.html";
@@ -28,7 +28,7 @@
             $pathJS = "./public/js/$component.js";
             $pathDefaultCSS = "./public/css/default-styles.css";
             if (is_file($pathHTML)) {
-                $content = Response::replaceFiles(file_get_contents($pathHTML));
+                $content = Response::loadingWithPHP($pathHTML);
                 foreach ($data as $key => $value) {
                     $content = str_replace('{{ ' . $key . ' }}', $value, $content);
                 }
@@ -51,17 +51,24 @@
             $res->errorCode(500);
         }
         
-        public static function replaceFiles(string $component) {
+        public static function loadingWithPHP(string $pathHTML) {   
+            $component = file_get_contents($pathHTML);           //in this Method should never get componentparts from the User. It has to be directly out of a trusted file!!!!!!
+            $component = Response::loadLinkedFiles($component);    //doesn't contain userinput, so still save
+            $component = Response::executePHP($component);
+            return $component;
+        }
+        private static function loadLinkedFiles(string $component){         //aus Sicherheitsgründen nur von loadingWithPHP() aufrufen!!!
+            //echo "component: $component<br>";
             $i = 0;
             while (true) {
                 $j = strpos($component, "{{% ", $i); 
                 if ($j == false) {
-                    return $component;
+                    return $component;;
                 } 
                 $j=$j+4;
                 $k = strpos($component, " %}}", $j);
                 if ($k == false) {
-                    return $component;  
+                    return $component;
                 }    
                 $i = $k+4;
                 $path = substr($component, $j, $k-$j);
@@ -78,7 +85,29 @@
                     $content = Response::view($path);
                     $component = substr_replace($component, $content, $j-4, $k-$j+8);
                 }
-            }   
+            }    
+        }
+        private static function executePHP($component){             //aus Sicherheitsgründen nur von loadingWithPHP() aufrufen!!!
+            $si = 0;
+            while (true) {
+                $sj = strpos($component, "<?php", $si); 
+                if ($sj == false) {
+                    return $component;
+                } 
+                $sj=$sj+5;
+                $sk = strpos($component, "?>", $sj);
+                if ($sk == false) {
+                    return $component;
+                }    
+                $i = $sk+2;
+                $code = substr($component, $sj, $sk-$sj);
+                $res = eval($code);                                 //Achtung Variablen werden geteilt, verwenden Sie in den Dateien keine hier genutzten Variablen
+                if ($res!=null) {
+                    $component = substr_replace($component, $res, $sj-5, $sk-$sj+7);
+                } else {
+                    $component = substr_replace($component, "", $sj-5, $sk-$sj+7);
+                }
+            } 
         }
     }
 ?>

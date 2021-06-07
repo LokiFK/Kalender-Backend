@@ -11,6 +11,8 @@
 
     $routes = new Routes();
 
+    $routes->get("", "GeneralController@startPage");
+
     //user
     $routes->get('/user/appointmentMaking', 'UserController@appointmentMaking');
     $routes->get('/user/appointmentOverview', 'UserController@appointmentOverview');
