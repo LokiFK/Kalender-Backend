@@ -21,6 +21,11 @@
                 )
             );
         }
+
+        public function test(Request $req, Response $res)
+        {
+            $res->json(['hHlasdjfoiewofwh']);
+        }
     }
 
 ?>

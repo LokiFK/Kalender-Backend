@@ -26,7 +26,7 @@
             $pathCSS = "./public/css/$component.css";
             $pathDefaultCSS = "./public/css/default-styles.css";
             if (is_file($pathHTML)) {
-                $content = replaceFiles( file_get_contents($pathHTML) );
+                $content = Response::replaceFiles(file_get_contents($pathHTML));
                 foreach ($data as $key => $value) {
                     $content = str_replace('{{ ' . $key . ' }}', $value, $content);
                 }
@@ -43,31 +43,31 @@
             $res->errorCode(500);
         }
         
-        public static function replaceFiles(string $component){
+        public static function replaceFiles(string $component) {
             $i = 0;
-            while(true){
-               $j = strpos($component, "{{%", $i) + 3; 
-               if($j==false){
-                 return $component;  
-               } 
-               $k = strpos($component, "%}}", $j);
-               if($k==false){
-                 return $component;  
-               }    
-               $i = $k;
-               $path = substr($component, $j, $k-$j);
-               if(substr($component, -2)=="()"){
-                   $activator = substr($component, 0, -2);
-                   $activator = explode('@', $activator);
-                        $class = new $activator[0]();
-                        $method = $activator[1];
-                        $content = $class->$method();
-                   $component = substr_replace($component, $content, $j-3, $k-$j+6);
-               }elseif(is_file($path)){
-                 $content = replaceFiles( file_getcontents($path) );
-                 $component = substr_replace($component, $content, $j-3, $k-$j+6);
-               }    
-               }    
+            while (true) {
+                $j = strpos($component, "{{%", $i) + 3; 
+                if ($j == false) {
+                    return $component;
+                } 
+                $k = strpos($component, "%}}", $j);
+                if ($k == false) {
+                    return $component;  
+                }    
+                $i = $k;
+                $path = substr($component, $j, $k-$j);
+                if (substr($component, -2) == "()") {
+                    $activator = substr($component, 0, -2);
+                    $activator = explode('@', $activator);
+                            $class = new $activator[0]();
+                            $method = $activator[1];
+                            $content = $class->$method();
+                    $component = substr_replace($component, $content, $j-3, $k-$j+6);
+                } else if (is_file($path)) {
+                    $content = Response::replaceFiles(file_get_contents($path) );
+                    $component = substr_replace($component, $content, $j-3, $k-$j+6);
+                }
             }   
         }
     }
+?>

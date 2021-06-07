@@ -2,7 +2,7 @@
 
 	  class Auth {
 
-		    const DURATION = '30 Minutes';		
+		const DURATION = '30 Minutes';		
 
         public static function registerUser($vorname, $nachname, $anrede, $geburtstag, $patientenid){
             $res = DB::query("insert into user(vorname,nachname,geburtstag,patientenid) values :vor,:nach,:an,:geb,:pat;",[':vor'=>$vorname, ':nach'=>$nachname, ':geb'=>$geburtstag, ':an'=>$anrede, ':pat'=>$patientenid]);

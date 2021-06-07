@@ -57,7 +57,7 @@
             $account = DB::table('account')->where('username = :username', [':username' => $username])[0];
 
             if (password_verify($password, $account['password'])) {
-                $token = bin2hex(random_bytes(64));
+                $token = Auth::createNewToken();
                 $start = date('Y-M-D H:M:S');
                 $end = null;
                 if (!$remember) {
@@ -79,7 +79,7 @@
             if (!isset($userID)) { return; }
 
             $tokenID = DB::table('tokens')->where('token = :token AND user_id = :user_id', [':token' => $token, ':user_id' => $userID])->get([], ['id'])[0]['id'];
-            DB::query('DELETE FROM tokens WHERE id = :id', [':id' => $tokenID]);
+            DB::query('UPDATE tokens SET `end` = :end WHERE id = :id', [':id' => $tokenID, ':end' => date('Y-M-D')]);
         }
 
         private static function isValidToken($token, $exitIfNot)
@@ -92,7 +92,16 @@
             }
             $lastLogin = new DateTime($timestamp);
             $currentTime = new DateTime();
-            return $lastLogin->diff($currentTime)->d < 10;
+            return $lastLogin->diff($currentTime)->d < 10; // only make it valid if token is less than 10 days old
+        }
+
+        public static function createNewToken()
+        {
+            $token = bin2hex(random_bytes(64));
+            while (DB::table('sessions')->where('token = :token', [':token' => $token])->get() !== null) {
+                $token = bin2hex(random_bytes(64));
+            }
+            return $token;
         }
 
         public static function getToken()
@@ -122,7 +131,7 @@
         public static function getPermissions()
         {
             $userID = Auth::userID();
-            $permission = DB::query('SELECT permissions.permission FROM permissions INNER JOIN users ON permissions.user_id = :user_id', array(':user_id' => $userID));
+            $permission = DB::query('SELECT `permissions`.`permission` FROM `permissions` INNER JOIN users ON `permissions`.`user_id` = :user_id', array(':user_id' => $userID));
             return $permission[0]['permission'];
         }
 
@@ -135,19 +144,19 @@
 
 
     class User {
-        public string $vorname = "";
-        public string $nachname = "";
-        public string $anrede = "";
-        public string $geburtstag = "";
-        public string $patientenID = "";
+        public $vorname = "";
+        public $nachname = "";
+        public $anrede = "";
+        public $geburtstag = "";
+        public $patientenID = "";
     }
 
     class Account {
-        public string $userID = "";
-        public string $username = "";
-        public string $email = "";
-        public string $password = "";
-        public string $approvalNeeded = "";
+        public $userID = "";
+        public $username = "";
+        public $email = "";
+        public $password = "";
+        public $approvalNeeded = "";
     }
 
 ?>

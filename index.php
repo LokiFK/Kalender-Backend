@@ -7,11 +7,6 @@
     require './helpers/index.php';
     require './controllers/AuthController.php';
 
-    $userid = Auth::getUserid();
-    if($userid!=null){
-      $isAdmin = Auth::isAdmin($userid);
-    }
-
     $routes = new Routes();
 
     // Register
@@ -21,6 +16,9 @@
     // Login
     $routes->view('/users/login', 'AuthController@login');
     $routes->get('/users/getUser', 'AuthController@getUser');
+
+
+    $routes->get('/test', 'AuthController@test');
 
 
     $routes->listen();
