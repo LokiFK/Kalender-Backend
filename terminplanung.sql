@@ -198,7 +198,7 @@ ALTER TABLE `raum`
 -- Indizes für die Tabelle `session`
 --
 ALTER TABLE `session`
-  ADD PRIMARY KEY (`userid`,`token`);
+  ADD PRIMARY KEY (`token`);
 
 --
 -- Indizes für die Tabelle `termin`
