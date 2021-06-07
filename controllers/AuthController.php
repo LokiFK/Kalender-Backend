@@ -4,12 +4,12 @@
 
         public function register(Request $req, Response $res)
         {
-            echo $res->view('register');
+            echo $res->view('auth/register');
         }
 
         public function registerAccount(Request $req, Response $res)
         {
-            echo $res->view('registerAccount', ['code' => $req->getBody()['code']]);
+            echo $res->view('auth/registerAccount', ['code' => $req->getBody()['code']]);
         }
 
         public function createUser(Request $req, Response $res)

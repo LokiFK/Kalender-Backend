@@ -1,0 +1,10 @@
+#nav{
+    background-color:green;
+    padding-top:0;
+    height:20px;
+}
+#content{
+    background-color:lightgreen;
+    padding-top:0;
+    height:80%;
+}
