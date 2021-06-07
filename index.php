@@ -5,20 +5,28 @@
 
     require_once './Auth/Auth.php';
     require './helpers/index.php';
+    require './controllers/GeneralController.php';
     require './controllers/AuthController.php';
+    require './controllers/UserController.php';
 
     $routes = new Routes();
 
+    //user
+    $routes->get('/user/appointmentMaking', 'UserController@appointmentMaking');
+    $routes->get('/user/appointmentOverview', 'UserController@appointmentOverview');
+    $routes->get('/user/profile', 'UserController@profile');
+
     // Register
-    $routes->view('/users/register', 'AuthController@register');
-    $routes->post('/users/createUser', 'AuthController@createUser');
+    $routes->get('/auth/register', 'AuthController@register');
+    $routes->post('/auth/createUser', 'AuthController@createUser');
+    
+    $routes->get('/auth/registerAccount', 'AuthController@registerAccount');
+    $routes->post('/auth/createAccount', 'AuthController@createAccount');
 
     // Login
-    $routes->view('/users/login', 'AuthController@login');
-    $routes->get('/users/getUser', 'AuthController@getUser');
+    $routes->get('/auth/login', 'AuthController@login');
+    $routes->get('/auth/getUser', 'AuthController@getUser');
 
-
-    $routes->get('/test', 'AuthController@test');
 
 
     $routes->listen();

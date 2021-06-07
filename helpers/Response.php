@@ -22,8 +22,10 @@
 
         public static function view(string $component, array $data = array())
         {
-            $pathHTML = "./public/$component.html";
+            //echo "view: $component <br>";
+            $pathHTML = "./public/html/$component.html";
             $pathCSS = "./public/css/$component.css";
+            $pathJS = "./public/js/$component.js";
             $pathDefaultCSS = "./public/css/default-styles.css";
             if (is_file($pathHTML)) {
                 $content = Response::replaceFiles(file_get_contents($pathHTML));
@@ -36,6 +38,12 @@
                 } else {
                     $content = str_replace('{% styles %}', '', $content);
                 }
+                if (is_file($pathJS)) {
+                    $script = '<script>' . file_get_contents($pathJS) . '</script>';
+                    $content = str_replace('{% script %}', $script, $content);
+                } else {
+                    $content = str_replace('{% script %}', '', $content);
+                }
                 return $content;
             }
             $res = new Response();
@@ -46,26 +54,29 @@
         public static function replaceFiles(string $component) {
             $i = 0;
             while (true) {
-                $j = strpos($component, "{{%", $i) + 3; 
+                $j = strpos($component, "{{% ", $i); 
                 if ($j == false) {
                     return $component;
                 } 
-                $k = strpos($component, "%}}", $j);
+                $j=$j+4;
+                $k = strpos($component, " %}}", $j);
                 if ($k == false) {
                     return $component;  
                 }    
-                $i = $k;
+                $i = $k+4;
                 $path = substr($component, $j, $k-$j);
+                //echo ">>>>>>>>>>>>>j: $j, k: $k path: $path<<<<<<<<<<<<";
                 if (substr($component, -2) == "()") {
                     $activator = substr($component, 0, -2);
                     $activator = explode('@', $activator);
                             $class = new $activator[0]();
                             $method = $activator[1];
                             $content = $class->$method();
-                    $component = substr_replace($component, $content, $j-3, $k-$j+6);
-                } else if (is_file($path)) {
-                    $content = Response::replaceFiles(file_get_contents($path) );
-                    $component = substr_replace($component, $content, $j-3, $k-$j+6);
+                    $component = substr_replace($component, $content, $j-4, $k-$j+8);
+                } else if (is_file("./public/html/".$path.".html")) {
+                    //$content = Response::replaceFiles(file_get_contents("./public/".$path) );
+                    $content = Response::view($path);
+                    $component = substr_replace($component, $content, $j-4, $k-$j+8);
                 }
             }   
         }

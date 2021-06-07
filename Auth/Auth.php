@@ -29,21 +29,20 @@
 
         public static function registerUser(User $user)
         {
-            return DB::query("INSERT INTO users (vorname, nachname, geburtstag, patientenID) VALUES (:vorname, :nachname, :geburtstag, :patientenID)", [':vorname' => $user->vorname, ':nachname' => $user->nachname, ':geburtstag' => $user->geburtstag, ':patientenID' => $user->patientenID]);
+            DB::query("INSERT INTO users (firstname, lastname, salutation, insurance, birthday, patientID) VALUES (:firstname, :lastname, :salutation, :insurance, :birthday, :patientID)", [':firstname' => $user->firstname, ':lastname' => $user->lastname, ':salutation' => $user->salutation, ':insurance' => $user->insurance, ':birthday' => $user->birthday, ':patientID' => $user->patientID]);
+            $userID = DB::table('users')->where('firstname = :firstname', [':firstname' => $user->firstname])->get([], ['id'])[0]['id'];
+            $code = bin2hex(random_bytes(64));
+            DB::query("INSERT INTO notapproved (userID, code, datetime) VALUES (:userID, :code, :date);", [':userID' => $userID, ':code' => $code, ':date' => date('Y-M-D')]);
+            $from = "FROM Terminplanung @noreply";
+            $subject = "Account bestätigen";
+            $msg = $code;
+            //mail($account->email, $subject, $msg, $from);
         }
 
         public static function registerAccount(Account $account)
         {
             if (Auth::userExists($account->userID)) {
-                if (!$account->approvalNeeded) {
-                    return DB::query("INSERT INTO account (userid, username, email, password, erstellungsdatum) VALUES (:userID, :username, :email, :password, :date);",[':userID' => $account->userID, ':username' => $account->username, ':email' => $account->email, ':password' => password_hash($account->password, PASSWORD_DEFAULT), ':date' => null]);
-                }
-                $token = bin2hex(random_bytes(64));
-                DB::query("INSERT INTO notapproved (userid, token, datetime) VALUES (:userID, :token, :date);", [':userID' => $account->userID, ':token' => $token, ':date' => date('Y-M-D')]);
-                $from = "FROM Terminplanung @noreply";
-                $subject = "Account bestätigen";
-                $msg = $token;
-                mail($account->email, $subject, $msg, $from);
+                DB::query("INSERT INTO account (userID, username, email, password, createdAt) VALUES (:userID, :username, :email, :password, :createdAt);",[':userID' => $account->userID, ':username' => $account->username, ':email' => $account->email, ':password' => password_hash($account->password, PASSWORD_DEFAULT), ':createdAt' => null]);
             }
         }
 
@@ -137,18 +136,29 @@
 
         public static function userExists($userID)
         {
-            $res = DB::query("SELECT count(*) AS 'Anzahl' FROM user WHERE id = :userid;", [':userid' => $userID]);
+            $res = DB::query("SELECT count(*) AS 'Anzahl' FROM users WHERE id = :userid;", [':userid' => $userID]);
             return $res[0]['Anzahl'] > 0;
         }
     }
 
 
     class User {
-        public $vorname = "";
-        public $nachname = "";
-        public $anrede = "";
-        public $geburtstag = "";
-        public $patientenID = "";
+        public $firstname = "";
+        public $lastname = "";
+        public $salutation = "";
+        public $birthday = "";
+        public $insurance = "";
+        public $patientID = "";
+
+        public function __construct($firstname, $lastname, $salutation, $birthday, $insurance, $patientID)
+        {
+            $this->firstname = $firstname;
+            $this->lastname = $lastname;
+            $this->salutation = $salutation;
+            $this->birthday = $birthday;
+            $this->insurance = $insurance;
+            $this->patientID = $patientID;
+        }
     }
 
     class Account {
@@ -157,6 +167,15 @@
         public $email = "";
         public $password = "";
         public $approvalNeeded = "";
+
+        public function __construct($userID, $username, $email, $password, $approvalNeeded)
+        {
+            $this->userID = $userID;
+            $this->username = $username;
+            $this->email = $email;
+            $this->password = $password;
+            $this->approvalNeeded = $approvalNeeded;
+        }
     }
 
 ?>
