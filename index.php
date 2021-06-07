@@ -5,9 +5,13 @@
 
     require_once './Auth/Auth.php';
     require './helpers/index.php';
+    require './controllers/GeneralController.php';
     require './controllers/AuthController.php';
+    require './controllers/UserController.php';
 
     $routes = new Routes();
+
+    $routes->get('', 'GeneralController@startPage');
 
     // Register
     $routes->view('/users/register', 'AuthController@register');

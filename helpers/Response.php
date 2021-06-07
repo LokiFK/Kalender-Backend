@@ -22,8 +22,9 @@
 
         public static function view(string $component, array $data = array())
         {
-            $pathHTML = "./public/$component.html";
+            $pathHTML = "./public/html/$component.html";
             $pathCSS = "./public/css/$component.css";
+            $pathJS = "./public/js/$component.js";
             $pathDefaultCSS = "./public/css/default-styles.css";
             if (is_file($pathHTML)) {
                 $content = Response::replaceFiles(file_get_contents($pathHTML));
@@ -35,6 +36,12 @@
                     $content = str_replace('{% styles %}', $styles, $content);
                 } else {
                     $content = str_replace('{% styles %}', '', $content);
+                }
+                if (is_file($pathJS)) {
+                    $script = '<script>' . file_get_contents($pathJS) . '</script>';
+                    $content = str_replace('{% script %}', $script, $content);
+                } else {
+                    $content = str_replace('{% script %}', '', $content);
                 }
                 return $content;
             }

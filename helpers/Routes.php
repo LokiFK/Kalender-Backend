@@ -48,6 +48,7 @@
                     }
                 }
             }
+            ErrorUI::errorCode(404);
         }
     }
 
