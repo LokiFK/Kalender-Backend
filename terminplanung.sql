@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Datenbank: `terminplanung`
+-- Datenbank: `calender`
 --
 
 -- --------------------------------------------------------
@@ -48,10 +48,10 @@ CREATE TABLE `admin` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `behandlung`
+-- Tabellenstruktur für Tabelle `treatment`
 --
 
-CREATE TABLE `behandlung` (
+CREATE TABLE `treatment` (
   `id` int(11) NOT NULL,
   `name` varchar(50) DEFAULT NULL,
   `nrDoctors` int(11) DEFAULT NULL,
@@ -88,10 +88,10 @@ CREATE TABLE `passwordreset` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `raum`
+-- Tabellenstruktur für Tabelle `room`
 --
 
-CREATE TABLE `raum` (
+CREATE TABLE `room` (
   `id` int(11) NOT NULL,
   `number` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -112,7 +112,7 @@ CREATE TABLE `session` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `termin`
+-- Tabellenstruktur für Tabelle `appointment`
 --
 
 CREATE TABLE `appointment` (
@@ -128,7 +128,7 @@ CREATE TABLE `appointment` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `terminmitarbeiter`
+-- Tabellenstruktur für Tabelle `apointment_admin`
 --
 
 CREATE TABLE `appointment_admin` (
@@ -170,7 +170,7 @@ ALTER TABLE `admin`
   ADD PRIMARY KEY (`userID`);
 
 --
--- Indizes für die Tabelle `behandlung`
+-- Indizes für die Tabelle `treatment`
 --
 ALTER TABLE `treatment`
   ADD PRIMARY KEY (`id`);
@@ -190,9 +190,9 @@ ALTER TABLE `passwordreset`
   ADD KEY `userID` (`userID`);
 
 --
--- Indizes für die Tabelle `raum`
+-- Indizes für die Tabelle `room`
 --
-ALTER TABLE `raum`
+ALTER TABLE `room`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -202,19 +202,19 @@ ALTER TABLE `session`
   ADD PRIMARY KEY (`token`);
 
 --
--- Indizes für die Tabelle `termin`
+-- Indizes für die Tabelle `appointment`
 --
-ALTER TABLE `termin`
+ALTER TABLE `appointment`
   ADD PRIMARY KEY (`id`),
   ADD KEY `userID` (`userID`),
   ADD KEY `treatmentID` (`treatmentID`),
   ADD KEY `roomID` (`roomID`);
 
 --
--- Indizes für die Tabelle `terminmitarbeiter`
+-- Indizes für die Tabelle `appointment_admin`
 --
 ALTER TABLE `appointment_admin`
-  ADD PRIMARY KEY (`terminID`,`adminID`),
+  ADD PRIMARY KEY (`appointmentID`,`adminID`),
   ADD KEY `adminID` (`adminID`);
 
 --
@@ -245,7 +245,7 @@ ALTER TABLE `passwordreset`
 --
 -- AUTO_INCREMENT für Tabelle `raum`
 --
-ALTER TABLE `raum`
+ALTER TABLE `room`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT für Tabelle `termin`
@@ -303,7 +303,7 @@ ALTER TABLE `appointment`
 -- Constraints der Tabelle `terminmitarbeiter`
 --
 ALTER TABLE `appointment_admin`
-  ADD CONSTRAINT `appointment_admin_ibfk_1` FOREIGN KEY (`appointmentID`) REFERENCES `termin` (`id`),
+  ADD CONSTRAINT `appointment_admin_ibfk_1` FOREIGN KEY (`appointmentID`) REFERENCES `appointment` (`id`),
   ADD CONSTRAINT `appointment_admin_ibfk_2` FOREIGN KEY (`adminID`) REFERENCES `admin` (`userID`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

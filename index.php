@@ -12,13 +12,14 @@
     // Register
     $routes->view('/users/register', 'AuthController@register');
     $routes->post('/users/createUser', 'AuthController@createUser');
+    
+    $routes->view('/users/registerAccount', 'AuthController@registerAccount');
+    $routes->post('/users/createAccount', 'AuthController@createAccount');
 
     // Login
     $routes->view('/users/login', 'AuthController@login');
     $routes->get('/users/getUser', 'AuthController@getUser');
 
-
-    $routes->get('/test', 'AuthController@test');
 
 
     $routes->listen();
