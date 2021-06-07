@@ -14,19 +14,13 @@
 
         public function get($route, $activator)
         {
-            $newRoute = new Route('/api' . $route, 'GET', $activator);
+            $newRoute = new Route($route, 'GET', $activator);
             array_push($this->routes, $newRoute);
         }
 
         public function post($route, $activator)
         {
-            $newRoute = new Route('/api' . $route, 'POST', $activator);
-            array_push($this->routes, $newRoute);
-        }
-
-        public function view($route, $activator)
-        {
-            $newRoute = new Route($route, 'GET', $activator);
+            $newRoute = new Route($route, 'POST', $activator);
             array_push($this->routes, $newRoute);
         }
 

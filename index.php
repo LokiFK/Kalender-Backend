@@ -19,11 +19,11 @@
     $routes->get('/user/profile', 'UserController@profile');
 
     // Register
-    $routes->view('/users/register', 'AuthController@register');
+    $routes->get('/users/register', 'AuthController@register');
     $routes->post('/users/createUser', 'AuthController@createUser');
 
     // Login
-    $routes->view('/users/login', 'AuthController@login');
+    $routes->get('/users/login', 'AuthController@login');
     $routes->get('/users/getUser', 'AuthController@getUser');
 
 
