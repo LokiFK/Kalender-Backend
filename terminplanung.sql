@@ -27,11 +27,11 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `account` (
-  `userid` int(11) NOT NULL,
+  `userID` int(11) NOT NULL,
   `username` varchar(50) DEFAULT NULL,
   `email` varchar(50) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
-  `erstellungsdatum` date DEFAULT NULL
+  `createdAt` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -41,7 +41,7 @@ CREATE TABLE `account` (
 --
 
 CREATE TABLE `admin` (
-  `userid` int(11) NOT NULL,
+  `userID` int(11) NOT NULL,
   `role` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -54,8 +54,8 @@ CREATE TABLE `admin` (
 CREATE TABLE `behandlung` (
   `id` int(11) NOT NULL,
   `name` varchar(50) DEFAULT NULL,
-  `anzahlaerzte` int(11) DEFAULT NULL,
-  `anzahlarzthelfer` int(11) DEFAULT NULL
+  `nrDoctors` int(11) DEFAULT NULL,
+  `nrNurses` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -66,7 +66,7 @@ CREATE TABLE `behandlung` (
 
 CREATE TABLE `notapproved` (
   `id` int(11) NOT NULL,
-  `userid` int(11) DEFAULT NULL,
+  `userID` int(11) DEFAULT NULL,
   `code` varchar(50) DEFAULT NULL,
   `datetime` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -79,10 +79,10 @@ CREATE TABLE `notapproved` (
 
 CREATE TABLE `passwordreset` (
   `id` int(11) NOT NULL,
-  `userid` int(11) DEFAULT NULL,
+  `userID` int(11) DEFAULT NULL,
   `code` varchar(50) DEFAULT NULL,
   `datetime` datetime DEFAULT NULL,
-  `used` tinyint(1) DEFAULT NULL
+  `isUsed` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -93,7 +93,7 @@ CREATE TABLE `passwordreset` (
 
 CREATE TABLE `raum` (
   `id` int(11) NOT NULL,
-  `nummer` varchar(20) DEFAULT NULL
+  `number` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -103,7 +103,7 @@ CREATE TABLE `raum` (
 --
 
 CREATE TABLE `session` (
-  `userid` int(11) NOT NULL,
+  `userID` int(11) NOT NULL,
   `token` varchar(64) NOT NULL,
   `start` datetime DEFAULT NULL,
   `end` datetime DEFAULT NULL
@@ -115,11 +115,11 @@ CREATE TABLE `session` (
 -- Tabellenstruktur für Tabelle `termin`
 --
 
-CREATE TABLE `termin` (
+CREATE TABLE `appointment` (
   `id` int(11) NOT NULL,
-  `userid` int(11) DEFAULT NULL,
-  `behandlungsid` int(11) DEFAULT NULL,
-  `raumid` int(11) DEFAULT NULL,
+  `userID` int(11) DEFAULT NULL,
+  `treatmentID` int(11) DEFAULT NULL,
+  `roomID` int(11) DEFAULT NULL,
   `start` datetime DEFAULT NULL,
   `end` datetime DEFAULT NULL,
   `status` varchar(20) DEFAULT NULL
@@ -131,9 +131,9 @@ CREATE TABLE `termin` (
 -- Tabellenstruktur für Tabelle `terminmitarbeiter`
 --
 
-CREATE TABLE `terminmitarbeiter` (
-  `terminid` int(11) NOT NULL,
-  `adminid` int(11) NOT NULL
+CREATE TABLE `appointment_admin` (
+  `appointmentID` int(11) NOT NULL,
+  `adminID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -144,11 +144,12 @@ CREATE TABLE `terminmitarbeiter` (
 
 CREATE TABLE `user` (
   `id` int(11) NOT NULL,
-  `vorname` varchar(50) DEFAULT NULL,
-  `nachname` varchar(50) DEFAULT NULL,
-  `anrede` varchar(20) DEFAULT NULL,
-  `geburtstag` date DEFAULT NULL,
-  `patientenid` varchar(30) DEFAULT NULL
+  `firstname` varchar(50) DEFAULT NULL,
+  `lastname` varchar(50) DEFAULT NULL,
+  `salutation` varchar(20) DEFAULT NULL,
+  `insurance` varchar(20) DEFAULT NULL,
+  `birthday` date DEFAULT NULL,
+  `patientID` varchar(30) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
