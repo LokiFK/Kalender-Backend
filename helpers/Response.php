@@ -67,6 +67,7 @@
                     } else if ($needlePrefix == "{# extend ") { //special case needs other treatmand
                         $containerContents = explode("@", $innerData);
                         if (is_file("./public/html/".$containerContents[0].".html")) {
+                            $component = substr_replace($component, "", $j, $k + strlen($needleSuffix));
                             $content = Response::view($containerContents[0], $data);
                             $component = str_replace("{# create ".$containerContents[1]." #}", $component, $content);
                         } else {
