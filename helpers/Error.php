@@ -1,7 +1,7 @@
 <?php
 
     class ErrorUI {
-        public static function error($msg)
+        public static function errorMsg($msg)
         {
             echo json_encode(
                 array(
@@ -10,11 +10,11 @@
             );
         }
 
-        public static function errorView($errCode, $msg)
+        public static function error($errCode, $msg)
         {
             http_response_code($errCode);
             if(strpos($msg, "/api")) {
-                ErrorUI::error($msg);
+                ErrorUI::errorMsg($msg);
             } else {
                 echo Response::view("general/error", ["errorCode" => $errCode]);
             }

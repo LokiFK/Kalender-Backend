@@ -6,56 +6,114 @@
             echo json_encode($input);
         }
 
-        public function errorCode(int $errorCode)
+        public function error(int $errorCode, string $msg)
         {
-            http_response_code($errorCode);
+            ErrorUI::error($errorCode, $msg);
         }
 
-        public function error(string $msg)
+        public static function view(string $component, array $data = array())
         {
-            echo json_encode(
-                array(
-                    'message' => $msg
-                )
-            );
-        }
-
-        public static function view(string $component, array $data = array())       //dont allow other userinput than $data without checking loadingWithPHP
-        {
-            //echo "view: $component <br>";
-            $pathHTML = "./public/html/$component.html";
-            $pathCSS = "./public/css/$component.css";
-            $pathJS = "./public/js/$component.js";
-            $pathDefaultCSS = "./public/css/default-styles.css";
-            if (is_file($pathHTML)) {
-                $content = Response::load($pathHTML, $data);
-                foreach ($data as $key => $value) {
-                    $content = str_replace('{{ ' . $key . ' }}', $value, $content);
-                }
-                if (is_file($pathCSS)) {
-                    $styles = '<style>' . file_get_contents($pathCSS) . file_get_contents($pathDefaultCSS) . '</style>';
-                    $content = str_replace('{% styles %}', $styles, $content);
-                } else {
-                    $content = str_replace('{% styles %}', '', $content);
-                }
-                if (is_file($pathJS)) {
-                    $script = '<script>' . file_get_contents($pathJS) . '</script>';
-                    $content = str_replace('{% script %}', $script, $content);
-                } else {
-                    $content = str_replace('{% script %}', '', $content);
-                }
-                return $content;
-            }
-            $res = new Response();
-            $res->error('Error setting up HTML');
-            $res->errorCode(500);
+            $content = Response::load($component, $data);
+            if ($content !== null) { return $content; }
+            
+            ErrorUI::error(500, 'Error setting up HTML');
+            exit;
         }
         
-        public static function load(string $pathHTML, $data) {
-            $component = file_get_contents($pathHTML);           //in this Method should never get componentparts from the User. It has to be directly out of a trusted file!!!!!!
-            $component = Response::executePHP($component);
-            $component = Response::loadContainers($component, $data);
-            $component = Response::loadLinkedFiles($component, $data);
+        public static function load(string $componentName, $data) {
+            $pathHTML = "./public/html/" . $componentName . ".html";
+
+            if (is_file($pathHTML)) {
+                $component = file_get_contents($pathHTML);
+                $component = Response::renderData($component, $componentName, $data);
+
+                return $component;
+            }
+        }
+
+        private static function renderData($component, $componentName, $data)
+        {
+            // Fill all variables with their data
+            foreach ($data as $key => $value) {
+                $component = str_replace("{{ " . $key . " }}", $value, $component);
+            }
+
+            // Find all listed tags and load their individual data
+            foreach (["{% / %}", "{+ / +}", "{# extend / #}", "<?php/?>"] as $needle) {
+                $i = 0;
+                $j = 0;
+
+                $needlePrefix = explode("/", $needle)[0];
+                $needleEnding = explode("/", $needle)[1];
+
+                while ($i <= strlen($component) && ($j <= strlen($component))) {
+                    $j = strpos($component, $needlePrefix, $i);  // j = index of start, i = offset from last found
+                    if ($j === false) { break; }
+
+                    $j = $j + strlen($needlePrefix); // j = index of start + prefix
+                    $k = strpos($component, $needleEnding, $j); // k = index of end
+                    if ($k === false) { break; }
+
+                    $i = $k + strlen($needleEnding); // i = index of end + ending
+
+                    $innerData = substr($component, $j, $k - $j);
+                    
+                    if ($needlePrefix == "{% ") {
+                        Response::loadRessources($component, $componentName, $innerData);
+                    } else if ($needlePrefix == "{+ ") {
+                        Response::loadCodeSnippets($component, $innerData, $data);
+                    } else if ($needlePrefix == "{# extend ") {
+                        Response::loadLayout($component, $innerData, $data, $j, $k);
+                    } else if ($needlePrefix == "<?php") {
+                        Response::loadAndExecutePHP($component, $innerData, $j, $k);
+                    }
+                }
+            }
+
+            return $component;
+        }
+
+        public static function loadLayout($component, $innerData, $data, $j, $k)
+        {
+            $containerContents = explode("@", $innerData);
+            if (is_file("./public/html/".$containerContents[0].".html")) {
+                $component = substr_replace($component, "", $j, $k - $j);
+                $content = Response::view($containerContents[0], $data);
+                $component = str_replace("{# create ".$containerContents[1]." #}", $component, $content);
+                $component = str_replace("{# extend  #}", "", $component);
+            }
+            return $component;
+        }
+
+        public static function loadRessources($component, $componentName, $innerData)
+        {
+            if (strpos($innerData, 'styles') !== false) {
+                $path = "./public/css/" . $componentName . ".css";
+                if (is_file($path)) {
+                    $styles = '<style>' . file_get_contents($path) . '</style>';
+                    $component = str_replace('{% styles %}', $styles, $component);
+                } else {
+                    $component = str_replace('{% styles %}', '', $component);
+                }
+            } else if (strpos($innerData, 'script') !== false) {
+                $path = "./public/js/" . $componentName . ".js";
+                if (is_file($path)) {
+                    $script = '<script>' . file_get_contents($path) . '</script>';
+                    $component = str_replace('{% script %}', $script, $component);
+                } else {
+                    $component = str_replace('{% script %}', '', $component);
+                }
+            }
+            return $component;
+        }
+
+        public static function loadCodeSnippets($component, $innerData, $data)
+        {
+            $innerData = str_replace(' ', '', $innerData);
+            if (is_file("./public/html/" . $innerData . ".html")) {
+                $content = Response::view($innerData, $data);
+                $component = str_replace("{+ " . $innerData . " +}", $content, $component);
+            }
             return $component;
         }
 
@@ -85,61 +143,15 @@
             return $component;
         }
 
-        private static function loadLinkedFiles(string $component, $data){         
-            //echo "component: $component<br>";
-            $i = 0;
-            while (true) {
-                if ($i > strlen($component)) return $component;
-                $j = strpos($component, "{{% ", $i); 
-                if ($j === false) {
-                    return $component;
-                } 
-                $j=$j+4;
-                if ($j > strlen($component)) return $component;
-                $k = strpos($component, " %}}", $j);
-                if ($k === false) {
-                    return $component;
-                }    
-                $i = $k+4;
-                $path = substr($component, $j, $k-$j);
-                //echo ">>>>>>>>>>>>>j: $j, k: $k path: $path<<<<<<<<<<<<";
-                /*if (substr($component, -2) == "()") {
-                    $activator = substr($component, 0, -2);
-                    $activator = explode('@', $activator);
-                            $class = new $activator[0]();
-                            $method = $activator[1];
-                            $content = $class->$method();
-                    $component = substr_replace($component, $content, $j-4, $k-$j+8);
-                } else*/ 
-                if (is_file("./public/html/".$path.".html")) {
-                    $content = Response::view($path, $data);
-                    $component = substr_replace($component, $content, $j-4, $k-$j+8);
-                }
-            }    
-        }
-        private static function executePHP($component){             //aus Sicherheitsgründen nur von loadingWithPHP() aufrufen!!!
-            $si = 0;
-            while (true) {
-                if ($si > strlen($component)) return $component;
-                $sj = strpos($component, "<?php", $si);
-                if ($sj === false) {
-                    return $component;
-                } 
-                $sj=$sj+5;
-                if ($sj > strlen($component)) return $component;
-                $sk = strpos($component, "?>", $sj);
-                if ($sk === false) {
-                    return $component;
-                }    
-                $si = $sk+2;
-                $code = substr($component, $sj, $sk-$sj);
-                $res = eval($code);                                 //Achtung Variablen werden geteilt, verwenden Sie in den Dateien keine hier genutzten Variablen
-                if ($res!=null) {
-                    $component = substr_replace($component, $res, $sj-5, $sk-$sj+7);
-                } else {
-                    $component = substr_replace($component, "", $sj-5, $sk-$sj+7);
-                }
-            } 
+        // Private because of potential security leaks
+        private static function loadAndExecutePHP($component, $innerData, $j, $k) {
+            $res = eval($innerData);
+
+            if ($res !== null) {
+                $component = substr_replace($component, $res, $j - 5, $k - $j + 7);
+            } else {
+                $component = substr_replace($component, "", $j - 5, $k - $j + 7);
+            }
         }
     }
 ?>
