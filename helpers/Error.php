@@ -1,12 +1,6 @@
 <?php
 
     class ErrorUI {
-        public static function errorCode($errorCode)
-        {
-            echo Response::view("general/error$errorCode");
-            http_response_code($errorCode);
-        }
-
         public static function error($msg)
         {
             echo json_encode(
