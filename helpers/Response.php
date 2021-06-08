@@ -6,9 +6,15 @@
             echo json_encode($input);
         }
 
-        public function error(int $errorCode, string $msg)
+        public static function errorJSON($errCode, $msg)
         {
-            ErrorUI::error($errorCode, $msg);
+            http_response_code($errCode);
+            ErrorUI::errorMsg($msg);
+        }
+
+        public static function errorVisual($errCode, $msg)
+        {
+            ErrorUI::error($errCode, $msg);
         }
 
         public static function view(string $component, array $data = array())

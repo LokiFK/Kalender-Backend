@@ -42,7 +42,7 @@
                     }
                 }
             }
-            ErrorUI::errorCode(404);
+            ErrorUI::error(404, 'Page not found');
         }
     }
 

@@ -2,10 +2,6 @@
 
     class Auth {
 
-        const GUEST = 0;
-        const USER = 1;
-        const ADMIN = 2;
-
         public static function user()
         {
             $token = Auth::getToken();
@@ -13,8 +9,7 @@
 
             $tokenWithUser = DB::table('tokens')->where('token = :token', [':token' => $token])->get([new ForeignDataKey('user_id', 'users', 'id')])[0];
             if (!isset($tokenWithUser)) {
-                ErrorUI::errorCode(401);
-                ErrorUI::error('Invalid Token');
+                ErrorUI::error(401, 'Invalid Token');
                 exit;
             }
 
@@ -51,7 +46,7 @@
             DB::query("UPDATE account SET erstellungsdatum = " . date('Y-M-D') . " WHERE userID = :userID;", [':userID' => $userID]);
         }
 
-        public static function login($username, $password, $ip, $remember)
+        public static function login($username, $password, $ip, bool $remember)
         {
             $account = DB::table('account')->where('username = :username', [':username' => $username])[0];
 
@@ -85,8 +80,7 @@
         {
             $timestamp = DB::table('tokens')->where('token = :token', [':token' => $token])->get([], ['timestamp'])[0]['timestamp'];
             if (!isset($timestamp) && $exitIfNot) {
-                ErrorUI::errorCode(401);
-                ErrorUI::error('Invalid Token');
+                ErrorUI::error(401, 'Invalid Token');
                 exit;
             }
             $lastLogin = new DateTime($timestamp);
@@ -125,13 +119,6 @@
             $isValid = Auth::isValidToken($token, false);
             
             return isset($isValid) && $isValid;
-        }
-
-        public static function getPermissions()
-        {
-            $userID = Auth::userID();
-            $permission = DB::query('SELECT `permissions`.`permission` FROM `permissions` INNER JOIN users ON `permissions`.`user_id` = :user_id', array(':user_id' => $userID));
-            return $permission[0]['permission'];
         }
 
         public static function userExists($userID)
