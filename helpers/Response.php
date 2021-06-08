@@ -53,11 +53,11 @@
         
         public static function loadingWithPHP(string $pathHTML) {   
             $component = file_get_contents($pathHTML);           //in this Method should never get componentparts from the User. It has to be directly out of a trusted file!!!!!!
-            $component = Response::loadLinkedFiles($component);    //doesn't contain userinput, so still save
             $component = Response::executePHP($component);
+            $component = Response::loadLinkedFiles($component);
             return $component;
         }
-        private static function loadLinkedFiles(string $component){         //aus Sicherheitsgründen nur von loadingWithPHP() aufrufen!!!
+        private static function loadLinkedFiles(string $component){         
             //echo "component: $component<br>";
             $i = 0;
             while (true) {
@@ -73,15 +73,15 @@
                 $i = $k+4;
                 $path = substr($component, $j, $k-$j);
                 //echo ">>>>>>>>>>>>>j: $j, k: $k path: $path<<<<<<<<<<<<";
-                if (substr($component, -2) == "()") {
+                /*if (substr($component, -2) == "()") {
                     $activator = substr($component, 0, -2);
                     $activator = explode('@', $activator);
                             $class = new $activator[0]();
                             $method = $activator[1];
                             $content = $class->$method();
                     $component = substr_replace($component, $content, $j-4, $k-$j+8);
-                } else if (is_file("./public/html/".$path.".html")) {
-                    //$content = Response::replaceFiles(file_get_contents("./public/".$path) );
+                } else*/ 
+                if (is_file("./public/html/".$path.".html")) {
                     $content = Response::view($path);
                     $component = substr_replace($component, $content, $j-4, $k-$j+8);
                 }
