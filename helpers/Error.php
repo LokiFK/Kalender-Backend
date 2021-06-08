@@ -22,7 +22,7 @@
             if(strpos($msg, "/api")) {
                 ErrorUI::error($msg);
             } else {
-                echo Response::view("general/error$errCode");
+                echo Response::view("general/error", ["errorCode" => $errCode]);
             }
         }
     }
