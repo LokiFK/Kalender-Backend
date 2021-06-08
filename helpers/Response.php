@@ -56,29 +56,20 @@
 
                     $innerData = substr($component, $j + strlen($needlePrefix), $k - ($j + strlen($needlePrefix)));
                     
-                    if ($needlePrefix == "{% ") {
-                        $content = Response::loadRessources($component, $componentName, $innerData);
+                    if ($needlePrefix == "{# extend ") { //special case needs other treatmand
+                        $component = Response::loadLayout($component, $innerData, $data, $j, $k, $needleSuffix);
+                        break;  //more than one container dont have a practical usecase.
+                    } else {
+                        $content = "";
+                        if ($needlePrefix == "{% ") {
+                            $content = Response::loadRessources($component, $componentName, $innerData);
+                        } else if ($needlePrefix == "{+ ") {
+                            $content = Response::loadCodeSnippets($component, $innerData, $data);
+                        } else if ($needlePrefix == "<?php") {                                      //Warning: maschining with userinput would be a really dangerous security issue.
+                            $content = Response::loadAndExecutePHP($component, $innerData, $j, $k);
+                        }   
                         $component = substr_replace($component, $content, $j, $k + strlen($needleSuffix));
-                        $i = $j + strlen($content);
-                    } else if ($needlePrefix == "{+ ") {
-                        $content = Response::loadCodeSnippets($component, $innerData, $data);
-                        $component = substr_replace($component, $content, $j, $k + strlen($needleSuffix));
-                        $i = $j + strlen($content);
-                    } else if ($needlePrefix == "{# extend ") { //special case needs other treatmand
-                        $containerContents = explode("@", $innerData);
-                        if (is_file("./public/html/".$containerContents[0].".html")) {
-                            $component = substr_replace($component, "", $j, $k + strlen($needleSuffix));
-                            $content = Response::view($containerContents[0], $data);
-                            $component = str_replace("{# create ".$containerContents[1]." #}", $component, $content);
-                        } else {
-                            $content = "<!--Container not found-->";
-                            $component = substr_replace($component, $content, $j, $k + strlen($needleSuffix));
-                        }
-                        break;  //$i is no longer important; more than one container dont have a practical usecase.
-                    } else if ($needlePrefix == "<?php") {                                      //Warning: maschining with userinput would be a really dangerous security issue.
-                        $content = Response::loadAndExecutePHP($component, $innerData, $j, $k);
-                        $component = substr_replace($component, $content, $j, $k + strlen($needleSuffix));
-                        $i = $j + strlen($content);
+                        $i = $j + strlen($content); 
                     }
                 }
             }
@@ -91,17 +82,19 @@
             return $component;
         }
 
-        /*public static function loadLayout($component, $innerData, $data, $j, $k)
+        public static function loadLayout($component, $innerData, $data, $j, $k, $needleSuffix)
         {
             $containerContents = explode("@", $innerData);
             if (is_file("./public/html/".$containerContents[0].".html")) {
-                $component = substr_replace($component, "", $j, $k - $j);
+                $component = substr_replace($component, "", $j, $k + strlen($needleSuffix));
                 $content = Response::view($containerContents[0], $data);
                 $component = str_replace("{# create ".$containerContents[1]." #}", $component, $content);
-                $component = str_replace("{# extend  #}", "", $component);
+            } else {
+                $content = "<!--Container not found-->";
+                $component = substr_replace($component, $content, $j, $k + strlen($needleSuffix));
             }
             return $component;
-        }*/
+        }
 
         public static function loadRessources($component, $componentName, $innerData)
         {
