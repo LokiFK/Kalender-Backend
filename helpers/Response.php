@@ -55,7 +55,7 @@
                     if ($k === false) { break; }
 
                     $innerData = substr($component, $j + strlen($needlePrefix), $k - ($j + strlen($needlePrefix)));
-                    
+
                     if ($needlePrefix == "{# extend ") { //special case needs other treatmand
                         $component = Response::loadLayout($component, $innerData, $data, $j, $k, $needleSuffix);
                         break;  //more than one container dont have a practical usecase.
@@ -68,7 +68,7 @@
                         } else if ($needlePrefix == "<?php") {                                      //Warning: maschining with userinput would be a really dangerous security issue.
                             $content = Response::loadAndExecutePHP($component, $innerData, $j, $k);
                         }   
-                        $component = substr_replace($component, $content, $j, $k + strlen($needleSuffix));
+                        $component = substr_replace($component, $content, $j, $k - $j + strlen($needleSuffix));
                         $i = $j + strlen($content); 
                     }
                 }
