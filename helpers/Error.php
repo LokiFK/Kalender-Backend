@@ -3,7 +3,7 @@
     class ErrorUI {
         public static function errorCode($errorCode)
         {
-            echo Response::view("general/error404");
+            echo Response::view("general/error$errorCode");
             http_response_code($errorCode);
         }
 
@@ -14,5 +14,15 @@
                     'message' => $msg
                 )
             );
+        }
+
+        public static function errorView($errCode, $msg)
+        {
+            http_response_code($errCode);
+            if(strpos($msg, "/api")) {
+                ErrorUI::error($msg);
+            } else {
+                echo Response::view("general/error$errCode");
+            }
         }
     }
