@@ -10,12 +10,13 @@
 </head>
 <body>
     <div id='nav'>
-        <a href="/user/appointmentMaking">Terminvereinbarung</a>
-        <a href="/user/appointmentOverview">Terminübersicht</a>
-        <a href="/user/profile">Profil</a>
+        <table id="navTable"> <tr>
+            <td id=ver><a href="/user/appointmentMaking">Terminvereinbarung</a></td>
+            <td id=ueb><a href="/user/appointmentOverview">Terminübersicht</a></td>
+            <td id=pro><a href="/user/profile">Profil</a></td>
+        </tr> </table>
     </div>
     <div id='content'>{{ content }}</div>
-    {{% general/footer %}}
-    <?php $i="test"; return $i; ?>
+    {{% general/footer %}}  
 </body>
 </html>
