@@ -33,5 +33,4 @@
 
     $routes->listen();
 
-
 ?>

@@ -39,47 +39,58 @@
 
         private static function renderData($component, $componentName, $data)
         {
-            // Fill all variables with their data
-            foreach ($data as $key => $value) {
-                $component = str_replace("{{ " . $key . " }}", $value, $component);
-            }
-
             // Find all listed tags and load their individual data
-            foreach (["{% / %}", "{+ / +}", "{# extend / #}", "<?php/?>"] as $needle) {
+            foreach (["<?php/?>", "{% / %}", "{+ / +}", "{# extend / #}"] as $needle) {            //order is important!!!! (refer caes <?php)
                 $i = 0;
                 $j = 0;
 
                 $needlePrefix = explode("/", $needle)[0];
-                $needleEnding = explode("/", $needle)[1];
+                $needleSuffix = explode("/", $needle)[1];
 
                 while ($i <= strlen($component) && ($j <= strlen($component))) {
                     $j = strpos($component, $needlePrefix, $i);  // j = index of start, i = offset from last found
                     if ($j === false) { break; }
 
-                    $j = $j + strlen($needlePrefix); // j = index of start + prefix
-                    $k = strpos($component, $needleEnding, $j); // k = index of end
+                    $k = strpos($component, $needleSuffix, $j + strlen($needlePrefix)); // k = index of end
                     if ($k === false) { break; }
 
-                    $i = $k + strlen($needleEnding); // i = index of end + ending
-
-                    $innerData = substr($component, $j, $k - $j);
+                    $innerData = substr($component, $j + strlen($needlePrefix), $k - ($j + strlen($needlePrefix)));
                     
                     if ($needlePrefix == "{% ") {
-                        Response::loadRessources($component, $componentName, $innerData);
+                        $content = Response::loadRessources($component, $componentName, $innerData);
+                        $component = substr_replace($component, $content, $j, $k + strlen($needleSuffix));
+                        $i = $j + strlen($content);
                     } else if ($needlePrefix == "{+ ") {
-                        Response::loadCodeSnippets($component, $innerData, $data);
-                    } else if ($needlePrefix == "{# extend ") {
-                        Response::loadLayout($component, $innerData, $data, $j, $k);
-                    } else if ($needlePrefix == "<?php") {
-                        Response::loadAndExecutePHP($component, $innerData, $j, $k);
+                        $content = Response::loadCodeSnippets($component, $innerData, $data);
+                        $component = substr_replace($component, $content, $j, $k + strlen($needleSuffix));
+                        $i = $j + strlen($content);
+                    } else if ($needlePrefix == "{# extend ") { //special case needs other treatmand
+                        $containerContents = explode("@", $innerData);
+                        if (is_file("./public/html/".$containerContents[0].".html")) {
+                            $content = Response::view($containerContents[0], $data);
+                            $component = str_replace("{# create ".$containerContents[1]." #}", $component, $content);
+                        } else {
+                            $content = "<!--Container not found-->";
+                            $component = substr_replace($component, $content, $j, $k + strlen($needleSuffix));
+                        }
+                        break;  //$i is no longer important; more than one container dont have a practical usecase.
+                    } else if ($needlePrefix == "<?php") {                                      //Warning: maschining with userinput would be a really dangerous security issue.
+                        $content = Response::loadAndExecutePHP($component, $innerData, $j, $k);
+                        $component = substr_replace($component, $content, $j, $k + strlen($needleSuffix));
+                        $i = $j + strlen($content);
                     }
                 }
+            }
+
+            // Fill all variables with their data
+            foreach ($data as $key => $value) {
+                $component = str_replace("{{ " . $key . " }}", $value, $component);
             }
 
             return $component;
         }
 
-        public static function loadLayout($component, $innerData, $data, $j, $k)
+        /*public static function loadLayout($component, $innerData, $data, $j, $k)
         {
             $containerContents = explode("@", $innerData);
             if (is_file("./public/html/".$containerContents[0].".html")) {
@@ -89,7 +100,7 @@
                 $component = str_replace("{# extend  #}", "", $component);
             }
             return $component;
-        }
+        }*/
 
         public static function loadRessources($component, $componentName, $innerData)
         {
@@ -97,20 +108,20 @@
                 $path = "./public/css/" . $componentName . ".css";
                 if (is_file($path)) {
                     $styles = '<style>' . file_get_contents($path) . '</style>';
-                    $component = str_replace('{% styles %}', $styles, $component);
+                    return $styles;
                 } else {
-                    $component = str_replace('{% styles %}', '', $component);
+                    return "<!--Styles konnten nicht geladen werden-->";
                 }
             } else if (strpos($innerData, 'script') !== false) {
                 $path = "./public/js/" . $componentName . ".js";
                 if (is_file($path)) {
                     $script = '<script>' . file_get_contents($path) . '</script>';
-                    $component = str_replace('{% script %}', $script, $component);
+                    return $script;
                 } else {
-                    $component = str_replace('{% script %}', '', $component);
+                    return "<!--Script konnten nicht geladen werden-->";
                 }
             }
-            return $component;
+            return "<!--Fehlerhafter Style oder Script tag-->";
         }
 
         public static function loadCodeSnippets($component, $innerData, $data)
@@ -118,12 +129,12 @@
             $innerData = str_replace(' ', '', $innerData);
             if (is_file("./public/html/" . $innerData . ".html")) {
                 $content = Response::view($innerData, $data);
-                $component = str_replace("{+ " . $innerData . " +}", $content, $component);
+                return $content;
             }
-            return $component;
+            return "<!--CodeSnippet nicht gefunden-->";
         }
 
-        public static function loadContainers($component, $data)
+        /*public static function loadContainers($component, $data)
         {
             $i = 0;
             if ($i > strlen($component)) return $component;
@@ -147,17 +158,13 @@
             }
             
             return $component;
-        }
+        }*/
 
         // Private because of potential security leaks
         private static function loadAndExecutePHP($component, $innerData, $j, $k) {
             $res = eval($innerData);
-
-            if ($res !== null) {
-                $component = substr_replace($component, $res, $j - 5, $k - $j + 7);
-            } else {
-                $component = substr_replace($component, "", $j - 5, $k - $j + 7);
-            }
+            if($res === null){ return ""; }
+            return $res;
         }
     }
 ?>
