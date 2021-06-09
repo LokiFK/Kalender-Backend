@@ -40,7 +40,7 @@
         private static function renderData($component, $componentName, $data)
         {
             // Find all listed tags and load their individual data
-            foreach (["<?php/?>", "{% / %}", "{+ / +}", "{# extend / #}"] as $needle) {            //order is important!!!! (refer caes <?php)
+            foreach (["<?php/?>", "{! @for / !}", "{% / %}", "{+ / +}", "{# extend / #}"] as $needle) {            //order is important!!!! (refer caes <?php)
                 $i = 0;
                 $j = 0;
 
@@ -57,17 +57,19 @@
                     $innerData = substr($component, $j + strlen($needlePrefix), $k - ($j + strlen($needlePrefix)));
 
                     if ($needlePrefix == "{# extend ") { //special case needs other treatmand
-                        $component = Response::loadLayout($component, $innerData, $data, $j, $k, $needlePrefix, $needleSuffix);
-                        break;  //more than one container dont have a practical usecase.
+                        $component = Response::loadLayout($component, $innerData, $data, $j, $k, $needleSuffix);
+                        break;  //more than one container doesn't have a particular usecase.
+                    } else if ($needlePrefix == "{! @for ") {
+                        $component = Response::interpreteForLoop($component, $j, $k);
                     } else {
                         $content = "";
                         if ($needlePrefix == "{% ") {
                             $content = Response::loadRessources($component, $componentName, $innerData);
                         } else if ($needlePrefix == "{+ ") {
                             $content = Response::loadCodeSnippets($component, $innerData, $data);
-                        } else if ($needlePrefix == "<?php") {                                      //Warning: maschining with userinput would be a really dangerous security issue.
+                        } else if ($needlePrefix == "<?php") { //Warning: messing around with userinput would be a really dangerous security issue.
                             $content = Response::loadAndExecutePHP($component, $innerData, $j, $k);
-                        }   
+                        }
                         $component = substr_replace($component, $content, $j, $k - $j + strlen($needleSuffix));
                         $i = $j + strlen($content); 
                     }
@@ -82,11 +84,16 @@
             return $component;
         }
 
-        public static function loadLayout($component, $innerData, $data, $j, $k, $needlePrefix $needleSuffix)
+        public static function interpreteForLoop($component, $j, $k)
+        {
+            return $component;
+        }
+
+        public static function loadLayout($component, $innerData, $data, $j, $k, $needleSuffix)
         {
             $containerContents = explode("@", $innerData);
             if (is_file("./public/html/".$containerContents[0].".html")) {
-                $component = substr_replace($component, "", $j, $k - $j + strlen($needlePrefix) + strlen($needleSuffix));
+                $component = substr_replace($component, "", $j, $k - $j + strlen($needleSuffix));
                 $content = Response::view($containerContents[0], $data);
                 $component = str_replace("{# create ".$containerContents[1]." #}", $component, $content);
             } else {

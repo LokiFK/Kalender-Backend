@@ -3,8 +3,7 @@
     class UserController{
 
         public function appointmentMaking(Request $req, Response $res){
-            $view = $res->view('user/appointmentMaking', ['title' => 'BLABLABLA']);
-            //$view = $res->view('user/template',['content'=>$view, "title"=>"Terminvereinbarung"]);
+            $view = $res->view('user/appointmentMaking', ['title' => 'BLABLABLA', 'var' => ['a', 'b', 'c']]);
             echo $view;
         }
 
