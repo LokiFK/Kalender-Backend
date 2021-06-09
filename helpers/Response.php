@@ -57,7 +57,7 @@
                     $innerData = substr($component, $j + strlen($needlePrefix), $k - ($j + strlen($needlePrefix)));
 
                     if ($needlePrefix == "{# extend ") { //special case needs other treatmand
-                        $component = Response::loadLayout($component, $innerData, $data, $j, $k, $needleSuffix);
+                        $component = Response::loadLayout($component, $innerData, $data, $j, $k, $needlePrefix, $needleSuffix);
                         break;  //more than one container dont have a practical usecase.
                     } else {
                         $content = "";
@@ -82,11 +82,11 @@
             return $component;
         }
 
-        public static function loadLayout($component, $innerData, $data, $j, $k, $needleSuffix)
+        public static function loadLayout($component, $innerData, $data, $j, $k, $needlePrefix $needleSuffix)
         {
             $containerContents = explode("@", $innerData);
             if (is_file("./public/html/".$containerContents[0].".html")) {
-                $component = substr_replace($component, "", $j, $k + strlen($needleSuffix));
+                $component = substr_replace($component, "", $j, $k - $j + strlen($needlePrefix) + strlen($needleSuffix));
                 $content = Response::view($containerContents[0], $data);
                 $component = str_replace("{# create ".$containerContents[1]." #}", $component, $content);
             } else {
