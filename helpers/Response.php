@@ -57,7 +57,7 @@
                 $i = $j+1;
 
                 foreach ($tags as $tag){
-                    if( substr($component, $j+1, strlen($tag[0])) == $tag[0]){
+                    if (substr($component, $j + 1, strlen($tag[0])) == $tag[0]) {
                         $endStartTag = $j + strlen($tagsActivator[0]) + strlen($tag[0]);
                         $k = null;
 
@@ -67,17 +67,14 @@
                             while($tiefe > 0){
                                 $l = strpos($component, $tagsActivator[0].$tag[0], $m);
                                 $k = strpos($component, $tag[1].$tagsActivator[1], $m);
-                                if($l === false && $k === false){ break 2; }
-                                if($l === false || $k < $l){
-                                    //echo " k ";
-                                    $m = $k+1;
+                                if ($l === false && $k === false) { break 2; }
+                                if ($l === false || $k < $l) {
+                                    $m = $k + 1;
                                     $tiefe--;
                                 } else {
-                                    //echo " l ";
-                                    $m = $l+1;
+                                    $m = $l + 1;
                                     $tiefe++;
                                 }
-                                //echo "m: $m <br>";
                             }
                         } else {
                             $k = strpos($component, $tag[1] . $tagsActivator[1], $endStartTag); // k = index of end
@@ -105,10 +102,10 @@
                                 $content = Response::loadAndExecutePHP($innerData);
                             } else if ($tag[0] == "! ") { 
                                 $content = Response::interpreteForLoop($innerData, $safeData, $loopData);
-                            } else if($tag[0] == "[ "){
+                            } else if ($tag[0] == "[ ") {
                                 $datasets = explode(", ", $innerData);
-                                foreach($datasets as $set){
-                                    $parts = explode("=>",$set, 2);
+                                foreach($datasets as $set) {
+                                    $parts = explode("=>", $set, 2);
                                     $safeData[$parts[0]] = $parts[1];
                                     $data[$parts[0]] = $parts[1];
                                 }
@@ -175,7 +172,7 @@
                 } else {
                     return "<!--Styles konnten nicht geladen werden-->";
                 }
-            } else if(substr($innerData, 0, 3) == "js/"){
+            } else if (substr($innerData, 0, 3) == "js/"){
                 $path = "./public/" . $innerData . ".js";
                 if (is_file($path)) {
                     $script = '<script>' . file_get_contents($path) . '</script>';
@@ -207,9 +204,9 @@
         {
             $content = "";
             $parts = explode(":", $innerData, 2);
-            if( array_key_exists($parts[0], $loopData) ){
+            if (array_key_exists($parts[0], $loopData)) {
                 $array = $loopData[$parts[0]];
-                foreach($array as $data){
+                foreach ($array as $data) {
                     $iteration = Response::processTags($parts[1], "noName", array(), $safeData, $loopData);
                     $iteration = str_replace("{{ " . $parts[0] . " }}", $data, $iteration);
                     $content = $content . $iteration;

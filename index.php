@@ -13,11 +13,15 @@
 
     $routes->get("", "GeneralController@startPage");
 
-    //user
-    $routes->get('/user/appointmentMaking', 'UserController@appointmentMaking');
-    $routes->get('/user/appointmentOverview', 'UserController@appointmentOverview');
+    // --- USER --- \\
+    // Appointments
+    $routes->get('/user/appointments/new', 'UserController@new');
+    $routes->get('/user/appointments/overview', 'UserController@overview');
+
+    // Profile
     $routes->get('/user/profile', 'UserController@profile');
 
+    // --- AUTH --- \\‚
     // Register
     $routes->get('/auth/register', 'AuthController@register');
     $routes->post('/auth/createUser', 'AuthController@createUser');
@@ -29,6 +33,7 @@
     $routes->get('/auth/login', 'AuthController@login');
     $routes->get('/auth/getUser', 'AuthController@getUser');
 
+    // --- ADMIN --- \\
 
 
     $routes->listen();
