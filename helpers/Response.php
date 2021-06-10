@@ -144,7 +144,7 @@
 
         public static function loadRessources($componentName, $innerData)
         {
-            if (strpos($innerData, 'styles') !== false) {
+            if ($innerData == "styles") {
                 $path = "./public/css/" . $componentName . ".css";
                 if (is_file($path)) {
                     $styles = '<style>' . file_get_contents($path) . '</style>';
@@ -152,8 +152,24 @@
                 } else {
                     return "<!--Styles konnten nicht geladen werden-->";
                 }
-            } else if (strpos($innerData, 'script') !== false) {
+            } else if ($innerData == "script") {
                 $path = "./public/js/" . $componentName . ".js";
+                if (is_file($path)) {
+                    $script = '<script>' . file_get_contents($path) . '</script>';
+                    return $script;
+                } else {
+                    return "<!--Script konnten nicht geladen werden-->";
+                }
+            } else if(substr($innerData, 0, 4) == "css/"){
+                $path = "./public/" . $innerData . ".css";
+                if (is_file($path)) {
+                    $styles = '<style>' . file_get_contents($path) . '</style>';
+                    return $styles;
+                } else {
+                    return "<!--Styles konnten nicht geladen werden-->";
+                }
+            } else if(substr($innerData, 0, 3) == "js/"){
+                $path = "./public/" . $innerData . ".js";
                 if (is_file($path)) {
                     $script = '<script>' . file_get_contents($path) . '</script>';
                     return $script;
