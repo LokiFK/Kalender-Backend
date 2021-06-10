@@ -5,11 +5,11 @@
 		const DURATION = '30 Minutes';		
 
         public static function registerUser($vorname, $nachname, $anrede, $geburtstag, $patientenid){
-            $res = DB::query("insert into user(vorname,nachname,geburtstag,patientenid) values :vor,:nach,:an,:geb,:pat;",[':vor'=>$vorname, ':nach'=>$nachname, ':geb'=>$geburtstag, ':an'=>$anrede, ':pat'=>$patientenid]);
-            return $res;
+            return DB::query("insert into user(vorname,nachname,geburtstag,patientenid) values :vor,:nach,:an,:geb,:pat;",[':vor'=>$vorname, ':nach'=>$nachname, ':geb'=>$geburtstag, ':an'=>$anrede, ':pat'=>$patientenid]);
         }
 
-        public static function registerAccount($userID, $username, $email, $password, $approvalNeeded) {
+        public static function registerAccount($userID, $username, $email, $password, $approvalNeeded): array|string
+        {
             if(Auth::userExists($userID)) {
                 $date = date('Y-M-D');
                 if ($approvalNeeded){
@@ -20,15 +20,16 @@
                     $code = bin2hex(random_bytes(50));
                     DB::query("insert into notapproved(userid, code, datetime) values :u,:c,now();",[':u'=>$userID,':c'=>$code]);
                     $from = "FROM Terminplanung @noreply";
-                    $betreff = "Account bestätigen";
+                    $subject = "Account bestätigen";
                     $msg = $code;
-                    mail($email,$betreff,$msg,$from);
+                    mail($email,$subject,$msg,$from);
                 }
                 return $res;
             }
         }
 
-        public static function approveMail($userid,$code){
+        public static function approveMail($userid,$code): bool
+        {
             $res = DB::query("select code from notapproved where userid=:u order by datetime desc limit 1;",[':u'=>$userid]);
             if(count($res)==1){
                 if($res[0]['code']==$code){
@@ -51,10 +52,15 @@
             return false;
         }
 
-        private static function login($userID, $ip, $isEndless) {
+        private static function login($userID, $ip, $isEndless): void
+        {
             $tmp = true;
             while($tmp) {
-                $token = bin2hex(random_bytes(64));
+                try {
+                    $token = bin2hex(random_bytes(64));
+                } catch (Exception $e) {
+                    ErrorUI::generalError();
+                }
                 $erg = DB::query("select count(*) as 'Anzahl' from session where userid = :userid and token = :token;", [':userid' => $userID, ':token' => $token]);
                 if($erg[0]['Anzahl'] == 0) {
                     $tmp=false;
@@ -69,7 +75,6 @@
                 $end = $date->format('Y-M-D H:M:S');
             }
             DB::query("INSERT INTO session (userid, token, start, end, ip) VALUES (:userID, :token, :start, :end, :ip);", [':userID' => $userID, ':token' => $token, ':start' => $start, ':end' => $end, ':ip'=>$ip]);
-            return $token;
         }
 
         public static function getUserid() {
@@ -136,17 +141,20 @@
             return false;
         }
 
-        public static function userExists($userid) {
+        public static function userExists($userid): bool
+        {
             $res = DB::query("select count(*) as 'Anzahl' from user where id = :userid;", [':userid'=>$userid]);
             return $res[0]['Anzahl'] == 1;
         }
 
-        public static function isAdmin($userid){
+        public static function isAdmin($userid): bool
+        {
             $res = DB::query("select count(*) as 'Anzahl' from admin where userid = :userid;", [':userid'=>$userid]);
             return $res[0]['Anzahl'] == 1;
         }
 
-        public static function isApproved($userid){
+        public static function isApproved($userid): bool
+        {
             $res = DB::query("select erstellungsdatum from account where userid = :userid;", [':userid'=>$userid]);
             return $res[0]['erstellungsdatum'] == null; 
         }

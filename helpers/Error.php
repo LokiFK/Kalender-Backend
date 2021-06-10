@@ -19,4 +19,8 @@
                 echo Response::view("general/error", ["errorCode" => $errCode, "msg" => $msg]);
             }
         }
+
+        public static function generalError() {
+            self::error(random_int(-1000,0), "Unknown Error");
+        }
     }
