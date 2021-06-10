@@ -10,13 +10,12 @@
                 if ($url[strlen($url)-1] == '/') {
                     $url = substr($url, 0, -1);
                 }
-                if (strpos($url, '?') !== false) {
+                if (str_contains($url, '?')) {
                     $url = substr($url, 0, strpos($url, "?"));
                 }
                 return $url;
             } else {
-                ErrorUI::errorCode(404);
-                ErrorUI::error('Page not found');
+                ErrorUI::error(404, 'Page not found');
             }
         }
     }
