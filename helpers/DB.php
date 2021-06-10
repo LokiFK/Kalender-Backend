@@ -9,20 +9,19 @@
         const username = 'root';
         const password = '';
 
-        private static function connect()
+        private static function connect(): PDO
         {
             try {
                 $pdo = new PDO('mysql:host=' . DB::host . ';dbname=' . DB::dbname . ';charset=utf8', DB::username, DB::password);
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 return $pdo;
             } catch (PDOException $e) {
-                ErrorUI::errorCode(500);
-                ErrorUI::error('Error connecting to DB: ' . $e->getMessage());
+                self::errorFiveHundred();
                 exit;
             }
         }
 
-        public static function query(string $query, array $params = array())
+        public static function query(string $query, array $params = array()): array|string
         {
             try {
                 $stmt = DB::connect()->prepare($query);
@@ -37,26 +36,29 @@
                     return DB::connect()->lastInsertID();
                 }
             } catch (PDOException $e) {
-                ErrorUI::errorCode(500);
-                ErrorUI::error('Error querying DB: ' . $e->getMessage());
+                self::errorFiveHundred();
                 exit;
             }
         }
 
-        public static function table(string $tableName)
+        private static function errorFiveHundred()
+        {
+            ErrorUI::error(500, 'Error querying DB: ' . $e->getMessage());
+        }
+
+        public static function table(string $tableName): TableReturn
         {
             return new TableReturn($tableName);
         }
 
-        public static function queryColumns(string $tableName)
+        public static function queryColumns(string $tableName): array
         {
             try {
                 $stmt = DB::connect()->prepare("DESCRIBE $tableName");
                 $stmt->execute();
                 return $stmt->fetchAll(PDO::FETCH_COLUMN);
             } catch (PDOException $e) {
-                ErrorUI::errorCode(500);
-                ErrorUI::error('Error querying DB: ' . $e->getMessage());
+                self::errorFiveHundred();
                 exit;
             }
         }
@@ -64,8 +66,8 @@
 
     class TableReturn {
 
-        private $name;
-        private $contents;
+        private string $name;
+        private string|array $contents;
         private $orderedBy;
         private $orderedByDirection;
 
@@ -75,13 +77,13 @@
             $this->contents = DB::query("SELECT * FROM `$name`");
         }
 
-        public function where(string $query, array $params = array())
+        public function where(string $query, array $params = array()): static
         {
             $this->contents = DB::query("SELECT * FROM `$this->name` WHERE $query", $params);
             return $this;
         }
 
-        public function orderBy(string $column, int $direction = 0)
+        public function orderBy(string $column, int $direction = 0): static
         {
             $this->orderedByDirection = $direction;
             $this->orderedBy = $column;
@@ -93,7 +95,7 @@
             return $this;
         }
 
-        public function get(array $foreignData = array(), array $columns = array())
+        public function get(array $foreignData = array(), array $columns = array()): array|string
         {
             $contentData = $this->contents;
 
@@ -128,9 +130,9 @@
     }
 
     class ForeignDataKey {
-        private $key = "";
-        private $relationTable = "";
-        private $relationColumn = "";
+        private string $key = "";
+        private string $relationTable = "";
+        private string $relationColumn = "";
 
         public function __construct($key, $relationTable, $relationColumn)
         {
@@ -139,17 +141,17 @@
             $this->relationColumn = $relationColumn;
         }
 
-        public function getKey()
+        public function getKey(): string
         {
             return $this->key;
         }
 
-        public function getRelationTable()
+        public function getRelationTable(): string
         {
             return $this->relationTable;
         }
 
-        public function getRelationColumn()
+        public function getRelationColumn(): string
         {
             return $this->relationColumn;
         }
