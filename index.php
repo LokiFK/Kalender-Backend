@@ -15,6 +15,7 @@
     // Appointments
     $routes->get('/user/appointments/new', 'UserController@new');
     $routes->get('/user/appointments/overview', 'UserController@overview');
+    $routes->get('/api/user/appointments/termine', 'UserController@termine');
 
     // Profile
     $routes->get('/user/profile', 'UserController@get');
@@ -31,7 +32,8 @@
 
     // Login
     $routes->get('/auth/login', 'AuthController@login');
-    $routes->get('/auth/getUser', 'AuthController@getUser');
+    $routes->get('/auth/logout', 'AuthController@logout');
+    $routes->get('/auth/getUser', 'AuthController@getUser');    //???
 
     // --- ADMIN --- \\
 
