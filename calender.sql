@@ -103,6 +103,7 @@ CREATE TABLE `room` (
 --
 
 CREATE TABLE `session` (
+  `id` int(11) NOT NULL,
   `userID` int(11) NOT NULL,
   `token` varchar(64) NOT NULL,
   `start` datetime DEFAULT NULL,
@@ -199,7 +200,7 @@ ALTER TABLE `room`
 -- Indizes für die Tabelle `session`
 --
 ALTER TABLE `session`
-  ADD PRIMARY KEY (`token`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indizes für die Tabelle `appointment`

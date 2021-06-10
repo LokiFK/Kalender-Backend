@@ -18,6 +18,11 @@
                 ErrorUI::error(404, 'Page not found');
             }
         }
+
+        public static function redirect(string $path)
+        {
+            header('Location: ' . $path);
+        }
     }
 
 ?>

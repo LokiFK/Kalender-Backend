@@ -1,6 +1,6 @@
 <?php
 
-    class FormValidate {
+    class Form {
         public static function validate($formData, array $columns)
         {
             foreach ($columns as $column) {

@@ -24,6 +24,7 @@
     $routes->post('/user/profile/update', 'UserController@update');
     $routes->post('/user/profile/delete', 'UserController@delete');
 
+    
     // --- AUTH --- \\
     // Register
     $routes->get('/auth/user/create', 'AuthController@createUser');
@@ -33,9 +34,17 @@
     $routes->post('/auth/account/create', 'AuthController@createAccount');
 
     // Login
+<<<<<<< Updated upstream
     $routes->get('/auth/login', 'AuthController@login');
     $routes->get('/auth/logout', 'AuthController@logout');
     $routes->get('/auth/getUser', 'AuthController@getUser');    //???
+=======
+    $routes->post('/api/auth/login', 'AuthController@login');
+
+    // Permissions
+    $routes->get('/api/auth/permissions', 'AuthController@permissions');
+    
+>>>>>>> Stashed changes
 
     // --- ADMIN --- \\
 

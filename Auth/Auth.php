@@ -46,7 +46,7 @@
             DB::query("UPDATE account SET erstellungsdatum = " . date('Y-M-D') . " WHERE userID = :userID;", [':userID' => $userID]);
         }
 
-        public static function login($username, $password, $ip, bool $remember)
+        public static function login($username, $password, bool $remember)
         {
             $account = DB::table('account')->where('username = :username', [':username' => $username])[0];
 
@@ -59,7 +59,10 @@
                     $date->add(new DateInterval(Auth::DURATION));
                     $end = $date->format('Y-M-D H:M:S');
                 }
-                DB::query("INSERT INTO `session` (userid, token, start, end, ip) VALUES (:userID, :token, :start, :end, :ip);", [':userID' => $account['userID'], ':token' => $token, ':start' => $start, ':end' => $end, ':ip' => $ip]);
+                DB::query(
+                    "INSERT INTO `session` (`userid`, `token`, `start`, `end`) VALUES (:userID, :token, :start, :end);",
+                    [':userID' => $account['userID'], ':token' => $token, ':start' => $start, ':end' => $end]
+                );
                 return $token;
             }
         }
