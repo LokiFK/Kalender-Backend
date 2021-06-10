@@ -1,13 +1,14 @@
-{% css/user/nav %}
 {% styles %}
+{% script %}
 <ul id="navList">
     <li id=ver><a href="/user/appointments/new" class=navElementLink>Terminvereinbarung</a></li>
     <li id=ueb><a href="/user/appointments/overview" class=navElementLink>Terminübersicht</a></li>
-    <li class=us><div class=navElementLink>{{ username }}</div></li>
-    <div class=dropdown>
-        <ul id=dropdownList>
-            <li id=pro><a href="/user/profil">Profil</a></li>
-            <li id=lo><a href="/auth/logout">logout</a></li>
-        </ul>
+    <li id=us><div class=navElementLink>{{ username }}</div></li>
     </div>
 </ul>
+<div id=dropdown>
+    <ul id=dropdownList>
+        <li id=pro><a href="/user/profile" class=dropLink>Profil</a></li>
+        <li id=lo><a href="/auth/logout" class=dropLink>logout</a></li>
+    </ul>
+</div>
