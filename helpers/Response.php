@@ -17,9 +17,9 @@
             ErrorUI::error($errCode, $msg);
         }
 
-        public static function view(string $component, array $data = array(), array $safeData = array())
+        public static function view(string $component, array $data = array(), array $safeData = array(), array $loopData = array())
         {
-            $content = Response::load($component, $data, $safeData);
+            $content = Response::load($component, $data, $safeData, $loopData);
             if ($content !== null) { return $content; }
             
             ErrorUI::error(500, 'Error setting up HTML');
@@ -28,25 +28,25 @@
             return "";
         }
         
-        public static function load(string $componentName, $data, $safeData) {
+        public static function load(string $componentName, $data, $safeData, $loopData) {
             $pathHTML = "./public/html/" . $componentName . ".html";
 
             if (is_file($pathHTML)) {
                 $component = file_get_contents($pathHTML);
-                $component = Response::processTags($component, $componentName, $data, $safeData);
+                $component = Response::processTags($component, $componentName, $data, $safeData, $loopData);
 
                 return $component;
             }
         }
 
-        private static function processTags($component, $componentName, $data, $safeData)
+        private static function processTags($component, $componentName, $data, $safeData, $loopData)
         {
             foreach ($safeData as $key => $value) {                                     //vor anderen Tags, damit diese von safeData ausgelöst werden können
                 $component = str_replace("{{ " . $key . " }}", $value, $component);         //safeData darf also niemals userInput enthalten!!!!!!!!!!
             }  
 
             $tagsActivator = ["{","}"];
-            $tags = [ ["?php","?"], ["! @for "," !"], ["% "," %"], ["+ "," +"], ["# extend "," #"]];
+            $tags = [ ["?php","?"], ["! "," !"], ["% "," %"], ["+ "," +"], ["# extend "," #"]];
             $i = 0;
             $template = null;
 
@@ -59,12 +59,34 @@
                 foreach ($tags as $tag){
                     if( substr($component, $j+1, strlen($tag[0])) == $tag[0]){
                         $endStartTag = $j + strlen($tagsActivator[0]) + strlen($tag[0]);
-                        $k = strpos($component, $tag[1] . $tagsActivator[1], $endStartTag); // k = index of end
-                        if ($k === false) { break; }
+                        $k = null;
+
+                        if ($tag[0] == "! "){
+                            $tiefe = 1;
+                            $m = $endStartTag;
+                            while($tiefe > 0){
+                                $l = strpos($component, $tagsActivator[0].$tag[0], $m);
+                                $k = strpos($component, $tag[1].$tagsActivator[1], $m);
+                                if($l === false && $k === false){ break 2; }
+                                if($l === false || $k < $l){
+                                    //echo " k ";
+                                    $m = $k+1;
+                                    $tiefe--;
+                                } else {
+                                    //echo " l ";
+                                    $m = $l+1;
+                                    $tiefe++;
+                                }
+                                //echo "m: $m <br>";
+                            }
+                        } else {
+                            $k = strpos($component, $tag[1] . $tagsActivator[1], $endStartTag); // k = index of end
+                            if ($k === false) { break; }
+                        }
 
                         $innerData = substr($component, $endStartTag, $k-$endStartTag);
 
-                        //echo "Found tag: ".$tag[0]." innerData $innerData";
+                        //echo "Found tag: ".$tag[0]." innerData $innerData <br>";
 
                         if ($tag[0] == "# extend ") { //special case needs other treatmand
 
@@ -72,20 +94,17 @@
                             $template = Response::loadTemplate($template, $innerData, $safeData);
 
                             $i = $j+1;
-                        } else if ($tag[0] == "! @for ") {                 //Whatever is goping to happen here
-
-                            $component = Response::interpreteForLoop($component, $j, $k);
-
-                            $i = $j+1;
                         } else {                                            //Group of "replacers"
                             $content = "";
 
                             if ($tag[0] == "% ") {
-                                $content = Response::loadRessources($component, $componentName, $innerData);
+                                $content = Response::loadRessources($componentName, $innerData);
                             } else if ($tag[0] == "+ ") {
-                                $content = Response::loadCodeSnippets($component, $innerData, $safeData);
+                                $content = Response::loadCodeSnippets($innerData, $safeData);
                             } else if ($tag[0] == "?php") { //Warning: messing around with userinput would be a really dangerous security issue.
-                                $content = Response::loadAndExecutePHP($component, $innerData);
+                                $content = Response::loadAndExecutePHP($innerData);
+                            } else if ($tag[0] == "! ") { 
+                                $content = Response::interpreteForLoop($innerData, $safeData, $loopData);
                             }
 
                             $component = substr_replace($component, $content, $j, $k-$j + strlen($tag[1]) + strlen($tagsActivator[1]));
@@ -123,12 +142,7 @@
             return $template;
         }
 
-        public static function interpreteForLoop($component, $j, $k)
-        {
-            return $component;
-        }
-
-        public static function loadRessources($component, $componentName, $innerData)
+        public static function loadRessources($componentName, $innerData)
         {
             if (strpos($innerData, 'styles') !== false) {
                 $path = "./public/css/" . $componentName . ".css";
@@ -150,7 +164,7 @@
             return "<!--Fehlerhafter Style oder Script tag-->";
         }
 
-        public static function loadCodeSnippets($component, $innerData, $safeData)
+        public static function loadCodeSnippets($innerData, $safeData)
         {
             $innerData = str_replace(' ', '', $innerData);
             if (is_file("./public/html/" . $innerData . ".html")) {
@@ -160,10 +174,25 @@
             return "<!--CodeSnippet nicht gefunden-->";
         }
 
-        private static function loadAndExecutePHP($component, $innerData) {     //Warnung never user data
+        private static function loadAndExecutePHP($innerData) {     //Warnung never user data
             $res = eval($innerData);
             if($res === null){ return ""; }
             return $res;
+        }
+        
+        public static function interpreteForLoop($innerData, $safeData, $loopData)
+        {
+            $content = "";
+            $parts = explode(":", $innerData, 2);
+            if( array_key_exists($parts[0], $loopData) ){
+                $array = $loopData[$parts[0]];
+                foreach($array as $data){
+                    $iteration = Response::processTags($parts[1], "noName", array(), $safeData, $loopData);
+                    $iteration = str_replace("{{ " . $parts[0] . " }}", $data, $iteration);
+                    $content = $content . $iteration;
+                }
+            }
+            return $content;
         }
 
 

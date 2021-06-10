@@ -1,8 +1,11 @@
 {# extend user/template@a #}
 appointmentMaking
-{! @for ('item' in 'var') !}
+{! stuff:
     <div>
-        {! @var ('item') !}
+        {{ stuff }}
+        {! thing: 
+            {{ thing }}
+        !}
     </div>
-{! @endfor !}
+ !}
 

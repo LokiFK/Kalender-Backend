@@ -3,7 +3,7 @@
     class UserController{
 
         public function appointmentMaking(Request $req, Response $res){
-            $view = $res->view('user/appointmentMaking', ['title' => 'BLABLABLA']);
+            $view = $res->view('user/appointmentMaking', ['title' => 'BLABLABLA'], array(), ['stuff' => ["1", "2", "3"], 'thing' => ["a", "b", "c"]]);
             echo $view;
         }
 
