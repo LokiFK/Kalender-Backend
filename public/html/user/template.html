@@ -10,11 +10,14 @@
 </head>
 <body>
     <div id='nav'>
-        <table id="navTable"> <tr>
-            <td id=ver><a href="/user/appointmentMaking">Terminvereinbarung</a></td>
-            <td id=ueb><a href="/user/appointmentOverview">Terminübersicht</a></td>
-            <td id=pro><a href="/user/profile">Profil</a></td>
-        </tr> </table>
+        {?php 
+            if(Auth::isLoggedIn()){
+                $username = Auth::getUsername();
+                return Response::view("user/navUser", ["username" => $username]);
+            } else {
+                return Response::view("user/navGuest");
+            }
+        ?}
     </div>
 
     <div id='content'>{# create a #}</div>
