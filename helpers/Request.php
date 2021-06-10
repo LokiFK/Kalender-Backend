@@ -1,8 +1,8 @@
 <?php
 
     class Request {
-        private $body;
-        private $method;
+        private mixed $body;
+        private mixed $method;
 
         public function __construct($body = array(), $method = "")
         {
