@@ -16,7 +16,7 @@
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 return $pdo;
             } catch (PDOException $e) {
-                self::errorFiveHundred();
+                ErrorUI::errorFiveHundred();
                 exit;
             }
         }
@@ -36,14 +36,9 @@
                     return DB::connect()->lastInsertID();
                 }
             } catch (PDOException $e) {
-                self::errorFiveHundred();
+                ErrorUI::errorFiveHundred($e);
                 exit;
             }
-        }
-
-        private static function errorFiveHundred()
-        {
-            ErrorUI::error(500, 'Error querying DB: ' . $e->getMessage());
         }
 
         public static function table(string $tableName): TableReturn

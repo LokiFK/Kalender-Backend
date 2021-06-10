@@ -21,6 +21,15 @@
         }
 
         public static function generalError() {
-            self::error(random_int(-1000,0), "Unknown Error");
+            try {
+                self::error(random_int(-700, -600), "Unknown Error");
+            } catch (Exception $e) {
+                self::error(601);
+            }
+        }
+
+        public static function errorFiveHundred($errCode)
+        {
+            ErrorUI::error(500, 'Error: ' . $errCode->getMessage());
         }
     }
