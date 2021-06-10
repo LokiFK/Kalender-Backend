@@ -9,15 +9,14 @@
         const username = 'root';
         const password = '';
 
-        private static function connect()
+        private static function connect(): PDO
         {
             try {
                 $pdo = new PDO('mysql:host=' . DB::host . ';dbname=' . DB::dbname . ';charset=utf8', DB::username, DB::password);
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 return $pdo;
             } catch (PDOException $e) {
-                ErrorUI::errorCode(500);
-                ErrorUI::error('Error connecting to DB: ' . $e->getMessage());
+                ErrorUI::errorFiveHundred($e);
                 exit;
             }
         }
@@ -37,26 +36,24 @@
                     return DB::connect()->lastInsertID();
                 }
             } catch (PDOException $e) {
-                ErrorUI::errorCode(500);
-                ErrorUI::error('Error querying DB: ' . $e->getMessage());
+                ErrorUI::errorFiveHundred($e);
                 exit;
             }
         }
 
-        public static function table(string $tableName)
+        public static function table(string $tableName): TableReturn
         {
             return new TableReturn($tableName);
         }
 
-        public static function queryColumns(string $tableName)
+        public static function queryColumns(string $tableName): array
         {
             try {
                 $stmt = DB::connect()->prepare("DESCRIBE $tableName");
                 $stmt->execute();
                 return $stmt->fetchAll(PDO::FETCH_COLUMN);
             } catch (PDOException $e) {
-                ErrorUI::errorCode(500);
-                ErrorUI::error('Error querying DB: ' . $e->getMessage());
+                ErrorUI::errorFiveHundred($e);
                 exit;
             }
         }

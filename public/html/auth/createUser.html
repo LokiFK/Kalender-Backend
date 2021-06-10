@@ -8,19 +8,17 @@
     {% styles %}
 </head>
 <body>
-    <form action="/api/users/createUser" method="POST">
+    <form action="/auth/user/create" method="POST">
         <label for="salutation">Anrede</label>
         <input type="text" name="salutation"><br>
-        <label for="firstName">Vorname</label>
-        <input type="text" name="firstName"><br>
-        <label for="lastName">Nachname</label>
-        <input type="text" name="lastName"><br>
-        <label for="username">Benutzername</label>
-        <input type="text" name="username"><br>
+        <label for="firstname">Vorname</label>
+        <input type="text" name="firstname"><br>
+        <label for="lastname">Nachname</label>
+        <input type="text" name="lastname"><br>
+        <label for="insurance">Versicherung</label>
+        <input type="text" name="insurance"><br>
         <label for="birthday">Geburtstag</label>
         <input type="text" name="birthday"><br>
-        <label for="password">Passwort</label>
-        <input type="text" name="password"><br>
 
         <input type="submit" value="Register">
     </form>
