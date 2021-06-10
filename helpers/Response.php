@@ -24,8 +24,6 @@
             
             ErrorUI::error(500, 'Error setting up HTML');
             exit;
-
-            return "";
         }
         
         public static function load(string $componentName, $data, $safeData, $loopData) {
@@ -33,9 +31,7 @@
 
             if (is_file($pathHTML)) {
                 $component = file_get_contents($pathHTML);
-                $component = Response::processTags($component, $componentName, $data, $safeData, $loopData);
-
-                return $component;
+                return Response::processTags($component, $componentName, $data, $safeData, $loopData);
             }
         }
 
@@ -95,13 +91,13 @@
                             $content = "";
 
                             if ($tag[0] == "% ") {
-                                $content = Response::loadRessources($componentName, $innerData);
+                                $content = Response::loadResources($componentName, $innerData);
                             } else if ($tag[0] == "+ ") {
                                 $content = Response::loadCodeSnippets($innerData, $safeData);
                             } else if ($tag[0] == "?php") { //Warning: messing around with userinput would be a really dangerous security issue.
                                 $content = Response::loadAndExecutePHP($innerData);
                             } else if ($tag[0] == "! ") { 
-                                $content = Response::interpreteForLoop($innerData, $safeData, $loopData);
+                                $content = Response::interpretForLoop($innerData, $safeData, $loopData);
                             } else if ($tag[0] == "[ ") {
                                 $datasets = explode(", ", $innerData);
                                 foreach($datasets as $set) {
@@ -146,7 +142,7 @@
             return $template;
         }
 
-        public static function loadRessources($componentName, $innerData)
+        public static function loadResources($componentName, $innerData): string
         {
             if ($innerData == "styles") {
                 $path = "./public/css/" . $componentName . ".css";
@@ -200,7 +196,7 @@
             return $res;
         }
         
-        public static function interpreteForLoop($innerData, $safeData, $loopData)
+        public static function interpretForLoop($innerData, $safeData, $loopData): string
         {
             $content = "";
             $parts = explode(":", $innerData, 2);
@@ -214,106 +210,5 @@
             }
             return $content;
         }
-
-
-
-
-
-
-
-
-
-        /*private static function renderData($component, $componentName, $data)
-        {
-            // Find all listed tags and load their individual data
-            foreach (["<?php/?>", "{! @for / !}", "{% / %}", "{+ / +}", "{# extend / #}"] as $needle) {            //order is important!!!! (refer caes <?php)
-                $i = 0;
-                $j = 0;
-
-                $needlePrefix = explode("/", $needle)[0];
-                $needleSuffix = explode("/", $needle)[1];
-
-                while ($i <= strlen($component) && ($j <= strlen($component))) {
-                    $j = strpos($component, $needlePrefix, $i);  // j = index of start, i = offset from last found
-                    if ($j === false) { break; }
-
-                    $k = strpos($component, $needleSuffix, $j + strlen($needlePrefix)); // k = index of end
-                    if ($k === false) { break; }
-
-                    $innerData = substr($component, $j + strlen($needlePrefix), $k - ($j + strlen($needlePrefix)));
-
-                    if ($needlePrefix == "{# extend ") { //special case needs other treatmand
-                        $component = Response::loadLayout($component, $innerData, $data, $j, $k, $needleSuffix);
-                        break;  //more than one container doesn't have a particular usecase.
-                    } else if ($needlePrefix == "{! @for ") {
-                        $component = Response::interpreteForLoop($component, $j, $k);
-                    } else {
-                        $content = "";
-                        if ($needlePrefix == "{% ") {
-                            $content = Response::loadRessources($component, $componentName, $innerData);
-                        } else if ($needlePrefix == "{+ ") {
-                            $content = Response::loadCodeSnippets($component, $innerData, $data);
-                        } else if ($needlePrefix == "<?php") { //Warning: messing around with userinput would be a really dangerous security issue.
-                            $content = Response::loadAndExecutePHP($component, $innerData, $j, $k);
-                        }
-                        $component = substr_replace($component, $content, $j, $k - $j + strlen($needleSuffix));
-                        $i = $j + strlen($content); 
-                    }
-                }
-            }
-
-            // Fill all variables with their data
-            foreach ($data as $key => $value) {
-                $component = str_replace("{{ " . $key . " }}", $value, $component);
-            }
-
-            return $component;
-        }
-
-        public static function interpreteForLoop($component, $j, $k)
-        {
-            return $component;
-        }
-
-        public static function loadLayout($component, $innerData, $data, $j, $k, $needleSuffix)
-        {
-            $containerContents = explode("@", $innerData);
-            if (is_file("./public/html/".$containerContents[0].".html")) {
-                $component = substr_replace($component, "", $j, $k - $j + strlen($needleSuffix));
-                $content = Response::view($containerContents[0], $data);
-                $component = str_replace("{# create ".$containerContents[1]." #}", $component, $content);
-            } else {
-                $content = "<!--Container not found-->";
-                $component = substr_replace($component, $content, $j, $k + strlen($needleSuffix));
-            }
-            return $component;
-        }*/
-
-
-        /*public static function loadContainers($component, $data)
-        {
-            $i = 0;
-            if ($i > strlen($component)) return $component;
-            $j = strpos($component, "{# extend ", $i);
-            if ($j === false) {
-                return $component;
-            }
-            $j=$j+10;
-            if ($j > strlen($component)) return $component;
-            $k = strpos($component, " #}", $j);
-            if ($k === false) {
-                return $component;
-            }    
-            $i = $k+3;
-            $containerContents = substr($component, $j, $k-$j);
-            $containerContents = explode("@", $containerContents);
-            if (is_file("./public/html/".$containerContents[0].".html")) {
-                $component = substr_replace($component, "", $j-10, $k-$j+13);
-                $content = Response::view($containerContents[0], $data);
-                $component = str_replace("{# create ".$containerContents[1]." #}",$component,$content);
-            }
-            
-            return $component;
-        }*/
     }
 ?>
