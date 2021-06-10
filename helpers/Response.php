@@ -204,7 +204,13 @@
                 $array = $loopData[$parts[0]];
                 foreach ($array as $data) {
                     $iteration = Response::processTags($parts[1], "noName", array(), $safeData, $loopData);
-                    $iteration = str_replace("{{ " . $parts[0] . " }}", $data, $iteration);
+                    if(is_string($data)){
+                        $iteration = str_replace("{{ " . $parts[0] . " }}", $data, $iteration);
+                    } else if(is_array($data)){
+                        foreach ($data as $key => $value) {                                     //am Ende werden die "normalen" Daten eingesetzt
+                            $iteration = str_replace("{{ " . $key . " }}", $value, $iteration);        
+                        }    
+                    }
                     $content = $content . $iteration;
                 }
             }
