@@ -10,7 +10,7 @@
                 if ($url[strlen($url)-1] == '/') {
                     $url = substr($url, 0, -1);
                 }
-                if (str_contains($url, '?')) {
+                if (strpos($url, '?')) {
                     $url = substr($url, 0, strpos($url, "?"));
                 }
                 return $url;

@@ -16,12 +16,12 @@
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 return $pdo;
             } catch (PDOException $e) {
-                ErrorUI::errorFiveHundred();
+                ErrorUI::errorFiveHundred($e);
                 exit;
             }
         }
 
-        public static function query(string $query, array $params = array()): array|string
+        public static function query(string $query, array $params = array())
         {
             try {
                 $stmt = DB::connect()->prepare($query);
@@ -53,7 +53,7 @@
                 $stmt->execute();
                 return $stmt->fetchAll(PDO::FETCH_COLUMN);
             } catch (PDOException $e) {
-                self::errorFiveHundred();
+                ErrorUI::errorFiveHundred($e);
                 exit;
             }
         }
@@ -61,8 +61,8 @@
 
     class TableReturn {
 
-        private string $name;
-        private string|array $contents;
+        private $name;
+        private $contents;
         private $orderedBy;
         private $orderedByDirection;
 
@@ -72,13 +72,13 @@
             $this->contents = DB::query("SELECT * FROM `$name`");
         }
 
-        public function where(string $query, array $params = array()): static
+        public function where(string $query, array $params = array())
         {
             $this->contents = DB::query("SELECT * FROM `$this->name` WHERE $query", $params);
             return $this;
         }
 
-        public function orderBy(string $column, int $direction = 0): static
+        public function orderBy(string $column, int $direction = 0)
         {
             $this->orderedByDirection = $direction;
             $this->orderedBy = $column;
@@ -90,7 +90,7 @@
             return $this;
         }
 
-        public function get(array $foreignData = array(), array $columns = array()): array|string
+        public function get(array $foreignData = array(), array $columns = array())
         {
             $contentData = $this->contents;
 
@@ -125,9 +125,9 @@
     }
 
     class ForeignDataKey {
-        private string $key = "";
-        private string $relationTable = "";
-        private string $relationColumn = "";
+        private $key = "";
+        private $relationTable = "";
+        private $relationColumn = "";
 
         public function __construct($key, $relationTable, $relationColumn)
         {
@@ -136,17 +136,17 @@
             $this->relationColumn = $relationColumn;
         }
 
-        public function getKey(): string
+        public function getKey()
         {
             return $this->key;
         }
 
-        public function getRelationTable(): string
+        public function getRelationTable()
         {
             return $this->relationTable;
         }
 
-        public function getRelationColumn(): string
+        public function getRelationColumn()
         {
             return $this->relationColumn;
         }

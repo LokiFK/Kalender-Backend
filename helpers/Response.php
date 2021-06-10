@@ -26,7 +26,7 @@
             exit;
         }
 
-        public static function load(string $componentName, $data, $safeData, $loopData): mixed
+        public static function load(string $componentName, $data, $safeData, $loopData)
         {
             $pathHTML = "./public/html/" . $componentName . ".html";
 
@@ -143,7 +143,7 @@
             return $template;
         }
 
-        public static function loadResources($componentName, $innerData): string
+        public static function loadResources($componentName, $innerData)
         {
             if ($innerData == "styles") {
                 $path = "./public/css/" . $componentName . ".css";
@@ -192,7 +192,7 @@
             return $res;
         }
         
-        public static function interpretForLoop($innerData, $safeData, $loopData): string
+        public static function interpretForLoop($innerData, $safeData, $loopData)
         {
             $content = "";
             $parts = explode(":", $innerData, 2);
