@@ -1,6 +1,13 @@
+{% css/user/nav %}
 {% styles %}
-<table id="navTable"> <tr>
-    <td id=ver><a href="/user/appointmentMaking">Terminvereinbarung</a></td>
-    <td id=ueb><a href="/user/appointmentOverview">Terminübersicht</a></td>
-    <td id=pro><a href="/user/profile">{{ username }}</a></td>
-</tr> </table>
+<ul id="navList">
+    <li id=ver><a href="/user/appointments/new" class=navElementLink>Terminvereinbarung</a></li>
+    <li id=ueb><a href="/user/appointments/overview" class=navElementLink>Terminübersicht</a></li>
+    <li class=us><div class=navElementLink>{{ username }}</div></li>
+    <div class=dropdown>
+        <ul id=dropdownList>
+            <li id=pro><a href="/user/profil">Profil</a></li>
+            <li id=lo><a href="/auth/logout">logout</a></li>
+        </ul>
+    </div>
+</ul>
