@@ -203,7 +203,7 @@
                     if(is_string($data)){
                         $iteration = str_replace("{{ " . $parts[0] . " }}", $data, $iteration);
                     } else if(is_array($data)){
-                        foreach ($data as $key => $value) {                                     //am Ende werden die "normalen" Daten eingesetzt
+                        foreach ($data as $key => $value) {                                    
                             $iteration = str_replace("{{ " . $key . " }}", $value, $iteration);        
                         }    
                     }
