@@ -46,7 +46,7 @@
             }  
 
             $tagsActivator = ["{","}"];
-            $tags = [ ["?php","?"], ["! "," !"], ["% "," %"], ["+ "," +"], ["# extend "," #"]];
+            $tags = [ ["?php","?"], ["! "," !"], ["% "," %"], ["+ "," +"], ["# extend "," #"], ["[ ", " ]"]];
             $i = 0;
             $template = null;
 
@@ -105,6 +105,13 @@
                                 $content = Response::loadAndExecutePHP($innerData);
                             } else if ($tag[0] == "! ") { 
                                 $content = Response::interpreteForLoop($innerData, $safeData, $loopData);
+                            } else if($tag[0] == "[ "){
+                                $datasets = explode(", ", $innerData);
+                                foreach($datasets as $set){
+                                    $parts = explode("=>",$set, 2);
+                                    $safeData[$parts[0]] = $parts[1];
+                                    $data[$parts[0]] = $parts[1];
+                                }
                             }
 
                             $component = substr_replace($component, $content, $j, $k-$j + strlen($tag[1]) + strlen($tagsActivator[1]));
