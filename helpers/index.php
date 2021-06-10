@@ -7,5 +7,6 @@
     require_once './helpers/Error.php';
     require_once './helpers/Middleware.php';
     require_once './helpers/UI.php';
+    require_once './helpers/FormValidate.php';
 
 ?>

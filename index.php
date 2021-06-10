@@ -11,23 +11,23 @@
 
     $routes = new Routes();
 
-    $routes->get("", "GeneralController@startPage");
-
     // --- USER --- \\
     // Appointments
     $routes->get('/user/appointments/new', 'UserController@new');
     $routes->get('/user/appointments/overview', 'UserController@overview');
 
     // Profile
-    $routes->get('/user/profile', 'UserController@profile');
+    $routes->get('/user/profile', 'UserController@get');
+    $routes->post('/user/profile/update', 'UserController@update');
+    $routes->post('/user/profile/delete', 'UserController@delete');
 
-    // --- AUTH --- \\‚
+    // --- AUTH --- \\
     // Register
-    $routes->get('/auth/register', 'AuthController@register');
-    $routes->post('/auth/createUser', 'AuthController@createUser');
+    $routes->get('/auth/user/create', 'AuthController@createUser');
+    $routes->post('/auth/user/create', 'AuthController@createUser');
     
-    $routes->get('/auth/registerAccount', 'AuthController@registerAccount');
-    $routes->post('/auth/createAccount', 'AuthController@createAccount');
+    $routes->get('/auth/account/create', 'AuthController@createAccount');
+    $routes->post('/auth/account/create', 'AuthController@createAccount');
 
     // Login
     $routes->get('/auth/login', 'AuthController@login');
