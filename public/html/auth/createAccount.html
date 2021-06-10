@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    {% styles %}
-</head>
-<body>
-    <form action="/api/users/createAccount" method="POST">
+{[ title=>Registrieren ]}
+{# extend auth/Template@main #}
+{% css/auth/form %}
+<div class="form-wrapper">
+    <form action="/auth/account/create" method="POST">
         <input type="hidden" name="code" value="{{ code }}">
         <label for="username">Benutzername</label>
         <input type="text" name="username"><br>
@@ -19,5 +13,4 @@
 
         <input type="submit" value="Register">
     </form>
-</body>
-</html>
+</div>

@@ -1,0 +1,13 @@
+{[ title=>Login ]}
+{# extend auth/Template@main #}
+{% css/auth/form %}
+<div class="form-wrapper">
+    <form action="/auth/login" method="POST">
+        <label for="username">Benutzername</label>
+        <input type="text" name="username"><br>
+        <label for="password">Passwort</label>
+        <input type="text" name="password"><br>
+
+        <input type="submit" value="Anmelden">
+    </form>
+</div>

@@ -37,7 +37,7 @@
         public static function registerAccount(Account $account)
         {
             if (Auth::userExists($account->userID)) {
-                DB::query("INSERT INTO account (userID, username, email, password, createdAt) VALUES (:userID, :username, :email, :password, :createdAt);",[':userID' => $account->userID, ':username' => $account->username, ':email' => $account->email, ':password' => password_hash($account->password, PASSWORD_DEFAULT), ':createdAt' => null]);
+                DB::query("INSERT INTO account (userID, username, email, password, createdAt) VALUES (:userID, :username, :email, :password, :createdAt);",[':userID' => $account->userID, ':username' => $account->username, ':email' => $account->email, ':password' => password_hash($account->password, PASSWORD_DEFAULT), ':createdAt' => date('Y-M-D')]);
             }
         }
 
@@ -48,7 +48,7 @@
 
         public static function login($username, $password, bool $remember)
         {
-            $account = DB::table('account')->where('username = :username', [':username' => $username])[0];
+            $account = DB::table('account')->where('username = :username', [':username' => $username])->get()[0];
 
             if (password_verify($password, $account['password'])) {
                 $token = Auth::createNewToken();
@@ -94,7 +94,7 @@
         public static function createNewToken()
         {
             $token = bin2hex(random_bytes(64));
-            while (DB::table('sessions')->where('token = :token', [':token' => $token])->get() !== null) {
+            while (count(DB::table('session')->where('token = :token', [':token' => $token])->get()) > 0) {
                 $token = bin2hex(random_bytes(64));
             }
             return $token;

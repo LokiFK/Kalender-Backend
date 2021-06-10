@@ -18,17 +18,18 @@
                         null
                     )
                 );
-                Path::redirect('../../../');
+                Path::redirect('../../auth/account/create');
             }
         }
 
         public function createAccount(Request $req, Response $res)
         {
             if ($req->getMethod() == "GET") {
-                echo $res->view('auth/createAccount');
+                $validatedData = Form::validate($req->getBody(), ['code']);
+                echo $res->view('auth/createAccount', ['code' => $validatedData['code']]);
             } else if ($req->getMethod() == "POST") {
-                $validatedData = Form::validate($req->getBody(), ['username', 'email', 'password', 'createdAt']);
-                $userID = DB::table('users')->where('username = :username', [':username' => $validatedData['username']])->get([], ['id']);
+                $validatedData = Form::validate($req->getBody(), ['username', 'email', 'password', 'code']);
+                $userID = DB::table('notapproved')->where('code = :code', [':code' => $validatedData['code']])->get([], ['id']);
                 
                 if (count($userID) > 0) {
                     Auth::registerAccount(
@@ -48,13 +49,23 @@
 
         public function login(Request $req, Response $res)
         {
-            $validatedData = Form::validate($req->getBody(), ['username', 'password']);
-            
-            $res->json(
-                array(
-                    'token' => Auth::login($validatedData['username'], $validatedData['password'], true)
-                )
-            );
+            if ($req->getMethod() == "GET") {
+                echo $res->view('auth/login');
+            } else if ($req->getMethod() == "POST") {
+                $validatedData = Form::validate($req->getBody(), ['username', 'password']);
+                
+                $token = Auth::login($validatedData['username'], $validatedData['password'], true);
+                
+                setcookie('token', $token, time()+60*60*24*30, '/');
+
+                $res->json(
+                    array(
+                        'token' => $token
+                    )
+                );
+
+                Path::redirect('../../../');
+            }
         }
 
         public function permissions(Request $req, Response $res)

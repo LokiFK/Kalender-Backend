@@ -12,7 +12,7 @@
     <div id='nav'>
         {% css/user/nav %}
         {?php 
-            if(Auth::isLoggedIn()){
+            if(!Auth::isLoggedIn()){
                 $username = Auth::getUsername();
                 return Response::view("user/navUser", ["username" => $username]);
             } else {

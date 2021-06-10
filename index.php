@@ -11,7 +11,7 @@
 
     $routes = new Routes();
 
-    $routes->get('', 'GeneralController@startPage');
+    $routes->get('/', 'GeneralController@startPage');
 
     // --- USER --- \\
     // Appointments
@@ -34,7 +34,8 @@
     $routes->post('/auth/account/create', 'AuthController@createAccount');
 
     // Login
-    $routes->post('/api/auth/login', 'AuthController@login');
+    $routes->post('/auth/login', 'AuthController@login');
+    $routes->get('/auth/login', 'AuthController@login');
 
     // Permissions
     $routes->get('/api/auth/permissions', 'AuthController@permissions');

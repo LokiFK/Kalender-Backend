@@ -1,5 +1,9 @@
-#ver,#an{
+#ver{
     width: 30%;
+}
+
+#an {
+    width: 15%;
 }
 #ver{
     float: left;
