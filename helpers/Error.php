@@ -24,7 +24,7 @@
             try {
                 self::error(random_int(-700, -600), "Unknown Error");
             } catch (Exception $e) {
-                self::error(601);
+                self::error(601, $e);
             }
         }
 
