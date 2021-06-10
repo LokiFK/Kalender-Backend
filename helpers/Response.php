@@ -25,8 +25,9 @@
             ErrorUI::error(500, 'Error setting up HTML');
             exit;
         }
-        
-        public static function load(string $componentName, $data, $safeData, $loopData) {
+
+        public static function load(string $componentName, $data, $safeData, $loopData): mixed
+        {
             $pathHTML = "./public/html/" . $componentName . ".html";
 
             if (is_file($pathHTML)) {
@@ -147,32 +148,28 @@
             if ($innerData == "styles") {
                 $path = "./public/css/" . $componentName . ".css";
                 if (is_file($path)) {
-                    $styles = '<style>' . file_get_contents($path) . '</style>';
-                    return $styles;
+                    return '<style>' . file_get_contents($path) . '</style>';
                 } else {
                     return "<!--Styles konnten nicht geladen werden-->";
                 }
             } else if ($innerData == "script") {
                 $path = "./public/js/" . $componentName . ".js";
                 if (is_file($path)) {
-                    $script = '<script>' . file_get_contents($path) . '</script>';
-                    return $script;
+                    return '<script>' . file_get_contents($path) . '</script>';
                 } else {
                     return "<!--Script konnten nicht geladen werden-->";
                 }
             } else if(substr($innerData, 0, 4) == "css/"){
                 $path = "./public/" . $innerData . ".css";
                 if (is_file($path)) {
-                    $styles = '<style>' . file_get_contents($path) . '</style>';
-                    return $styles;
+                    return '<style>' . file_get_contents($path) . '</style>';
                 } else {
                     return "<!--Styles konnten nicht geladen werden-->";
                 }
             } else if (substr($innerData, 0, 3) == "js/"){
                 $path = "./public/" . $innerData . ".js";
                 if (is_file($path)) {
-                    $script = '<script>' . file_get_contents($path) . '</script>';
-                    return $script;
+                    return '<script>' . file_get_contents($path) . '</script>';
                 } else {
                     return "<!--Script konnten nicht geladen werden-->";
                 }
@@ -184,8 +181,7 @@
         {
             $innerData = str_replace(' ', '', $innerData);
             if (is_file("./public/html/" . $innerData . ".html")) {
-                $content = Response::view($innerData, array(), $safeData);
-                return $content;
+                return Response::view($innerData, array(), $safeData);
             }
             return "<!--CodeSnippet nicht gefunden-->";
         }
