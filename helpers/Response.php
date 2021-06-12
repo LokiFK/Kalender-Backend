@@ -32,6 +32,7 @@
 
             if (is_file($pathHTML)) {
                 $component = file_get_contents($pathHTML);
+                $safeData['res']=$componentName;
                 return Response::processTags($component, $componentName, $data, $safeData, $loopData);
             }
         }
