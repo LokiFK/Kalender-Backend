@@ -114,7 +114,7 @@
 
         public static function isLoggedIn()
         {
-            return true;
+            return false;
             $token = "";
             if (isset($_POST['token'])) $token = $_POST['token'];
             else if (isset($_GET['token'])) $token = $_GET['token'];

@@ -235,18 +235,22 @@
             $script = "window.onload=function(){ window.onclick = function(event){";
             $style = "";
 
+            $width=0;
             if(count($lines)>0 && substr($lines[0], 0, 7) == "width: "){
+                $width=intval(substr($lines[0], 7, -1));
                 $style = "<style> 
-                .navElementLink{
+                .navElement, .navDropdown{
                     ". array_shift($lines) .";
                 }";
             }
     
             $side = "left";
             $elementNr = -1;
+            $umbruch = -1;
             foreach($lines as $line){
                 if(substr($line, 0, 1) == "/"){            //Wechsel zur rechten Seite
                     $side = "right";
+                    $umbruch = $elementNr;
                 } else if(substr($line, 0, 1) == "-"){      //Unterpunkte eines Dropdown
                     if(!array_key_exists($elementNr, $dropdown)){
                         $dropdown[$elementNr] = array();
@@ -299,7 +303,17 @@
 
             $dropdownHtml = "";
             foreach($dropdown as $key => $value){
-                $dropdownHtml = $dropdownHtml . "<div class=navDropdown id=navDropdown$key><ul class=navDropdownList id=navDropdownList$key>";
+                $x = 0;
+                $side = "";
+                if($key<$umbruch || $umbruch==-1){
+                    $side="left";
+                    $x=($key)*$width;
+                } else {
+                    $side="right";
+                    $x=($elementNr-$umbruch-1)*$width;
+                }
+                $style = $style . "#navDropdown$key{margin-$side:$x;}";
+                $dropdownHtml = $dropdownHtml . "<div class=\"navDropdown $side\" id=navDropdown$key><ul class=navDropdownList id=navDropdownList$key>";
                 foreach($value as $line){
                     $dropdownHtml = $dropdownHtml . $line;
                 }
