@@ -1,0 +1,7 @@
+width: 20%
+Terminvereinbarung(/user/appointments/new)
+Terminübersicht(/user/appointments/overview)
+/
+{{ username }}()
+-Profil(/user/profile)
+-abmelden(/auth/logout)

@@ -32,7 +32,6 @@
 
             if (is_file($pathHTML)) {
                 $component = file_get_contents($pathHTML);
-                $safeData['res']=$componentName;
                 return Response::processTags($component, $componentName, $data, $safeData, $loopData);
             }
         }
@@ -42,6 +41,8 @@
             foreach ($safeData as $key => $value) {                                     //vor anderen Tags, damit diese von safeData ausgelöst werden können
                 $component = str_replace("{{ " . $key . " }}", $value, $component);         //safeData darf also niemals userInput enthalten!!!!!!!!!!
             }  
+
+            $safeData['origin']=$componentName;
 
             $tagsActivator = ["{","}"];
             $tags = [ ["?php","?"], ["! "," !"], ["% "," %"], ["+ "," +"], ["# extend "," #"], ["[ ", " ]"]];
@@ -97,7 +98,11 @@
                             } else if ($tag[0] == "+ ") {
                                 $content = Response::loadCodeSnippets($innerData, $safeData);
                             } else if ($tag[0] == "?php") { //Warning: messing around with userinput would be a really dangerous security issue.
-                                $content = Response::loadAndExecutePHP($innerData);
+                                $replaceData = new ReplaceData($data, $safeData, $loopData);
+                                $content = Response::loadAndExecutePHP($innerData, $replaceData);
+                                $data = $replaceData->data;
+                                $safeData = $replaceData->safeData;
+                                $loopData = $replaceData->loopData;
                             } else if ($tag[0] == "! ") { 
                                 $content = Response::interpretForLoop($innerData, $safeData, $loopData);
                             } else if ($tag[0] == "[ ") {
@@ -187,7 +192,7 @@
             return "<!--CodeSnippet nicht gefunden-->";
         }
 
-        private static function loadAndExecutePHP($innerData) {     //Warnung never user data
+        private static function loadAndExecutePHP($innerData, $replaceData) {     //Warnung never user data
             $res = eval($innerData);
             if($res === null){ return ""; }
             return $res;
@@ -212,6 +217,117 @@
                 }
             }
             return $content;
+        }
+
+
+        public static function nav($navContentLink){
+            if($navContentLink == "{{ navContentLink }}"){
+                return "<!-- Navigationsleiste konnte leider nicht geladen werden. navContentLink nicht gefunden. -->";
+            }
+            if(!is_file("./public/html/".$navContentLink.".txt")){
+                return "<!-- Navigationsleiste konnte leider nicht geladen werden. Datei nicht gefunden. -->";
+            }
+            $navContent = file_get_contents("./public/html/".$navContentLink.".txt");
+            $lines = explode("\n", $navContent);
+
+            $list = "<ul id=navList>";
+            $dropdown = array();
+            $script = "window.onload=function(){ window.onclick = function(event){";
+            $style = "";
+
+            if(count($lines)>0 && substr($lines[0], 0, 7) == "width: "){
+                $style = "<style> 
+                .navElementLink{
+                    ". array_shift($lines) .";
+                }";
+            }
+    
+            $side = "left";
+            $elementNr = -1;
+            foreach($lines as $line){
+                if(substr($line, 0, 1) == "/"){            //Wechsel zur rechten Seite
+                    $side = "right";
+                } else if(substr($line, 0, 1) == "-"){      //Unterpunkte eines Dropdown
+                    if(!array_key_exists($elementNr, $dropdown)){
+                        $dropdown[$elementNr] = array();
+                    }
+                    $line = substr($line, 1);
+                    $startParam = 0;        //definitly needs improving
+                    $tmp = -1;
+                    while($tmp !== false){
+                        $startParam = $tmp;
+                        $tmp = strpos($line, "(", $tmp+1);
+                    }
+                    $content = substr($line, 0, $startParam);
+                    $param = substr($line, $startParam+1, -2);
+                    $href="";
+                    if($param != ""){
+                        $param = explode(", ", $param);
+                        if($param[0] != ""){
+                          $href="href=\"" . $param[0] . "\"";
+                        }
+                        if(count($param)>1 && $param[1] != ""){
+                            $style = $style."#navDropdownElement".count($dropdown[$elementNr])."{width:" . $param[1] . ";}";
+                        }
+                    }
+                    $content = "<a class=navDropdownElementLink $href>$content</a>";
+                    array_push($dropdown[$elementNr], "<li class=\"$side navDropdownElement\" id=navDropdownElement".count($dropdown[$elementNr]).">$content</li>");
+                } else {                                    //NavElemente
+                    $elementNr++;
+                    $startParam = 0;        //definitly needs improving
+                    $tmp = -1;
+                    while($tmp !== false){
+                        $startParam = $tmp;
+                        $tmp = strpos($line, "(", $tmp+1);
+                    }
+                    $content = substr($line, 0, $startParam);
+                    $param = substr($line, $startParam+1, -2);
+                    $href="";
+                    if($param != ""){
+                        $param = explode(", ", $param);
+                        if($param[0] != ""){
+                          $href="href=\"" . $param[0] . "\"";
+                        }
+                        if(count($param)>1 && $param[1] != ""){
+                            $style = $style."#navElement$elementNr{width:" . $param[1] . ";}";
+                        }
+                    }
+                    $content = "<a class=navElementLink $href>$content</a>";
+                    $list = $list . "<li class=\"$side navElement\" id=navElement$elementNr>$content</li>";
+                }
+            }
+
+            $dropdownHtml = "";
+            foreach($dropdown as $key => $value){
+                $dropdownHtml = $dropdownHtml . "<div class=navDropdown id=navDropdown$key><ul class=navDropdownList id=navDropdownList$key>";
+                foreach($value as $line){
+                    $dropdownHtml = $dropdownHtml . $line;
+                }
+                $dropdownHtml = $dropdownHtml . "</ul></div>";
+                $script = $script . 
+                 "if(document.getElementById(\"navElement$key\").contains(event.target) && document.getElementById(\"navDropdown$key\").style.display != \"block\"){
+                    document.getElementById(\"navDropdown$key\").style.display = \"block\";
+                  } else if (document.getElementById(\"navDropdown$key\").style.display == \"block\" && !document.getElementById(\"navDropdown$key\").contains(event.target)) {
+                    document.getElementById(\"navDropdown$key\").style.display = \"none\";
+                  }";
+            }
+            $list = $list . "</ul>";
+            $script = $script."}}";
+            $style = $style . "</style>";
+            return "<script>" . $script . "</script>" . $style . $list . $dropdownHtml;
+        }
+    }
+
+    class ReplaceData {
+        public array $data;
+        public array $safeData;
+        public array $loopData;
+
+        public function __construct($data, $safeData, $loopData)
+        {
+            $this->data = $data;
+            $this->safeData = $safeData;
+            $this->loopData = $loopData;
         }
     }
 ?>

@@ -1,0 +1,18 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+#nav{
+    margin:0;
+}
+#content{
+    background-color:lightgreen;
+    padding-top:0;
+    height:80vh;
+}
+footer{
+    background-color:rgb(130, 175, 130);
+    padding-bottom:0;
+    height:20px;
+}

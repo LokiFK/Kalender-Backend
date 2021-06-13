@@ -1,0 +1,49 @@
+#navList{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    
+    background-color:green;
+}
+.navElementLink{
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+.navElementLink:hover {
+    background-color:darkgreen;
+}
+.left {
+    float: left;
+}
+.right {
+    float: right;
+}
+
+
+.navDropdown {
+    display: none;
+    background-color:rgb(0, 160, 0);
+    /*float: right;
+    width: 25%;*/
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.3); 
+}
+.navDropdownList{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;    
+}
+.navDropdownElementLink{
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 12px 14px;
+    text-decoration: none;
+}
+.navDropdownElementLink:hover {
+    background-color:darkgreen;
+}
