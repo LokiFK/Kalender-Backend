@@ -46,7 +46,7 @@
             DB::query("UPDATE account SET erstellungsdatum = " . date('Y-M-D') . " WHERE userID = :userID;", [':userID' => $userID]);
         }
 
-        public static function login($username, $password, $ip, bool $remember)
+        public static function login($username, $password, $ip, bool $remember): string
         {
             $account = DB::table('account')->where('username = :username', [':username' => $username])[0];
 
@@ -76,19 +76,23 @@
             DB::query('UPDATE tokens SET `end` = :end WHERE id = :id', [':id' => $tokenID, ':end' => date('Y-M-D')]);
         }
 
-        private static function isValidToken($token, $exitIfNot)
+        private static function isValidToken($token, $exitIfNot): bool
         {
             $timestamp = DB::table('tokens')->where('token = :token', [':token' => $token])->get([], ['timestamp'])[0]['timestamp'];
             if (!isset($timestamp) && $exitIfNot) {
                 ErrorUI::error(401, 'Invalid Token');
                 exit;
             }
-            $lastLogin = new DateTime($timestamp);
+            try {
+                $lastLogin = new DateTime($timestamp);
+            } catch (Exception $e) {
+                ErrorUI::error(602, $e);
+            }
             $currentTime = new DateTime();
             return $lastLogin->diff($currentTime)->d < 10; // only make it valid if token is less than 10 days old
         }
 
-        public static function createNewToken()
+        public static function createNewToken(): string
         {
             $token = bin2hex(random_bytes(64));
             while (DB::table('sessions')->where('token = :token', [':token' => $token])->get() !== null) {
@@ -109,9 +113,9 @@
             }
         }
 
-        public static function isLoggedIn()
+        public static function isLoggedIn(): bool
         {
-            return true;
+            // return true;
             $token = "";
             if (isset($_POST['token'])) $token = $_POST['token'];
             else if (isset($_GET['token'])) $token = $_GET['token'];
@@ -122,11 +126,17 @@
             return isset($isValid) && $isValid;
         }
 
-        public static function getUsername(){
-            return "testusername";
+        public static function getUsername(): string
+        {
+            //return "testusername";
+            $token = "";
+            if (isset($_POST['token'])) $token = $_POST['token'];
+            else if (isset($_GET['token'])) $token = $_GET['token'];
+            else { ErrorUI::errorMsg("Error");}
+            return DB::query("SELECT firstname, lastname FROM users NATURAL JOIN session WHERE token = :token", [':token' => $token]);
         }
 
-        public static function userExists($userID)
+        public static function userExists($userID): bool
         {
             $res = DB::query("SELECT count(*) AS 'Anzahl' FROM users WHERE id = :userid;", [':userid' => $userID]);
             return $res[0]['Anzahl'] > 0;
@@ -135,12 +145,12 @@
 
 
     class User {
-        public $firstname = "";
-        public $lastname = "";
-        public $salutation = "";
-        public $birthday = "";
-        public $insurance = "";
-        public $patientID = "";
+        public string $firstname = "";
+        public string $lastname = "";
+        public string $salutation = "";
+        public string $birthday = "";
+        public string $insurance = "";
+        public string $patientID = "";
 
         public function __construct($firstname, $lastname, $salutation, $birthday, $insurance, $patientID)
         {
@@ -154,11 +164,11 @@
     }
 
     class Account {
-        public $userID = "";
-        public $username = "";
-        public $email = "";
-        public $password = "";
-        public $approvalNeeded = "";
+        public string $userID = "";
+        public string $username = "";
+        public string $email = "";
+        public string $password = "";
+        public string $approvalNeeded = "";
 
         public function __construct($userID, $username, $email, $password, $approvalNeeded)
         {
