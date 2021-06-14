@@ -213,11 +213,11 @@
                     if(is_string($data)){
                         $iteration = str_replace("{{ " . $parts[0] . " }}", $data, $iteration);
                     } else if(is_array($data)){
-                        try{
-                            foreach ($data as $key => $value) {                                    
-                                $iteration = str_replace("{{ " . $key . " }}", $value, $iteration);        
-                            }   
-                        }catch(Exception $e){}
+                        foreach ($data as $key => $value) {  
+                            if(is_string($key) && is_string($value)){                                  
+                                $iteration = str_replace("{{ " . $key . " }}", $value, $iteration);  
+                            }      
+                        }  
                     }
                     $content = $content . $iteration;
                     $iterationNr++;
