@@ -19,30 +19,33 @@
 
         public static function view(string $component, array $data = array(), array $safeData = array(), array $loopData = array())
         {
-            $content = Response::load($component, $data, $safeData, $loopData);
+            return Response::viewObject($component, new ReplaceData($data, $safeData, $loopData));
+        }
+        public static function viewObject($component, $replaceData){
+            $content = Response::load($component, $replaceData);
             if ($content !== null) { return $content; }
             
             ErrorUI::error(500, 'Error setting up HTML');
             exit;
         }
 
-        public static function load(string $componentName, $data, $safeData, $loopData)
+        public static function load(string $componentName, $replaceData)
         {
             $pathHTML = "./public/html/" . $componentName . ".html";
 
             if (is_file($pathHTML)) {
                 $component = file_get_contents($pathHTML);
-                return Response::processTags($component, $componentName, $data, $safeData, $loopData);
+                return Response::processTags($component, $componentName, $replaceData);
             }
         }
 
-        private static function processTags($component, $componentName, $data, $safeData, $loopData)
+        private static function processTags($component, $componentName, $replaceData)
         {
-            foreach ($safeData as $key => $value) {                                     //vor anderen Tags, damit diese von safeData ausgelöst werden können
+            foreach ($replaceData->safeData as $key => $value) {                                     //vor anderen Tags, damit diese von safeData ausgelöst werden können
                 $component = str_replace("{{ " . $key . " }}", $value, $component);         //safeData darf also niemals userInput enthalten!!!!!!!!!!
             }  
 
-            $safeData['origin']=$componentName;
+            $replaceData->safeData['origin']=$componentName;
 
             $tagsActivator = ["{","}"];
             $tags = [ ["?php","?"], ["! "," !"], ["% "," %"], ["+ "," +"], ["# extend "," #"], ["[ ", " ]"]];
@@ -87,7 +90,7 @@
                         if ($tag[0] == "# extend ") { //special case needs other treatmand
 
                             $component = substr_replace($component, "", $j, $k-$j + strlen($tag[1]) + strlen($tagsActivator[1]) );
-                            $template = Response::loadTemplate($template, $innerData, $safeData);
+                            $template = Response::loadTemplate($template, $innerData, $replaceData);
 
                             $i = $j+1;
                         } else {                                            //Group of "replacers"
@@ -96,21 +99,17 @@
                             if ($tag[0] == "% ") {
                                 $content = Response::loadResources($componentName, $innerData);
                             } else if ($tag[0] == "+ ") {
-                                $content = Response::loadCodeSnippets($innerData, $safeData);
+                                $content = Response::loadCodeSnippets($innerData, $replaceData);
                             } else if ($tag[0] == "?php") { //Warning: messing around with userinput would be a really dangerous security issue.
-                                $replaceData = new ReplaceData($data, $safeData, $loopData);
                                 $content = Response::loadAndExecutePHP($innerData, $replaceData);
-                                $data = $replaceData->data;
-                                $safeData = $replaceData->safeData;
-                                $loopData = $replaceData->loopData;
                             } else if ($tag[0] == "! ") { 
-                                $content = Response::interpretForLoop($innerData, $safeData, $loopData);
+                                $content = Response::interpretForLoop($innerData, $replaceData);
                             } else if ($tag[0] == "[ ") {
                                 $datasets = explode(", ", $innerData);
                                 foreach($datasets as $set) {
                                     $parts = explode("=>", $set, 2);
-                                    $safeData[$parts[0]] = $parts[1];
-                                    $data[$parts[0]] = $parts[1];
+                                    $replaceData->safeData[$parts[0]] = $parts[1];
+                                    $replaceData->data[$parts[0]] = $parts[1];
                                 }
                             }
 
@@ -125,18 +124,18 @@
                 $component = str_replace("{# here #}", $component, $template);
             }
 
-            foreach ($data as $key => $value) {                                     //am Ende werden die "normalen" Daten eingesetzt
+            foreach ($replaceData->data as $key => $value) {                                     //am Ende werden die "normalen" Daten eingesetzt
                 $component = str_replace("{{ " . $key . " }}", $value, $component);        
             }  
 
             return $component;
         }
 
-        private static function loadTemplate($template, $innerData, $safeData)
+        private static function loadTemplate($template, $innerData, $replaceData)
         {
             $containerContents = explode("@", $innerData);
             if (is_file("./public/html/".$containerContents[0].".html")) {
-                $content = Response::view($containerContents[0], array(), $safeData);
+                $content = Response::viewObject($containerContents[0], $replaceData);
                 $content = str_replace("{# create ".$containerContents[1]." #}", "{# here #}", $content);
             } else {
                 $content = "<!--Container not found-->";
@@ -183,11 +182,11 @@
             return "<!--Fehlerhafter Style oder Script tag-->";
         }
 
-        public static function loadCodeSnippets($innerData, $safeData)
+        public static function loadCodeSnippets($innerData, $replaceData)
         {
             $innerData = str_replace(' ', '', $innerData);
             if (is_file("./public/html/" . $innerData . ".html")) {
-                return Response::view($innerData, array(), $safeData);
+                return Response::viewObject($innerData, $replaceData);
             }
             return "<!--CodeSnippet nicht gefunden-->";
         }
@@ -198,15 +197,15 @@
             return $res;
         }
         
-        public static function interpretForLoop($innerData, $safeData, $loopData)
+        public static function interpretForLoop($innerData, $replaceData)
         {
             $content = "";
             $parts = explode(":", $innerData, 2);
-            if (array_key_exists($parts[0], $loopData)) {
-                $array = $loopData[$parts[0]];
+            if (array_key_exists($parts[0], $replaceData->loopData)) {
+                $array = $replaceData->loopData[$parts[0]];
                 $iterationNr = 1;
                 foreach ($array as $data) {
-                    $iteration = Response::processTags($parts[1], "noName", array(), $safeData, $loopData);
+                    $iteration = Response::processTags($parts[1], "noName", $replaceData);
                     $iteration = str_replace("{{ iterationNr }}", $iterationNr, $iteration);
                     if(is_string($data)){
                         $iteration = str_replace("{{ " . $parts[0] . " }}", $data, $iteration);
