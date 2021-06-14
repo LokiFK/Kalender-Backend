@@ -3,7 +3,8 @@
     class UserController {
 
         public function new(Request $req, Response $res){
-            $view = $res->view('user/new');
+            $treatments = DB::query("select * from treatment");
+            $view = $res->view('user/new', array(), array(), [ "treatments"=>$treatments ]);
             echo $view;
         }
 

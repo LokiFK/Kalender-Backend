@@ -3,13 +3,17 @@
     margin: 0;
     box-sizing: border-box;
 }
+body {
+    background-color: #f2f2f2;
+    font-family: 'Open Sans', sans-serif;
+}
 #nav{
     margin:0;
 }
-#content{
+/*#content{
     background-color:lightgreen;
     padding-top:0;
-}
+}*/
 #footer{
     background-color:rgb(130, 175, 130);
 }

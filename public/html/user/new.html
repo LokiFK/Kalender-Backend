@@ -11,5 +11,10 @@
     }
 ?}
 {# extend general/template@main #}
-neuer Termin...
+
+<ul id=treatments>
+{! treatments:
+     <li class=treatment id=treatment{{ iterationNr }}>{{ name }}</li>
+!}
+</ul>
 

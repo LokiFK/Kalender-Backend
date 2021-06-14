@@ -204,8 +204,10 @@
             $parts = explode(":", $innerData, 2);
             if (array_key_exists($parts[0], $loopData)) {
                 $array = $loopData[$parts[0]];
+                $iterationNr = 1;
                 foreach ($array as $data) {
                     $iteration = Response::processTags($parts[1], "noName", array(), $safeData, $loopData);
+                    $iteration = str_replace("{{ iterationNr }}", $iterationNr, $iteration);
                     if(is_string($data)){
                         $iteration = str_replace("{{ " . $parts[0] . " }}", $data, $iteration);
                     } else if(is_array($data)){
@@ -214,6 +216,7 @@
                         }    
                     }
                     $content = $content . $iteration;
+                    $iterationNr++;
                 }
             }
             return $content;
