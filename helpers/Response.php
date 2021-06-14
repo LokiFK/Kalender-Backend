@@ -268,11 +268,7 @@
                 if(substr($line, 0, 1) == "/"){            //Wechsel zur rechten Seite
                     $side = "right";
                     $umbruch = $elementNr;
-                } else if(substr($line, 0, 1) == "-"){      //Unterpunkte eines Dropdown
-                    if(!array_key_exists($elementNr, $dropdown)){
-                        $dropdown[$elementNr] = array();
-                    }
-                    $line = substr($line, 1);
+                } else {
                     $startParam = 0;        //definitly needs improving
                     $tmp = -1;
                     while($tmp !== false){
@@ -281,40 +277,38 @@
                     }
                     $content = substr($line, 0, $startParam);
                     $param = substr($line, $startParam+1, strpos($line, ")", $startParam+1) - 1-$startParam);
-                    $href="";
-                    if($param != ""){
-                        $param = explode(", ", $param);
-                        if($param[0] != ""){
-                          $href="href=\"" . $param[0] . "\"";
+                    if(substr($line, 0, 1) == "-"){      //Unterpunkte eines Dropdown
+                        if(!array_key_exists($elementNr, $dropdown)){
+                            $dropdown[$elementNr] = array();
                         }
-                        if(count($param)>1 && $param[1] != ""){
-                            $style = $style."#navDropdownElement".count($dropdown[$elementNr])."{width:" . $param[1] . ";}";
+                        $line = substr($line, 1);
+                        $href="";
+                        if($param != ""){
+                            $param = explode(", ", $param);
+                            if($param[0] != ""){
+                            $href="href=\"" . $param[0] . "\"";
+                            }
+                            if(count($param)>1 && $param[1] != ""){
+                                $style = $style."#navDropdownElement".count($dropdown[$elementNr])."{width:" . $param[1] . ";}";
+                            }
                         }
+                        $content = "<a class=navDropdownElementLink $href>$content</a>";
+                        array_push($dropdown[$elementNr], "<li class=\"$side navDropdownElement\" id=navDropdownElement".count($dropdown[$elementNr]).">$content</li>");
+                    } else {                                    //NavElemente
+                        $elementNr++;
+                        $href="";
+                        if($param != ""){
+                            $param = explode(", ", $param);
+                            if($param[0] != ""){
+                            $href="href=\"" . $param[0] . "\"";
+                            }
+                            if(count($param)>1 && $param[1] != ""){
+                                $style = $style."#navElement$elementNr{width:" . $param[1] . ";}";
+                            }
+                        }
+                        $content = "<a class=navElementLink $href>$content</a>";
+                        $list = $list . "<li class=\"$side navElement\" id=navElement$elementNr>$content</li>";
                     }
-                    $content = "<a class=navDropdownElementLink $href>$content</a>";
-                    array_push($dropdown[$elementNr], "<li class=\"$side navDropdownElement\" id=navDropdownElement".count($dropdown[$elementNr]).">$content</li>");
-                } else {                                    //NavElemente
-                    $elementNr++;
-                    $startParam = 0;        //definitly needs improving
-                    $tmp = -1;
-                    while($tmp !== false){
-                        $startParam = $tmp;
-                        $tmp = strpos($line, "(", $tmp+1);
-                    }
-                    $content = substr($line, 0, $startParam);
-                    $param = substr($line, $startParam+1, strpos($line, ")", $startParam+1) - 1-$startParam);
-                    $href="";
-                    if($param != ""){
-                        $param = explode(", ", $param);
-                        if($param[0] != ""){
-                          $href="href=\"" . $param[0] . "\"";
-                        }
-                        if(count($param)>1 && $param[1] != ""){
-                            $style = $style."#navElement$elementNr{width:" . $param[1] . ";}";
-                        }
-                    }
-                    $content = "<a class=navElementLink $href>$content</a>";
-                    $list = $list . "<li class=\"$side navElement\" id=navElement$elementNr>$content</li>";
                 }
             }
 
