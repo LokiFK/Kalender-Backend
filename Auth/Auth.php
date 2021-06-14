@@ -26,7 +26,11 @@
         {
             DB::query("INSERT INTO users (firstname, lastname, salutation, insurance, birthday, patientID) VALUES (:firstname, :lastname, :salutation, :insurance, :birthday, :patientID)", [':firstname' => $user->firstname, ':lastname' => $user->lastname, ':salutation' => $user->salutation, ':insurance' => $user->insurance, ':birthday' => $user->birthday, ':patientID' => $user->patientID]);
             $userID = DB::table('users')->where('firstname = :firstname', [':firstname' => $user->firstname])->get([], ['id'])[0]['id'];
-            $code = bin2hex(random_bytes(64));
+            try {
+                $code = bin2hex(random_bytes(64));
+            } catch (Exception $e) {
+                ErrorUI::error(502, $e);
+            }
             DB::query("INSERT INTO notapproved (userID, code, datetime) VALUES (:userID, :code, :date);", [':userID' => $userID, ':code' => $code, ':date' => date('Y-M-D')]);
             $from = "FROM Terminplanung @noreply";
             $subject = "Account bestätigen";
