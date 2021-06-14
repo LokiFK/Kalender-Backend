@@ -18,6 +18,11 @@
             echo $view; 
         }
 
+        public function get(Request $req, Response $res) {
+            $view = $res->view('user/profile');
+            echo $view;
+        }
+
     }
 
 ?>

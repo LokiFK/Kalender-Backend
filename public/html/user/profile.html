@@ -1,4 +1,5 @@
 {[ title=>Profil ]}
+{% css/user/profile %}
 {?php 
     if(!Auth::isLoggedIn()){
         $username = Auth::getUsername();
@@ -11,3 +12,8 @@
     }
 ?}
 {# extend general/template@main #}
+<h3 id="title">Hallo Testuser</h3>
+<form id="form">
+    <label for="firstName">Vorname</label>
+    <input type="text" id="firstName" name="firstName"></input>
+</form>
