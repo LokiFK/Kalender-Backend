@@ -1,15 +1,4 @@
 {[ title=>Terminvereinbarung ]}
-{?php 
-    if(!Auth::isLoggedIn()){
-        $username = Auth::getUsername();
-        $replaceData->data['username'] = $username;
-        $replaceData->safeData['navContentLink'] = "user/navUser";
-        return "";
-    } else {
-        $replaceData->safeData['navContentLink'] = "general/navGuest";
-        return "";
-    }
-?}
 {# extend general/template@main #}
 
 

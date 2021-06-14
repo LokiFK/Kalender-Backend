@@ -222,14 +222,29 @@
         }
 
 
-        public static function nav($navContentLink){
+        public static function nav($navContentLink, $absolutOrigin, $replaceData){
             if($navContentLink == "{{ navContentLink }}"){
-                return "<!-- Navigationsleiste konnte leider nicht geladen werden. navContentLink nicht gefunden. -->";
+                if($absolutOrigin == "{{ absolutOrigin }}"){
+                    return "<!-- Navigationsleiste konnte leider nicht geladen werden. navContentLink nicht gefunden. -->";
+                } 
+                $i = 0;        //definitly needs improving
+                $j = -1;
+                while($j !== false){
+                    $i = $j;
+                    $j = strpos($absolutOrigin, "/", $j+1);
+                }
+                $navContentLink = substr($absolutOrigin, 0, $i)."/nav";
             }
-            if(!is_file("./public/html/".$navContentLink.".txt")){
-                return "<!-- Navigationsleiste konnte leider nicht geladen werden. Datei nicht gefunden. -->";
+            if(is_file("./public/html/".$navContentLink.".html")){
+                $content = Response::viewObject($navContentLink, $replaceData);
+                if(substr($content, 0, 6) == "Link: "){
+                    $navContentLink = substr($content, 6, strpos($content, ";", 6)-6);
+                }
             }
-            $navContent = file_get_contents("./public/html/".$navContentLink.".txt");
+            if(!is_file("./public/html/".$navContentLink.".nav")){
+                return "<!-- Navigationsleiste konnte leider nicht geladen werden. Datei($navContentLink) nicht gefunden. -->";
+            }
+            $navContent = file_get_contents("./public/html/".$navContentLink.".nav");
             $lines = explode("\n", $navContent);
 
             $list = "<ul id=navList>";
