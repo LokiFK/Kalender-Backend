@@ -101,7 +101,7 @@
                         $foreignColumn = $foreignData[$j]->getRelationColumn();
                         $foreignKey = $foreignData[$j]->getKey();
                         $data = DB::query("SELECT $foreignTable.* FROM $foreignTable INNER JOIN $this->name ON $foreignTable.$foreignColumn = :foreign_column_val LIMIT 1", [':foreign_column_val' => $this->contents[$i][$foreignKey]])[0];
-                        $contentData[$i][str_replace("_id", '', $foreignData[$j]->getKey())] = $data;
+                        $contentData[$i][str_replace("ID", '', $foreignData[$j]->getKey())] = $data;
                         unset($contentData[$i][$foreignData[$j]->getKey()]);
                     }
                 }

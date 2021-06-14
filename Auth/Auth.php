@@ -7,34 +7,32 @@
             $token = Auth::getToken();
             if (!isset($token)) { return; }
 
-            $tokenWithUser = DB::table('tokens')->where('token = :token', [':token' => $token])->get([new ForeignDataKey('user_id', 'users', 'id')])[0];
+            $tokenWithUser = DB::table('session')->where('token = :token', [':token' => $token])->get([new ForeignDataKey('userID', 'users', 'id')]);
             if (!isset($tokenWithUser)) {
                 ErrorUI::error(401, 'Invalid Token');
                 exit;
             }
 
-            return $tokenWithUser['user'];
+            return $tokenWithUser[0]['user'];
         }
 
         public static function userID()
         {
             $token = Auth::getToken();
-            return DB::table('tokens')->where('token = :token', [':token' => $token])->get([], ['user_id'])[0]['user_id'];
+            return DB::table('session')->where('token = :token', [':token' => $token])->get([], ['userID'])[0]['userID'];
         }
 
         public static function registerUser(User $user)
         {
             DB::query("INSERT INTO users (firstname, lastname, salutation, insurance, birthday, patientID) VALUES (:firstname, :lastname, :salutation, :insurance, :birthday, :patientID)", [':firstname' => $user->firstname, ':lastname' => $user->lastname, ':salutation' => $user->salutation, ':insurance' => $user->insurance, ':birthday' => $user->birthday, ':patientID' => $user->patientID]);
             $userID = DB::table('users')->where('firstname = :firstname', [':firstname' => $user->firstname])->get([], ['id'])[0]['id'];
-            try {
-                $code = bin2hex(random_bytes(64));
-            } catch (Exception $e) {
-                ErrorUI::error(502, $e);
-            }
+            $code = Auth::createNewToken();
+            
             DB::query("INSERT INTO notapproved (userID, code, datetime) VALUES (:userID, :code, :date);", [':userID' => $userID, ':code' => $code, ':date' => date('Y-M-D')]);
             $from = "FROM Terminplanung @noreply";
             $subject = "Account bestätigen";
             $msg = $code;
+            return $code;
             //mail($account->email, $subject, $msg, $from);
         }
 
@@ -79,36 +77,50 @@
             $userID = Auth::userID();
             if (!isset($userID)) { return; }
 
-            $tokenID = DB::table('tokens')->where('token = :token AND user_id = :user_id', [':token' => $token, ':user_id' => $userID])->get([], ['id'])[0]['id'];
-            DB::query('UPDATE tokens SET `end` = :end WHERE id = :id', [':id' => $tokenID, ':end' => date('Y-M-D')]);
+            $tokenID = DB::table('session')->where('token = :token AND user_id = :user_id', [':token' => $token, ':user_id' => $userID])->get([], ['id'])[0]['id'];
+            DB::query('UPDATE `session` SET `end` = :end WHERE id = :id', [':id' => $tokenID, ':end' => date('Y-M-D')]);
         }
 
         private static function isValidToken($token, $exitIfNot): bool
         {
-            $timestamp = DB::table('tokens')->where('token = :token', [':token' => $token])->get([], ['timestamp'])[0]['timestamp'];
-            if (!isset($timestamp) && $exitIfNot) {
+            $timestamp = DB::table('session')->where('token = :token', [':token' => $token])->get([], ['start']);
+            if (!isset($timestamp[0]['start']) && $exitIfNot) {
                 ErrorUI::error(401, 'Invalid Token');
                 exit;
             }
+            $timestamp = $timestamp[0]['start'];
             try {
                 $lastLogin = new DateTime($timestamp);
             } catch (Exception $e) {
                 ErrorUI::error(605, $e);
             }
             $currentTime = new DateTime();
-            return $lastLogin->diff($currentTime)->d < 10; // only make it valid if token is less than 10 days old
+
+
+
+            /**
+             * 
+             * 
+             * ONLY FOR TEST PURPOSE ON RETURN TRUE
+             * 
+             * 
+             */
+
+
+
+            return true;   //$lastLogin->diff($currentTime)->d < 10; // only make it valid if token is less than 10 days old
         }
 
         public static function createNewToken(): string
         {
             try {
-                $token = bin2hex(random_bytes(64));
+                $token = bin2hex(random_bytes(25));
             } catch (Exception $e) {
                 ErrorUI::error(605, $e);
             }
             while (count(DB::table('session')->where('token = :token', [':token' => $token])->get()) > 0) {
                 try {
-                    $token = bin2hex(random_bytes(64));
+                    $token = bin2hex(random_bytes(25));
                 } catch (Exception $e) {
                     ErrorUI::error(605, $e);
                 }

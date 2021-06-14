@@ -1,6 +1,11 @@
 <?php
 
     class AuthController {
+        public function test(Request $req, Response $res)
+        {
+            $a = Auth::user();
+            print_r($a);
+        }
 
         public function createUser(Request $req, Response $res)
         {
@@ -8,17 +13,17 @@
                 echo $res->view('auth/createUser');
             } else if ($req->getMethod() == "POST") {
                 $validatedData = Form::validate($req->getBody(), ['firstname', 'lastname', 'salutation', 'insurance', 'birthday']);
-                Auth::registerUser(
+                $code = Auth::registerUser(
                     new User(
                         $validatedData['firstname'],
                         $validatedData['lastname'],
                         $validatedData['salutation'],
                         $validatedData['birthday'],
                         $validatedData['insurance'],
-                        null
+                        ""
                     )
                 );
-                Path::redirect('../../auth/account/create');
+                Path::redirect('../../auth/account/create?code=' . $code);
             }
         }
 
@@ -29,12 +34,12 @@
                 echo $res->view('auth/createAccount', ['code' => $validatedData['code']]);
             } else if ($req->getMethod() == "POST") {
                 $validatedData = Form::validate($req->getBody(), ['username', 'email', 'password', 'code']);
-                $userID = DB::table('notapproved')->where('code = :code', [':code' => $validatedData['code']])->get([], ['id']);
-                
+                $userID = DB::table('notapproved')->where('`code` = :code', [':code' => $validatedData['code']])->get();
+
                 if (count($userID) > 0) {
                     Auth::registerAccount(
                         new Account(
-                            $userID[0]['id'],
+                            $userID[0]['userID'],
                             $validatedData['username'],
                             $validatedData['email'],
                             $validatedData['password'],
@@ -42,6 +47,7 @@
                         )
                     );
                 }
+
                 
                 Path::redirect('../../../');
             }
@@ -56,13 +62,7 @@
                 
                 $token = Auth::login($validatedData['username'], $validatedData['password'], true);
                 
-                setcookie('token', $token, time()+60*60*24*30, '/');
-
-                $res->json(
-                    array(
-                        'token' => $token
-                    )
-                );
+                setcookie('token', $token, time() + 60 * 60 * 24 * 30, '/');
 
                 Path::redirect('../../../');
             }
