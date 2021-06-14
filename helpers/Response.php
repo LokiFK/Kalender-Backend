@@ -205,14 +205,19 @@
                 $array = $replaceData->loopData[$parts[0]];
                 $iterationNr = 1;
                 foreach ($array as $data) {
+                    if(is_array($data) && array_key_exists("inner", $data)){
+                        $replaceData->loopData[$parts[0]."Inner"] = $data["inner"];
+                    }    
                     $iteration = Response::processTags($parts[1], "noName", $replaceData);
-                    $iteration = str_replace("{{ iterationNr }}", $iterationNr, $iteration);
+                    $iteration = str_replace("{{ ".$parts[0]."IterationNr }}", $iterationNr, $iteration);
                     if(is_string($data)){
                         $iteration = str_replace("{{ " . $parts[0] . " }}", $data, $iteration);
                     } else if(is_array($data)){
-                        foreach ($data as $key => $value) {                                    
-                            $iteration = str_replace("{{ " . $key . " }}", $value, $iteration);        
-                        }    
+                        try{
+                            foreach ($data as $key => $value) {                                    
+                                $iteration = str_replace("{{ " . $key . " }}", $value, $iteration);        
+                            }   
+                        }catch(Exception $e){}
                     }
                     $content = $content . $iteration;
                     $iterationNr++;

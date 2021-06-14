@@ -1,5 +1,18 @@
 {[ title=>Terminvereinbarung ]}
 {# extend general/template@main #}
 
-
+<ul id=terminListe>
+{! termine:
+    <li class=datum id=datum{{ termineIterationNr }}>
+        {{ datum }}
+        <ul class=uhrzeitenListe id=uhrzeitenList{{ termineIterationNr }}>
+        {! termineInner:
+            <li class=termin id=termin{{ termineIterationNR }}.{{ termineInnerIterationNr }}>
+                {{ start }} bis {{ end }}
+            </li>
+         !}
+        </ul>
+    </li>
+ !}
+</ul>
 
