@@ -266,7 +266,7 @@
                         $tmp = strpos($line, "(", $tmp+1);
                     }
                     $content = substr($line, 0, $startParam);
-                    $param = substr($line, $startParam+1, -2);
+                    $param = substr($line, $startParam+1, strpos($line, ")", $startParam+1) - 1-$startParam);
                     $href="";
                     if($param != ""){
                         $param = explode(", ", $param);
@@ -288,7 +288,7 @@
                         $tmp = strpos($line, "(", $tmp+1);
                     }
                     $content = substr($line, 0, $startParam);
-                    $param = substr($line, $startParam+1, -2);
+                    $param = substr($line, $startParam+1, strpos($line, ")", $startParam+1) - 1-$startParam);
                     $href="";
                     if($param != ""){
                         $param = explode(", ", $param);
