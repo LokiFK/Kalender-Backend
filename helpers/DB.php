@@ -27,12 +27,12 @@
                 $stmt = DB::connect()->prepare($query);
                 $stmt->execute($params);
 
-                if (explode(' ', $query)[0] == 'SELECT') {
+                if (strtoupper(explode(' ', $query)[0]) == 'SELECT') {
                     $result = $stmt->fetchAll();
                     if (isset($result)) {
                         return $result;
                     }
-                } else if (explode(' ', $query)[0] == 'INSERT') {
+                } else if (strtoupper(explode(' ', $query)[0]) == 'INSERT') {
                     return DB::connect()->lastInsertID();
                 }
             } catch (PDOException $e) {

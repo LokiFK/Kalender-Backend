@@ -9,7 +9,7 @@
         public static function errorJSON($errCode, $msg)
         {
             http_response_code($errCode);
-            ErrorUI::errorMsg($msg);
+            ErrorUI::errorMsg($errCode, $msg);
         }
 
         public static function errorVisual($errCode, $msg)
