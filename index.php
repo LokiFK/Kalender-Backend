@@ -9,6 +9,7 @@
     require './controllers/AuthController.php';
     require './controllers/UserController.php';
 
+
     $routes = new Routes();
 
     $routes->get('/', 'GeneralController@startPage');
@@ -33,6 +34,8 @@
     
     $routes->get('/auth/account/create', 'AuthController@createAccount');
     $routes->post('/auth/account/create', 'AuthController@createAccount');
+
+    $routes->get('/auth', 'AuthController@test');
 
     // Login
     $routes->post('/auth/login', 'AuthController@login');
