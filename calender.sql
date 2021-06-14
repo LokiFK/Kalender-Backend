@@ -54,6 +54,7 @@ CREATE TABLE `admin` (
 CREATE TABLE `treatment` (
   `id` int(11) NOT NULL,
   `name` varchar(50) DEFAULT NULL,
+  `duration` int(11) DEFAULT NULL,
   `nrDoctors` int(11) DEFAULT NULL,
   `nrNurses` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
