@@ -1,0 +1,13 @@
+#ver{
+    width: 30%;
+}
+
+#an {
+    width: 15%;
+}
+#ver{
+    float: left;
+}
+#an{
+    float: right;
+}
