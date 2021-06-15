@@ -262,7 +262,7 @@
             $width=0;
             if(count($lines)>0 && substr($lines[0], 0, 7) == "width: "){
                 $width=intval(substr($lines[0], 7, -1));
-                $style = "
+                $style = $style."
                 .navElement, .navDropdown{
                     ". array_shift($lines) .";
                 }";
