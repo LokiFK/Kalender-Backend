@@ -282,11 +282,12 @@
                     }
                     $content = substr($line, 0, $startParam);
                     $param = substr($line, $startParam+1, strpos($line, ")", $startParam+1) - 1-$startParam);
-                    if(substr($line, 0, 1) == "-"){      //Unterpunkte eines Dropdown
+                    if(substr($content, 0, 1) == "-"){      //Unterpunkte eines Dropdown
                         if(!array_key_exists($elementNr, $dropdown)){
                             $dropdown[$elementNr] = array();
                         }
-                        $line = substr($line, 1);
+                        $content = substr($content, 1);
+                        //echo $line;
                         $href="";
                         if($param != ""){
                             $param = explode(", ", $param);
@@ -344,6 +345,7 @@
             $list = $list . "</ul>";
             $script = $script."}}";
             $style = $style . "</style>";
+            echo "$style";
             return "<script>" . $script . "</script>" . $style . $list . $dropdownHtml;
         }
     }

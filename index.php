@@ -41,6 +41,9 @@
     $routes->post('/auth/login', 'AuthController@login');
     $routes->get('/auth/login', 'AuthController@login');
 
+    //Logout
+    $routes->get('/auth/logout', 'AuthController@logout');
+
     // Permissions
     $routes->get('/api/auth/permissions', 'AuthController@permissions');
     

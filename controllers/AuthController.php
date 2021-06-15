@@ -66,6 +66,12 @@
                 Path::redirect('../../../');
             }
         }
+        public function logout(Request $req, Response $res){
+            if(Auth::logout()!=true){
+
+            }
+            Path::redirect('../../../');
+        }
 
         public function permissions(Request $req, Response $res)
         {
