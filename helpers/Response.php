@@ -9,7 +9,7 @@
         public static function errorJSON($errCode, $msg)
         {
             http_response_code($errCode);
-            ErrorUI::errorMsg($msg);
+            ErrorUI::errorMsg($errCode, $msg);
         }
 
         public static function errorVisual($errCode, $msg)
@@ -19,30 +19,33 @@
 
         public static function view(string $component, array $data = array(), array $safeData = array(), array $loopData = array())
         {
-            $content = Response::load($component, $data, $safeData, $loopData);
+            return Response::viewObject($component, new ReplaceData($data, $safeData, $loopData));
+        }
+        public static function viewObject($component, $replaceData){
+            $content = Response::load($component, $replaceData);
             if ($content !== null) { return $content; }
             
             ErrorUI::error(500, 'Error setting up HTML');
             exit;
         }
 
-        public static function load(string $componentName, $data, $safeData, $loopData)
+        public static function load(string $componentName, $replaceData)
         {
             $pathHTML = "./public/html/" . $componentName . ".html";
 
             if (is_file($pathHTML)) {
                 $component = file_get_contents($pathHTML);
-                return Response::processTags($component, $componentName, $data, $safeData, $loopData);
+                return Response::processTags($component, $componentName, $replaceData);
             }
         }
 
-        private static function processTags($component, $componentName, $data, $safeData, $loopData)
+        private static function processTags($component, $componentName, $replaceData)
         {
-            foreach ($safeData as $key => $value) {                                     //vor anderen Tags, damit diese von safeData ausgelöst werden können
+            foreach ($replaceData->safeData as $key => $value) {                                     //vor anderen Tags, damit diese von safeData ausgelöst werden können
                 $component = str_replace("{{ " . $key . " }}", $value, $component);         //safeData darf also niemals userInput enthalten!!!!!!!!!!
             }  
 
-            $safeData['origin']=$componentName;
+            $replaceData->safeData['origin']=$componentName;
 
             $tagsActivator = ["{","}"];
             $tags = [ ["?php","?"], ["! "," !"], ["% "," %"], ["+ "," +"], ["# extend "," #"], ["[ ", " ]"]];
@@ -87,7 +90,7 @@
                         if ($tag[0] == "# extend ") { //special case needs other treatmand
 
                             $component = substr_replace($component, "", $j, $k-$j + strlen($tag[1]) + strlen($tagsActivator[1]) );
-                            $template = Response::loadTemplate($template, $innerData, $safeData);
+                            $template = Response::loadTemplate($template, $innerData, $replaceData);
 
                             $i = $j+1;
                         } else {                                            //Group of "replacers"
@@ -96,21 +99,17 @@
                             if ($tag[0] == "% ") {
                                 $content = Response::loadResources($componentName, $innerData);
                             } else if ($tag[0] == "+ ") {
-                                $content = Response::loadCodeSnippets($innerData, $safeData);
+                                $content = Response::loadCodeSnippets($innerData, $replaceData);
                             } else if ($tag[0] == "?php") { //Warning: messing around with userinput would be a really dangerous security issue.
-                                $replaceData = new ReplaceData($data, $safeData, $loopData);
                                 $content = Response::loadAndExecutePHP($innerData, $replaceData);
-                                $data = $replaceData->data;
-                                $safeData = $replaceData->safeData;
-                                $loopData = $replaceData->loopData;
                             } else if ($tag[0] == "! ") { 
-                                $content = Response::interpretForLoop($innerData, $safeData, $loopData);
+                                $content = Response::interpretForLoop($innerData, $replaceData);
                             } else if ($tag[0] == "[ ") {
                                 $datasets = explode(", ", $innerData);
                                 foreach($datasets as $set) {
                                     $parts = explode("=>", $set, 2);
-                                    $safeData[$parts[0]] = $parts[1];
-                                    $data[$parts[0]] = $parts[1];
+                                    $replaceData->safeData[$parts[0]] = $parts[1];
+                                    $replaceData->data[$parts[0]] = $parts[1];
                                 }
                             }
 
@@ -125,18 +124,18 @@
                 $component = str_replace("{# here #}", $component, $template);
             }
 
-            foreach ($data as $key => $value) {                                     //am Ende werden die "normalen" Daten eingesetzt
+            foreach ($replaceData->data as $key => $value) {                                     //am Ende werden die "normalen" Daten eingesetzt
                 $component = str_replace("{{ " . $key . " }}", $value, $component);        
             }  
 
             return $component;
         }
 
-        private static function loadTemplate($template, $innerData, $safeData)
+        private static function loadTemplate($template, $innerData, $replaceData)
         {
             $containerContents = explode("@", $innerData);
             if (is_file("./public/html/".$containerContents[0].".html")) {
-                $content = Response::view($containerContents[0], array(), $safeData);
+                $content = Response::viewObject($containerContents[0], $replaceData);
                 $content = str_replace("{# create ".$containerContents[1]." #}", "{# here #}", $content);
             } else {
                 $content = "<!--Container not found-->";
@@ -183,11 +182,11 @@
             return "<!--Fehlerhafter Style oder Script tag-->";
         }
 
-        public static function loadCodeSnippets($innerData, $safeData)
+        public static function loadCodeSnippets($innerData, $replaceData)
         {
             $innerData = str_replace(' ', '', $innerData);
             if (is_file("./public/html/" . $innerData . ".html")) {
-                return Response::view($innerData, array(), $safeData);
+                return Response::viewObject($innerData, $replaceData);
             }
             return "<!--CodeSnippet nicht gefunden-->";
         }
@@ -198,22 +197,27 @@
             return $res;
         }
         
-        public static function interpretForLoop($innerData, $safeData, $loopData)
+        public static function interpretForLoop($innerData, $replaceData)
         {
             $content = "";
             $parts = explode(":", $innerData, 2);
-            if (array_key_exists($parts[0], $loopData)) {
-                $array = $loopData[$parts[0]];
+            if (array_key_exists($parts[0], $replaceData->loopData)) {
+                $array = $replaceData->loopData[$parts[0]];
                 $iterationNr = 1;
                 foreach ($array as $data) {
-                    $iteration = Response::processTags($parts[1], "noName", array(), $safeData, $loopData);
-                    $iteration = str_replace("{{ iterationNr }}", $iterationNr, $iteration);
+                    if(is_array($data) && array_key_exists("inner", $data)){
+                        $replaceData->loopData[$parts[0]."Inner"] = $data["inner"];
+                    }    
+                    $iteration = Response::processTags($parts[1], "noName", $replaceData);
+                    $iteration = str_replace("{{ ".$parts[0]."IterationNr }}", $iterationNr, $iteration);
                     if(is_string($data)){
                         $iteration = str_replace("{{ " . $parts[0] . " }}", $data, $iteration);
                     } else if(is_array($data)){
-                        foreach ($data as $key => $value) {                                    
-                            $iteration = str_replace("{{ " . $key . " }}", $value, $iteration);        
-                        }    
+                        foreach ($data as $key => $value) {  
+                            if(is_string($key) && is_string($value)){                                  
+                                $iteration = str_replace("{{ " . $key . " }}", $value, $iteration);  
+                            }      
+                        }  
                     }
                     $content = $content . $iteration;
                     $iterationNr++;
@@ -223,14 +227,29 @@
         }
 
 
-        public static function nav($navContentLink){
+        public static function nav($navContentLink, $absolutOrigin, $replaceData){
             if($navContentLink == "{{ navContentLink }}"){
-                return "<!-- Navigationsleiste konnte leider nicht geladen werden. navContentLink nicht gefunden. -->";
+                if($absolutOrigin == "{{ absolutOrigin }}"){
+                    return "<!-- Navigationsleiste konnte leider nicht geladen werden. navContentLink nicht gefunden. -->";
+                } 
+                $i = 0;        //definitly needs improving
+                $j = -1;
+                while($j !== false){
+                    $i = $j;
+                    $j = strpos($absolutOrigin, "/", $j+1);
+                }
+                $navContentLink = substr($absolutOrigin, 0, $i)."/nav";
             }
-            if(!is_file("./public/html/".$navContentLink.".txt")){
-                return "<!-- Navigationsleiste konnte leider nicht geladen werden. Datei nicht gefunden. -->";
+            if(is_file("./public/html/".$navContentLink.".html")){
+                $content = Response::viewObject($navContentLink, $replaceData);
+                if(substr($content, 0, 6) == "Link: "){
+                    $navContentLink = substr($content, 6, strpos($content, ";", 6)-6);
+                }
             }
-            $navContent = file_get_contents("./public/html/".$navContentLink.".txt");
+            if(!is_file("./public/html/".$navContentLink.".nav")){
+                return "<!-- Navigationsleiste konnte leider nicht geladen werden. Datei($navContentLink) nicht gefunden. -->";
+            }
+            $navContent = file_get_contents("./public/html/".$navContentLink.".nav");
             $lines = explode("\n", $navContent);
 
             $list = "<ul id=navList>";
@@ -254,11 +273,7 @@
                 if(substr($line, 0, 1) == "/"){            //Wechsel zur rechten Seite
                     $side = "right";
                     $umbruch = $elementNr;
-                } else if(substr($line, 0, 1) == "-"){      //Unterpunkte eines Dropdown
-                    if(!array_key_exists($elementNr, $dropdown)){
-                        $dropdown[$elementNr] = array();
-                    }
-                    $line = substr($line, 1);
+                } else {
                     $startParam = 0;        //definitly needs improving
                     $tmp = -1;
                     while($tmp !== false){
@@ -267,40 +282,38 @@
                     }
                     $content = substr($line, 0, $startParam);
                     $param = substr($line, $startParam+1, strpos($line, ")", $startParam+1) - 1-$startParam);
-                    $href="";
-                    if($param != ""){
-                        $param = explode(", ", $param);
-                        if($param[0] != ""){
-                          $href="href=\"" . $param[0] . "\"";
+                    if(substr($line, 0, 1) == "-"){      //Unterpunkte eines Dropdown
+                        if(!array_key_exists($elementNr, $dropdown)){
+                            $dropdown[$elementNr] = array();
                         }
-                        if(count($param)>1 && $param[1] != ""){
-                            $style = $style."#navDropdownElement".count($dropdown[$elementNr])."{width:" . $param[1] . ";}";
+                        $line = substr($line, 1);
+                        $href="";
+                        if($param != ""){
+                            $param = explode(", ", $param);
+                            if($param[0] != ""){
+                            $href="href=\"" . $param[0] . "\"";
+                            }
+                            if(count($param)>1 && $param[1] != ""){
+                                $style = $style."#navDropdownElement".count($dropdown[$elementNr])."{width:" . $param[1] . ";}";
+                            }
                         }
+                        $content = "<a class=navDropdownElementLink $href>$content</a>";
+                        array_push($dropdown[$elementNr], "<li class=\"$side navDropdownElement\" id=navDropdownElement".count($dropdown[$elementNr]).">$content</li>");
+                    } else {                                    //NavElemente
+                        $elementNr++;
+                        $href="";
+                        if($param != ""){
+                            $param = explode(", ", $param);
+                            if($param[0] != ""){
+                            $href="href=\"" . $param[0] . "\"";
+                            }
+                            if(count($param)>1 && $param[1] != ""){
+                                $style = $style."#navElement$elementNr{width:" . $param[1] . ";}";
+                            }
+                        }
+                        $content = "<a class=navElementLink $href>$content</a>";
+                        $list = $list . "<li class=\"$side navElement\" id=navElement$elementNr>$content</li>";
                     }
-                    $content = "<a class=navDropdownElementLink $href>$content</a>";
-                    array_push($dropdown[$elementNr], "<li class=\"$side navDropdownElement\" id=navDropdownElement".count($dropdown[$elementNr]).">$content</li>");
-                } else {                                    //NavElemente
-                    $elementNr++;
-                    $startParam = 0;        //definitly needs improving
-                    $tmp = -1;
-                    while($tmp !== false){
-                        $startParam = $tmp;
-                        $tmp = strpos($line, "(", $tmp+1);
-                    }
-                    $content = substr($line, 0, $startParam);
-                    $param = substr($line, $startParam+1, strpos($line, ")", $startParam+1) - 1-$startParam);
-                    $href="";
-                    if($param != ""){
-                        $param = explode(", ", $param);
-                        if($param[0] != ""){
-                          $href="href=\"" . $param[0] . "\"";
-                        }
-                        if(count($param)>1 && $param[1] != ""){
-                            $style = $style."#navElement$elementNr{width:" . $param[1] . ";}";
-                        }
-                    }
-                    $content = "<a class=navElementLink $href>$content</a>";
-                    $list = $list . "<li class=\"$side navElement\" id=navElement$elementNr>$content</li>";
                 }
             }
 

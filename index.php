@@ -9,6 +9,7 @@
     require './controllers/AuthController.php';
     require './controllers/UserController.php';
 
+
     $routes = new Routes();
 
     $routes->get('/', 'GeneralController@startPage');
@@ -16,6 +17,7 @@
     // --- USER --- \\
     // Appointments
     $routes->get('/user/appointments/new', 'UserController@new');
+    $routes->get('/user/appointments/new2', 'UserController@new2');
     $routes->get('/user/appointments/overview', 'UserController@overview');
     $routes->get('/api/user/appointments/termine', 'UserController@termine');
 
@@ -32,6 +34,8 @@
     
     $routes->get('/auth/account/create', 'AuthController@createAccount');
     $routes->post('/auth/account/create', 'AuthController@createAccount');
+
+    $routes->get('/auth', 'AuthController@test');
 
     // Login
     $routes->post('/auth/login', 'AuthController@login');

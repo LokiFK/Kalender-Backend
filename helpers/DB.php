@@ -27,12 +27,12 @@
                 $stmt = DB::connect()->prepare($query);
                 $stmt->execute($params);
 
-                if (explode(' ', $query)[0] == 'SELECT') {
+                if (strtoupper(explode(' ', $query)[0]) == 'SELECT') {
                     $result = $stmt->fetchAll();
                     if (isset($result)) {
                         return $result;
                     }
-                } else if (explode(' ', $query)[0] == 'INSERT') {
+                } else if (strtoupper(explode(' ', $query)[0]) == 'INSERT') {
                     return DB::connect()->lastInsertID();
                 }
             } catch (PDOException $e) {
@@ -101,7 +101,7 @@
                         $foreignColumn = $foreignData[$j]->getRelationColumn();
                         $foreignKey = $foreignData[$j]->getKey();
                         $data = DB::query("SELECT $foreignTable.* FROM $foreignTable INNER JOIN $this->name ON $foreignTable.$foreignColumn = :foreign_column_val LIMIT 1", [':foreign_column_val' => $this->contents[$i][$foreignKey]])[0];
-                        $contentData[$i][str_replace("_id", '', $foreignData[$j]->getKey())] = $data;
+                        $contentData[$i][str_replace("ID", '', $foreignData[$j]->getKey())] = $data;
                         unset($contentData[$i][$foreignData[$j]->getKey()]);
                     }
                 }

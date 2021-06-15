@@ -1,4 +1,4 @@
 {% styles %}
 {?php 
-    return Response::nav("{{ navContentLink }}");
+    return Response::nav("{{ navContentLink }}", "{{ absolutOrigin }}", $replaceData);
 ?}

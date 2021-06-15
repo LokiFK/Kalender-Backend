@@ -1,13 +1,8 @@
 {[ title=>Profil ]}
-{?php 
-    if(!Auth::isLoggedIn()){
-        $username = Auth::getUsername();
-        $replaceData->data['username'] = $username;
-        $replaceData->safeData['navContentLink'] = "user/navUser";
-        return "";
-    } else {
-        $replaceData->safeData['navContentLink'] = "general/navGuest";
-        return "";
-    }
-?}
+{% css/user/profile %}
 {# extend general/template@main #}
+<h3 id="title">Hallo Testuser</h3>
+<form id="form">
+    <label for="firstName">Vorname</label>
+    <input type="text" id="firstName" name="firstName"></input>
+</form>

@@ -1,0 +1,18 @@
+{[ title=>Terminvereinbarung ]}
+{# extend general/template@main #}
+
+<ul id=terminListe>
+{! termine:
+    <li class=datum id=datum{{ termineIterationNr }}>
+        {{ datum }}
+        <ul class=uhrzeitenListe id=uhrzeitenList{{ termineIterationNr }}>
+        {! termineInner:
+            <li class=termin id=termin{{ termineIterationNR }}.{{ termineInnerIterationNr }}>
+                <a class=terminLink id=terminLink{{ termineIterationNR }}.{{ termineInnerIterationNr }} href="/user/appointments/new3?treatment={{ treatment  }}&date={{ datum }}&start={{ start }}&end={{ end }}">{{ start }} bis {{ end }}</a>
+            </li>
+         !}
+        </ul>
+    </li>
+ !}
+</ul>
+

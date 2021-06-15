@@ -1,10 +1,11 @@
 <?php
 
     class ErrorUI {
-        public static function errorMsg($msg)
+        public static function errorMsg($errCode, $msg)
         {
             echo json_encode(
                 array(
+                    'errorCode' => $errCode,
                     'message' => $msg
                 )
             );
@@ -14,10 +15,11 @@
         {
             http_response_code($errCode);
             if(strpos($msg, "/api")) {
-                ErrorUI::errorMsg($msg);
+                ErrorUI::errorMsg($errCode, $msg);
             } else {
                 echo Response::view("general/error", ["errorCode" => $errCode, "msg" => $msg]);
             }
+            exit();
         }
 
         public static function generalError() {
