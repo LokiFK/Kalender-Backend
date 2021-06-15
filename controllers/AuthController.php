@@ -3,8 +3,7 @@
     class AuthController {
         public function test(Request $req, Response $res)
         {
-            $a = Auth::user();
-            print_r($a);
+            echo $res->view('auth/login');
         }
 
         public function createUser(Request $req, Response $res)

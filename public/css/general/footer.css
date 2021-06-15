@@ -10,6 +10,8 @@
 }
 
 .footer-list-item {
+    list-style-type: none;
+    text-align: center;
     width: 33%;
 }
 
