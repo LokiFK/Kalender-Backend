@@ -2,4 +2,3 @@ Start(/)
 Terminvereinbarung(/user/appointments/new)
 /
 Anmelden(/auth/login)
-Registrieren(/auth/user/create)
