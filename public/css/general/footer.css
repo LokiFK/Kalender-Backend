@@ -1,5 +1,7 @@
 .footer-wrap {
     width: 100%;
+    /*box-shadow: 0 0 10px rgba(0,0,0,0.5);*/
+    background-color: rgb(165, 165, 165);
     border-top: 0 0 10px rgba(0, 0, 0, 0.5);
     padding: 10px;
 }
@@ -17,6 +19,6 @@
 
 .footer-link {
     text-decoration: none;
-    color: blue;
+    color: rgb(255, 255, 255);
     font-size: 15px;
 }

@@ -4,7 +4,7 @@
 
         public static function user()
         {
-            $token = Auth::getToken();
+            $token = Auth::getCheckedToken();
             if (!isset($token)) { return; }
 
             $tokenWithUser = DB::table('session')->where('token = :token', [':token' => $token])->get([new ForeignDataKey('userID', 'users', 'id')]);
@@ -18,7 +18,8 @@
 
         public static function userID()
         {
-            $token = Auth::getToken();
+            $token = Auth::getCheckedToken();
+            if($token==null) return null;
             return DB::table('session')->where('token = :token', [':token' => $token])->get([], ['userID'])[0]['userID'];
         }
 
@@ -43,8 +44,8 @@
             }
         }
 
-        public static function approveAccount($token) {
-            $userID = DB::table('notapproved')->where('token = :token', [':token' => $token]);
+        public static function approveAccount($token, $code) {
+            $userID = DB::table('notapproved')->where('token = :token AND code = :code', [':token' => $token, ":code"=>$code]);
             DB::query("UPDATE account SET erstellungsdatum = " . date('Y-M-D') . " WHERE userID = :userID;", [':userID' => $userID]);
         }
 
@@ -78,12 +79,23 @@
             if (!isset($userID)) { return; }
 
             $tokenID = DB::table('session')->where('token = :token AND user_id = :user_id', [':token' => $token, ':user_id' => $userID])->get([], ['id'])[0]['id'];
-            DB::query('UPDATE `session` SET `end` = :end WHERE id = :id', [':id' => $tokenID, ':end' => date('Y-M-D')]);
+            DB::query('UPDATE `session` SET `end` = :end WHERE id = :id', [':id' => $tokenID, ':end' => date('Y-M-D H:M:S')]);
         }
 
-        private static function isValidToken($token, $exitIfNot): bool
+        private static function isValidToken($token): bool
         {
-            $timestamp = DB::table('session')->where('token = :token', [':token' => $token])->get([], ['start']);
+            $erg = DB::query("select end from session where token = :token and (end is null or end<:end);", [':token' => $token, ":end" => date('Y-M-D H:M:S')]);
+            if (count($erg) == 1) {
+                if ($erg[0]['end'] != null) {
+                    $date = new DateTime();
+                    $date->add(new DateInterval(Auth::DURATION));
+                    $end = $date->format('Y-M-D H:M:S');
+                    DB::query("update session set end = :end where token = :token;", [':token'=>$token, ':end'=>$end]);
+                } 
+                return true;
+            }
+            return false;
+            /*$timestamp = DB::table('session')->where('token = :token', [':token' => $token])->get([], ['start']);
             if (!isset($timestamp[0]['start']) && $exitIfNot) {
                 ErrorUI::error(401, 'Invalid Token');
                 exit;
@@ -91,11 +103,11 @@
             $timestamp = $timestamp[0]['start'];
             try {
                 $lastLogin = new DateTime($timestamp);
+                $lastLogin = $lastLogin->format('Y-M-D H:M:S');
             } catch (Exception $e) {
                 ErrorUI::error(605, $e);
             }
-            $currentTime = new DateTime();
-
+            $currentTime = new DateTime();*/
 
 
             /**
@@ -108,10 +120,10 @@
 
 
 
-            return true;   //$lastLogin->diff($currentTime)->d < 10; // only make it valid if token is less than 10 days old
+            //return true;   //$lastLogin->diff($currentTime)->d < 10; // only make it valid if token is less than 10 days old
         }
 
-        public static function createNewToken(): string
+        public static function createNewToken()
         {
             try {
                 $token = bin2hex(random_bytes(25));
@@ -128,42 +140,42 @@
             return $token;
         }
 
-        public static function getToken()
+        public static function getCheckedToken(){
+            $token = Auth::getToken();
+            if($token==null){
+                debug_print_backtrace();
+                ErrorUI::error(401, 'Invalid Token');
+                exit;
+            }
+        }
+        public static function getToken(){
+            $token = Auth::getGivenToken();
+            if (Auth::isValidToken($token, false)) {
+                return $token;
+            }
+        }
+        public static function getGivenToken()
         {
             $token = "";
             if (isset($_POST['token'])) $token = $_POST['token'];
             else if (isset($_GET['token'])) $token = $_GET['token'];
+            else if (isset($_COOKIE['token'])) $token = $_COOKIE['token'];
             else { return false; }
-
-            if (Auth::isValidToken($token, true)) {
-                return $token;
-            }
         }
 
         public static function isLoggedIn(): bool
         {
-            return false;
-            $token = "";
-            if (isset($_POST['token'])) $token = $_POST['token'];
-            else if (isset($_GET['token'])) $token = $_GET['token'];
-            else { return false; }
-
-            $isValid = Auth::isValidToken($token, false);
-            
-            return isset($isValid) && $isValid;
+            return Auth::getToken()!=null;
         }
 
         public static function getUsername(): array|string
         {
-            return "testusername";
-            $token = "";
-            if (isset($_POST['token'])) $token = $_POST['token'];
-            else if (isset($_GET['token'])) $token = $_GET['token'];
-            else { ErrorUI::errorMsg("Error");}
-            return DB::query("SELECT firstname, lastname FROM users NATURAL JOIN session WHERE token = :token", [':token' => $token]);
+            //return "testusername";
+            $token = Auth::getCheckedToken();
+            return DB::query("SELECT username FROM account, session WHERE account.userID = session.userID and token = :token", [':token' => $token]);
         }
 
-        public static function userExists($userID): bool
+        public static function userIDExists($userID): bool
         {
             $res = DB::query("SELECT count(*) AS 'Anzahl' FROM users WHERE id = :userid;", [':userid' => $userID]);
             return $res[0]['Anzahl'] > 0;
