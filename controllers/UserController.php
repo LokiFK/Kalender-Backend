@@ -9,7 +9,6 @@
             echo $view;
         }
         public function new2(Request $req, Response $res){
-            //
             $data = Form::validate($req->getBody(), ['treatment']);
             $treatment = $data['treatment'];
             if(DB::query("SELECT count(*) as Anzahl from treatment where name=:treatment;", [ ":treatment"=>$treatment ])[0]['Anzahl']!=1){

@@ -39,7 +39,7 @@
             }
         }
 
-        private static function processTags($component, $componentName, $replaceData)
+        private static function processTags(string $component, string $componentName, ReplaceData $replaceData)
         {
             foreach ($replaceData->safeData as $key => $value) {                                     //vor anderen Tags, damit diese von safeData ausgelöst werden können
                 $component = str_replace("{{ " . $key . " }}", $value, $component);         //safeData darf also niemals userInput enthalten!!!!!!!!!!
@@ -124,8 +124,8 @@
                 $component = str_replace("{# here #}", $component, $template);
             }
 
-            foreach ($replaceData->data as $key => $value) {                                     //am Ende werden die "normalen" Daten eingesetzt
-                $component = str_replace("{{ " . $key . " }}", $value, $component);        
+            foreach ($replaceData->data as $key => $value) {                                    //am Ende werden die "normalen" Daten eingesetzt
+                $component = str_replace("{{ " . $key . " }}", $value, $component);
             }  
 
             return $component;
@@ -210,14 +210,16 @@
                     }    
                     $iteration = Response::processTags($parts[1], "noName", $replaceData);
                     $iteration = str_replace("{{ ".$parts[0]."IterationNr }}", $iterationNr, $iteration);
-                    if(is_string($data)){
+                    if (is_string($data)) {
                         $iteration = str_replace("{{ " . $parts[0] . " }}", $data, $iteration);
-                    } else if(is_array($data)){
+                    } else if (is_array($data)) {
                         foreach ($data as $key => $value) {  
-                            if(is_string($key) && is_string($value)){                                  
-                                $iteration = str_replace("{{ " . $key . " }}", $value, $iteration);  
+                            if (is_string($key) && is_string($value)) {
+                                $iteration = str_replace("{{ " . $key . " }}", $value, $iteration);
+                                // version where you can access dict like in generalcontroller@landingPage
+                                $iteration = str_replace("{{ " . $parts[0] . "." . $key . " }}", $value, $iteration);
                             }      
-                        }  
+                        }
                     }
                     $content = $content . $iteration;
                     $iterationNr++;
@@ -298,6 +300,7 @@
                                 $style = $style."#navDropdownElement".count($dropdown[$elementNr])."{width:" . $param[1] . ";}";
                             }
                         }
+                        $content = str_replace('-', '', $content);
                         $content = "<a class=navDropdownElementLink $href>$content</a>";
                         array_push($dropdown[$elementNr], "<li class=\"$side navDropdownElement\" id=navDropdownElement".count($dropdown[$elementNr]).">$content</li>");
                     } else {                                    //NavElemente

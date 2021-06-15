@@ -1,6 +1,8 @@
 <?php
 
     class Auth {
+        
+		const DURATION = '30 Minutes';
 
         public static function user()
         {
@@ -19,7 +21,6 @@
         public static function userID()
         {
             $token = Auth::getCheckedToken();
-            if($token==null) return null;
             return DB::table('session')->where('token = :token', [':token' => $token])->get([], ['userID'])[0]['userID'];
         }
 
@@ -40,7 +41,7 @@
         public static function registerAccount(Account $account)
         {
             if (Auth::userExists($account->userID)) {
-                DB::query("INSERT INTO account (userID, username, email, password, createdAt) VALUES (:userID, :username, :email, :password, :createdAt);",[':userID' => $account->userID, ':username' => $account->username, ':email' => $account->email, ':password' => password_hash($account->password, PASSWORD_DEFAULT), ':createdAt' => date('Y-M-D')]);
+                DB::query("INSERT INTO account (userID, username, email, password, createdAt) VALUES (:userID, :username, :email, :password, :createdAt);",[':userID' => $account->userID, ':username' => $account->username, ':email' => $account->email, ':password' => password_hash($account->password, PASSWORD_DEFAULT), ':createdAt' => date('Y-m-d')]);
             }
         }
 
@@ -72,55 +73,30 @@
 
         public static function logout()
         {
-            $token = Auth::getToken();
-            if (!isset($token)) { return; }
-            
-            $userID = Auth::userID();
-            if (!isset($userID)) { return; }
+            $token = Auth::getCheckedToken();
 
-            $tokenID = DB::table('session')->where('token = :token AND user_id = :user_id', [':token' => $token, ':user_id' => $userID])->get([], ['id'])[0]['id'];
-            DB::query('UPDATE `session` SET `end` = :end WHERE id = :id', [':id' => $tokenID, ':end' => date('Y-M-D H:M:S')]);
+            DB::query('UPDATE `session` SET `end` = :end WHERE `token` = :token', [':token' => $token, ':end' => date('Y-M-D H:M:S')]);
+        }
+
+        public static function userExists($id): bool
+        {
+            $res = DB::query("SELECT `id` FROM `users` WHERE id = :id;", [':id' => $id]);
+            return count($res) > 0;
         }
 
         private static function isValidToken($token): bool
         {
-            $erg = DB::query("select end from session where token = :token and (end is null or end<:end);", [':token' => $token, ":end" => date('Y-M-D H:M:S')]);
+            $erg = DB::query("SELECT `end` FROM `session` WHERE `token` = :token AND (`end` IS NULL OR `end` < :end);", [':token' => $token, ":end" => date('Y-M-D H:M:S')]);
             if (count($erg) == 1) {
                 if ($erg[0]['end'] != null) {
                     $date = new DateTime();
                     $date->add(new DateInterval(Auth::DURATION));
                     $end = $date->format('Y-M-D H:M:S');
-                    DB::query("update session set end = :end where token = :token;", [':token'=>$token, ':end'=>$end]);
+                    DB::query("UPDATE `session` SET `end` = :end WHERE `token` = :token;", [':token' => $token, ':end' => $end]);
                 } 
                 return true;
             }
             return false;
-            /*$timestamp = DB::table('session')->where('token = :token', [':token' => $token])->get([], ['start']);
-            if (!isset($timestamp[0]['start']) && $exitIfNot) {
-                ErrorUI::error(401, 'Invalid Token');
-                exit;
-            }
-            $timestamp = $timestamp[0]['start'];
-            try {
-                $lastLogin = new DateTime($timestamp);
-                $lastLogin = $lastLogin->format('Y-M-D H:M:S');
-            } catch (Exception $e) {
-                ErrorUI::error(605, $e);
-            }
-            $currentTime = new DateTime();*/
-
-
-            /**
-             * 
-             * 
-             * ONLY FOR TEST PURPOSE ON RETURN TRUE
-             * 
-             * 
-             */
-
-
-
-            //return true;   //$lastLogin->diff($currentTime)->d < 10; // only make it valid if token is less than 10 days old
         }
 
         public static function createNewToken()
@@ -140,17 +116,17 @@
             return $token;
         }
 
-        public static function getCheckedToken(){
+        public static function getCheckedToken() {
             $token = Auth::getToken();
-            if($token==null){
+            if ($token == null) {
                 debug_print_backtrace();
                 ErrorUI::error(401, 'Invalid Token');
                 exit;
             }
+            return $token;
         }
-        public static function getToken(){
+        public static function getToken() {
             $token = Auth::getGivenToken();
-            //echo "token: ".$token;
             if (Auth::isValidToken($token, false)) {
                 return $token;
             }
@@ -176,8 +152,11 @@
         {
             //return "testusername";
             $token = Auth::getCheckedToken();
-            $username = DB::query("SELECT username FROM account, session WHERE account.userID = session.userID and token = :token;", [':token' => $token])[0]['username'];
-            return $username;
+            $username = DB::query("SELECT username FROM `account`, `session` WHERE account.userID = `session`.userID AND token = :token;", [':token' => $token]);
+            if (count($username) > 0) {
+                return $username[0]['username'];
+            }
+            return "Default";
         }
 
         public static function userIDExists($userID): bool

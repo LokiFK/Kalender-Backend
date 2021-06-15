@@ -73,6 +73,12 @@
             Path::redirect('../../../');
         }
 
+        public function logout(Request $req, Response $res)
+        {
+            Auth::logout();
+            Path::redirect('../../../');
+        }
+
         public function permissions(Request $req, Response $res)
         {
             Middleware::auth();
