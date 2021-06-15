@@ -12,10 +12,11 @@
 
     $routes = new Routes();
 
-    $routes->get('/', 'GeneralController@landingPage');
+    $routes->get('/', 'GeneralController@startPage');
 
     // --- USER --- \\
     // Appointments
+    $routes->get('/user/landingPage', 'UserController@landingPage');
     $routes->get('/user/appointments/new', 'UserController@new');
     $routes->get('/user/appointments/new2', 'UserController@new2');
     $routes->get('/user/appointments/overview', 'UserController@overview');
