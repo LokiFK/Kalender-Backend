@@ -60,7 +60,7 @@
                 $validatedData = Form::validate($req->getBody(), ['username', 'password']);
                 
                 $token = Auth::login($validatedData['username'], $validatedData['password'], true);
-                
+                //echo $token;
                 setcookie('token', $token, time() + 60 * 60 * 24 * 30, '/');
 
                 Path::redirect('../../../');

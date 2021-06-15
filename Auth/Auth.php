@@ -150,6 +150,7 @@
         }
         public static function getToken(){
             $token = Auth::getGivenToken();
+            //echo "token: ".$token;
             if (Auth::isValidToken($token, false)) {
                 return $token;
             }
@@ -161,18 +162,22 @@
             else if (isset($_GET['token'])) $token = $_GET['token'];
             else if (isset($_COOKIE['token'])) $token = $_COOKIE['token'];
             else { return false; }
+            return $token;
         }
 
         public static function isLoggedIn(): bool
         {
-            return Auth::getToken()!=null;
+            $token = Auth::getToken();
+            //echo "token: ".$token;
+            return $token!=null;
         }
 
-        public static function getUsername(): array|string
+        public static function getUsername(): string
         {
             //return "testusername";
             $token = Auth::getCheckedToken();
-            return DB::query("SELECT username FROM account, session WHERE account.userID = session.userID and token = :token", [':token' => $token]);
+            $username = DB::query("SELECT username FROM account, session WHERE account.userID = session.userID and token = :token;", [':token' => $token])[0]['username'];
+            return $username;
         }
 
         public static function userIDExists($userID): bool
