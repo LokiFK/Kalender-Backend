@@ -3,12 +3,12 @@
 
 <ul id=terminListe>
 {! termine:
-    <li class=datum id=datum{{ termineIterationNr }}>
-        {{ datum }}
-        <ul class=uhrzeitenListe id=uhrzeitenList{{ termineIterationNr }}>
-        {! termineInner:
-            <li class=termin id=termin{{ termineIterationNR }}.{{ termineInnerIterationNr }}>
-                <a class=terminLink id=terminLink{{ termineIterationNR }}.{{ termineInnerIterationNr }} href="/user/appointments/new3?treatment={{ treatment  }}&date={{ datum }}&start={{ start }}&end={{ end }}">{{ start }} bis {{ end }}</a>
+    <li class=datum id=datum{{ termine.iterationNr }}>
+        {{ termine.key }}
+        <ul class=uhrzeitenListe id=uhrzeitenList{{ termine.iterationNr }}>
+        {! termine/inner:
+            <li class=termin id=termin{{ termine.iterationNr }}.{{ termine/inner.iterationNr }}>
+                <a class=terminLink id=terminLink{{ termine.iterationNr }}.{{ termine/inner.iterationNr }} href="/user/appointments/new3?treatment={{ treatment }}&date={{ termine.key }}&start={{ start }}&end={{ end }}">{{ start }} bis {{ end }}</a>
             </li>
          !}
         </ul>

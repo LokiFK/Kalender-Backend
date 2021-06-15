@@ -43,7 +43,8 @@
                 ErrorUI::error(400, 'Treatment not found.');
             }
             //$termine = 
-            $termine = [ [ "datum"=>"14.06.21", "inner"=>[["start"=>"13:00", "end"=>"13:15" ], ["start"=>"14:00", "end"=>"14:15" ]] ], [ "datum"=>"15.06.21", "inner"=>[["start"=>"13:00", "end"=>"13:15" ], ["start"=>"14:00", "end"=>"14:15" ]] ] ];
+            //$termine = [ [ "datum"=>"14.06.21", "inner"=>[["start"=>"13:00", "end"=>"13:15" ], ["start"=>"14:00", "end"=>"14:15" ]] ], [ "datum"=>"15.06.21", "inner"=>[["start"=>"13:00", "end"=>"13:15" ], ["start"=>"14:00", "end"=>"14:15" ]] ] ];
+            $termine = [ "14.06.2021"=>[["start"=>"13:00", "end"=>"13:15" ], ["start"=>"14:00", "end"=>"14:15" ]], "15.06.2021"=>[["start"=>"13:00", "end"=>"13:15" ], ["start"=>"14:00", "end"=>"14:15" ]]];
             $view = $res->view('user/new2', [ "treatment"=>$treatment ], array(), [ "termine"=>$termine ]);
             echo $view;
         }

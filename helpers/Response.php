@@ -201,15 +201,24 @@
         {
             $content = "";
             $parts = explode(":", $innerData, 2);
-            if (array_key_exists($parts[0], $replaceData->loopData)) {
-                $array = $replaceData->loopData[$parts[0]];
+            $sonderpfad = str_replace(".", "/", $parts[0])."/inner";
+            $keys = explode(".", $parts[0]);
+            $array = $replaceData->loopData;
+            foreach($keys as $keyskey){
+                if (is_array($array) && array_key_exists($keyskey, $array)) {
+                    $array = $array[$keyskey];
+                } else {
+                    return $content;
+                }   
+            }
                 $iterationNr = 1;
-                foreach ($array as $data) {
-                    if(is_array($data) && array_key_exists("inner", $data)){
-                        $replaceData->loopData[$parts[0]."Inner"] = $data["inner"];
+                foreach ($array as $aKey => $data) {
+                    if(is_array($data)){
+                        $replaceData->loopData[$sonderpfad] = $data;
                     }    
                     $iteration = Response::processTags($parts[1], "noName", $replaceData);
-                    $iteration = str_replace("{{ ".$parts[0]."IterationNr }}", $iterationNr, $iteration);
+                    $iteration = str_replace("{{ ".$parts[0].".iterationNr }}", $iterationNr, $iteration);
+                    $iteration = str_replace("{{ ".$parts[0].".key }}", $aKey, $iteration);
                     if (is_string($data)) {
                         $iteration = str_replace("{{ " . $parts[0] . " }}", $data, $iteration);
                     } else if (is_array($data)) {
@@ -224,8 +233,10 @@
                     $content = $content . $iteration;
                     $iterationNr++;
                 }
-            }
-            return $content;
+                if(array_key_exists($sonderpfad, $replaceData->loopData)){
+                    unset($replaceData->loopData[$sonderpfad]);
+                }
+                return $content;
         }
 
 

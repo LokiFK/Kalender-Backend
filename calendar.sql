@@ -169,6 +169,11 @@ CREATE TABLE `treatment` (
   `nrNurses` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
+-- Daten für Tabelle treatment
+insert into treatment (id, name, duration, nrDoctors, nrNurses) values
+(1, 'b1', 15, 1,1)
+(2, 'b2', 10, 0,2);
 -- --------------------------------------------------------
 
 --
