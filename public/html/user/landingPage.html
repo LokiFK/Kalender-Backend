@@ -1,0 +1,37 @@
+{[ title=>Startseite ]}
+{# extend general/template@main #}
+{% styles %}
+
+<div class="content-wrapper">
+    <div class="row">
+        <div class="appointments">
+            <h3>Alle Termine</h3>
+            <div class="appointments-list">
+                {! appointments: 
+                    <div class="appointments-list-item">
+                        <div class="row">
+                            <div><p class="type">{{ appointments.type }}</p></div>
+                            <div class="row">
+                                <p class="start">{{ appointments.start }}</p> -
+                                <p class="end">{{ appointments.end }}</p>
+                            </div>
+                        </div>
+                    </div>
+                 !}
+            </div>
+        </div>
+        <div class="create-appointment">
+            <h3>Für welchen Anlass benötigen Sie einen Termin?</h3>
+            <div class="appointment-types">
+                {! appointmentTypes: 
+                    <div class="appointment-types-item">
+                        <form action="/user/appointments/new2" method="GET">
+                            <input type="hidden" name="treatment" value="{{ appointmentTypes }}">
+                            <input type="submit" value="{{ appointmentTypes }}">
+                        </form>
+                    </div>
+                 !}
+            </div>
+        </div>
+    </div>
+</div>

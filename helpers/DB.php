@@ -16,7 +16,7 @@
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 return $pdo;
             } catch (PDOException $e) {
-                ErrorUI::errorFiveHundred($e);
+                ErrorUI::error(500, 'Error connecting to DB');
                 exit;
             }
         }

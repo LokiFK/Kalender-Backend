@@ -12,7 +12,7 @@
 
     $routes = new Routes();
 
-    $routes->get('/', 'GeneralController@startPage');
+    $routes->get('/', 'GeneralController@landingPage');
 
     // --- USER --- \\
     // Appointments
@@ -35,11 +35,12 @@
     $routes->get('/auth/account/create', 'AuthController@createAccount');
     $routes->post('/auth/account/create', 'AuthController@createAccount');
 
-    $routes->get('/auth', 'AuthController@test');
-
     // Login
-    $routes->post('/auth/login', 'AuthController@login');
     $routes->get('/auth/login', 'AuthController@login');
+    $routes->post('/auth/login', 'AuthController@login');
+
+    // Logout
+    $routes->get('/auth/logout', 'AuthController@logout');
 
     // Permissions
     $routes->get('/api/auth/permissions', 'AuthController@permissions');

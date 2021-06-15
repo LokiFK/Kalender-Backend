@@ -1,4 +1,5 @@
 width: 30%
+Start(/)
 Terminvereinbarung(/user/appointments/new)
 /
 Anmelden(/auth/login)

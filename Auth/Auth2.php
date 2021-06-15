@@ -1,5 +1,5 @@
 <?php
-
+/*
 	  class Auth {
 
 		const DURATION = '30 Minutes';		
@@ -84,7 +84,7 @@
              * $token = Auth::getToken();
              * $userID = Auth::userID();
              * Da hast du die Token-validation direkt mit drin und ganz nebenbei hast du dadurch verdopplungen im Code vermieden
-             */
+             *
 
             $token = "";
             $userid = 0;
@@ -126,7 +126,7 @@
              * $token = Auth::getToken();
              * $userID = Auth::userID();
              * Da hast du die Token-validation direkt mit drin und ganz nebenbei hast du dadurch verdopplungen im Code vermieden
-             */
+             *
 
             $token = "";
             $userid = 0;
@@ -159,5 +159,5 @@
             return $res[0]['erstellungsdatum'] == null; 
         }
     }
-
+*/
 ?>
