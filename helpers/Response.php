@@ -348,7 +348,7 @@
             $list = $list . "</ul>";
             $script = $script."}}";
             $style = $style . "</style>";
-            echo "$style";
+            //echo "$style";
             return "<script>" . $script . "</script>" . $style . $list . $dropdownHtml;
         }
     }
