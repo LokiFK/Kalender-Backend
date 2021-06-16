@@ -2,7 +2,7 @@
 
     class Auth {
         
-		const DURATION = '30 Minutes';
+		const DURATION = 'PT30M';
 
         public static function user()
         {
@@ -50,25 +50,28 @@
             DB::query("UPDATE account SET erstellungsdatum = " . date('Y-M-D') . " WHERE userID = :userID;", [':userID' => $userID]);
         }
 
-        public static function login($username, $password, bool $remember): string
+        public static function login($username, $password, bool $remember)
         {
-            $account = DB::table('account')->where('username = :username', [':username' => $username])->get()[0];
-
-            if (password_verify($password, $account['password'])) {
-                $token = Auth::createNewToken();
-                $start = date('Y-M-D H:M:S');
-                $end = null;
-                if (!$remember) {
-                    $date = new DateTime();
-                    $date->add(new DateInterval(Auth::DURATION));
-                    $end = $date->format('Y-M-D H:M:S');
+            $accounts = DB::table('account')->where('username = :username', [':username' => $username])->get();
+            if(count($accounts)==1){
+                $account = $accounts[0];
+                if (password_verify($password, $account['password'])) {
+                    $token = Auth::createNewToken();
+                    $start = date('Y-M-D H:M:S');
+                    $end = null;
+                    if (!$remember) {
+                        $date = new DateTime();
+                        $date->add(new DateInterval(Auth::DURATION));
+                        $end = $date->format('Y-M-D H:M:S');
+                    }
+                    DB::query(
+                        "INSERT INTO `session` (`userid`, `token`, `start`, `end`) VALUES (:userID, :token, :start, :end);",
+                        [':userID' => $account['userID'], ':token' => $token, ':start' => $start, ':end' => $end]
+                    );
+                    return $token;
                 }
-                DB::query(
-                    "INSERT INTO `session` (`userid`, `token`, `start`, `end`) VALUES (:userID, :token, :start, :end);",
-                    [':userID' => $account['userID'], ':token' => $token, ':start' => $start, ':end' => $end]
-                );
-                return $token;
             }
+            return null;    
         }
 
         public static function logout()

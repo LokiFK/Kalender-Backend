@@ -58,12 +58,20 @@
                 echo $res->view('auth/login');
             } else if ($req->getMethod() == "POST") {
                 $validatedData = Form::validate($req->getBody(), ['username', 'password']);
-                
-                $token = Auth::login($validatedData['username'], $validatedData['password'], true);
+                $remember = false;
+                if(isset($req->getBody()['remember']) && $req->getBody()['remember'] == 'on'){
+                    $remember = true;
+                }
+                $token = Auth::login($validatedData['username'], $validatedData['password'], $remember);
                 //echo $token;
-                setcookie('token', $token, time() + 60 * 60 * 24 * 30, '/');
+                if($token!=null){
+                    setcookie('token', $token, time() + 60 * 60 * 24 * 30, '/');
 
-                Path::redirect('../../../');
+                    Path::redirect('../../../');
+                } else {
+                    echo "wrong username or password";      //todo
+                    echo $res->view('auth/login');
+                }
             }
         }
         public function logout(Request $req, Response $res){
