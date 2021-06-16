@@ -36,6 +36,8 @@
     $routes->get('/auth/account/create', 'AuthController@createAccount');
     $routes->post('/auth/account/create', 'AuthController@createAccount');
 
+    $routes->get('/auth/account/approve', 'AuthController@approve');
+
     // Login
     $routes->get('/auth/login', 'AuthController@login');
     $routes->post('/auth/login', 'AuthController@login');

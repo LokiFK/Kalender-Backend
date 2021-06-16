@@ -36,7 +36,7 @@
                 $userID = DB::table('notapproved')->where('`code` = :code', [':code' => $validatedData['code']])->get();
 
                 if (count($userID) > 0) {
-                    Auth::registerAccount(
+                    $code = Auth::registerAccount(
                         new Account(
                             $userID[0]['userID'],
                             $validatedData['username'],
@@ -45,10 +45,19 @@
                             false
                         ), true
                     );
-                }
 
-                
-                Path::redirect('../../../');
+                    $link =  $_SERVER['HTTP_HOST'].'/auth/account/approve?code='.$code;
+                    echo $link;
+                    echo "<a href=../../../auth/account/emailApproval>kopiert und normal weiter</a>";
+                    
+                    /*$from = "FROM Terminplanung @noreply";
+                    $subject = "Account bestätigen";
+                    $msg = "BlaBlaBla Hier ihr anmelde Link: '.$link;
+                    mail($account->email, $subject, $msg, $from);
+                    
+                    Path::redirect('../../../auth/account/emailApproval');
+                    */
+                }
             }
 
             /*
@@ -57,6 +66,14 @@
                     $msg = $code;
             //mail($account->email, $subject, $msg, $from);
             */
+        }
+        public function approve(Request $req, Response $res){
+            $data = Form::validate($req->getBody(), ['code']);
+            if(Auth::approveAccount($data['code'])){
+                echo 'account bestätigt';                               //todo
+            } else {
+                echo 'Tut uns leid es liegt ein Fehler vor.';
+            }
         }
 
         public function login(Request $req, Response $res)
