@@ -38,18 +38,16 @@
                 if($approvalNeeded){                    //unterscheidet approved User von nicht approved User
                     $created = null;
                 } else {
-                    $created = date('Y-M-D H:M:S');
+                    $created = date('Y-M-D');
                 }
                 DB::query("INSERT INTO account (userID, username, email, password, createdAt) VALUES (:userID, :username, :email, :password, :createdAt);",[':userID' => $account->userID, ':username' => $account->username, ':email' => $account->email, ':password' => password_hash($account->password, PASSWORD_DEFAULT), ':createdAt' => $created]);
                 
                 if($approvalNeeded){
-                    $code = Auth::createNewCode();
-                    DB::query("INSERT INTO notapproved (userID, code, datetime) VALUES (:userID, :code, :date);", [':userID' => $account->userID, ':code' => $code, ':date' => date('Y-M-D H:M:S')]);
-                    return $code;
+                    return Auth::createNewCode($account->userID);
                 }
             }
         }
-        public static function createNewCode()
+        public static function createNewCode($userID)
         {
             try {
                 $code = bin2hex(random_bytes(25));
@@ -63,6 +61,7 @@
                     ErrorUI::error(605, $e);
                 }
             }
+            DB::query("INSERT INTO notapproved (userID, code, datetime) VALUES (:userID, :code, :date);", [':userID' => $userID, ':code' => $code, ':date' => date('Y-M-D H:M:S')]);
             return $code;
         }
 

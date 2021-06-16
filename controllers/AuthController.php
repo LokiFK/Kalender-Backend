@@ -48,14 +48,14 @@
 
                     $link =  $_SERVER['HTTP_HOST'].'/auth/account/approve?code='.$code;
                     echo $link;
-                    echo "<a href=../../../auth/account/emailApproval>kopiert und normal weiter</a>";
+                    echo "<a href=../../../auth/account/notApproved>kopiert und normal weiter</a>";
                     
                     /*$from = "FROM Terminplanung @noreply";
                     $subject = "Account bestätigen";
                     $msg = "BlaBlaBla Hier ihr anmelde Link: '.$link;
                     mail($account->email, $subject, $msg, $from);
                     
-                    Path::redirect('../../../auth/account/emailApproval');
+                    Path::redirect('../../../auth/account/emailApproved');
                     */
                 }
             }
@@ -75,6 +75,14 @@
                 echo 'Tut uns leid es liegt ein Fehler vor.';
             }
         }
+        public function notApproved(Request $req, Response $res){
+            $token = Auth::getTokenWithUnapprovedUsers();
+            if($token == null){
+                echo "bad request";
+                exit();
+            }
+            echo "todo: email ändern, neue schicken";
+        }
 
         public function login(Request $req, Response $res)
         {
@@ -91,7 +99,12 @@
                 if($token!=null){
                     setcookie('token', $token, time() + 60 * 60 * 24 * 30, '/');
 
-                    Path::redirect('../../../');
+                    $res = DB::query("select count(*) as Anzahl from session, account where session.userID = account.userID and token = :token and createdAt is not null", [":token"=>$token]);
+                    if($res[0]['Anzahl']==1){   //approved
+                        Path::redirect('../../../');
+                    } else {
+                        Path::redirect('../../../auth/account/emailApproved');
+                    }
                 } else {
                     echo "wrong username or password";      //todo
                     echo $res->view('auth/login');
