@@ -28,26 +28,51 @@
         {
             DB::query("INSERT INTO users (firstname, lastname, salutation, insurance, birthday, patientID) VALUES (:firstname, :lastname, :salutation, :insurance, :birthday, :patientID)", [':firstname' => $user->firstname, ':lastname' => $user->lastname, ':salutation' => $user->salutation, ':insurance' => $user->insurance, ':birthday' => $user->birthday, ':patientID' => $user->patientID]);
             $userID = DB::table('users')->where('firstname = :firstname', [':firstname' => $user->firstname])->get([], ['id'])[0]['id'];
-            $code = Auth::createNewToken();
             
-            DB::query("INSERT INTO notapproved (userID, code, datetime) VALUES (:userID, :code, :date);", [':userID' => $userID, ':code' => $code, ':date' => date('Y-M-D')]);
-            $from = "FROM Terminplanung @noreply";
-            $subject = "Account bestätigen";
-            $msg = $code;
-            return $code;
-            //mail($account->email, $subject, $msg, $from);
+            return $userID;
         }
 
-        public static function registerAccount(Account $account)
+        public static function registerAccount(Account $account, $approvalNeeded)
         {
             if (Auth::userExists($account->userID)) {
-                DB::query("INSERT INTO account (userID, username, email, password, createdAt) VALUES (:userID, :username, :email, :password, :createdAt);",[':userID' => $account->userID, ':username' => $account->username, ':email' => $account->email, ':password' => password_hash($account->password, PASSWORD_DEFAULT), ':createdAt' => date('Y-m-d')]);
+                if($approvalNeeded){                    //unterscheidet approved User von nicht approved User
+                    $created = null;
+                } else {
+                    $created = date('Y-M-D H:M:S');
+                }
+                DB::query("INSERT INTO account (userID, username, email, password, createdAt) VALUES (:userID, :username, :email, :password, :createdAt);",[':userID' => $account->userID, ':username' => $account->username, ':email' => $account->email, ':password' => password_hash($account->password, PASSWORD_DEFAULT), ':createdAt' => $created]);
+                
+                if($approvalNeeded){
+                    $code = Auth::createNewCode();
+                    DB::query("INSERT INTO notapproved (userID, code, datetime) VALUES (:userID, :code, :date);", [':userID' => $account->userID, ':code' => $code, ':date' => date('Y-M-D H:M:S')]);
+                    return $code;
+                }
             }
         }
+        public static function createNewCode()
+        {
+            try {
+                $code = bin2hex(random_bytes(25));
+            } catch (Exception $e) {
+                ErrorUI::error(605, $e);
+            }
+            while (count(DB::table('notapproved')->where('code = :code', [':code' => $code])->get()) > 0) {
+                try {
+                    $code = bin2hex(random_bytes(25));
+                } catch (Exception $e) {
+                    ErrorUI::error(605, $e);
+                }
+            }
+            return $code;
+        }
 
-        public static function approveAccount($token, $code) {
-            $userID = DB::table('notapproved')->where('token = :token AND code = :code', [':token' => $token, ":code"=>$code]);
-            DB::query("UPDATE account SET erstellungsdatum = " . date('Y-M-D') . " WHERE userID = :userID;", [':userID' => $userID]);
+        public static function approveAccount($code) {
+            $res = DB::query("select userID from notapproved where code = :code", [":code"=>$code]);
+            if(count($res)==1){
+                DB::query("UPDATE account SET createdAt = " . date('Y-M-D') . " WHERE userID = :userID;", [':userID' => $res[0]['userID']]);
+                return true;
+            }
+            return false;
         }
 
         public static function login($username, $password, bool $remember)
@@ -129,6 +154,13 @@
             return $token;
         }
         public static function getToken() {
+            $token = Auth::getTokenWithUnapprovedUsers();
+            $res = DB::query("select count(*) as Anzahl from session, account where session.userID = account.userID and createdAdd is not null and token = :token", [":token"=>$token]);
+            if ($res[0]['Anzahl'] == 1) {
+                return $token;
+            }
+        }
+        public static function getTokenWithUnapprovedUsers() {
             $token = Auth::getGivenToken();
             if (Auth::isValidToken($token, false)) {
                 return $token;

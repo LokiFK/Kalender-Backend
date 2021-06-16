@@ -43,13 +43,20 @@
                             $validatedData['email'],
                             $validatedData['password'],
                             false
-                        )
+                        ), true
                     );
                 }
 
                 
                 Path::redirect('../../../');
             }
+
+            /*
+            $from = "FROM Terminplanung @noreply";
+                    $subject = "Account bestätigen";
+                    $msg = $code;
+            //mail($account->email, $subject, $msg, $from);
+            */
         }
 
         public function login(Request $req, Response $res)
