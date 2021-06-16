@@ -4,7 +4,7 @@
     box-sizing: border-box;
 }
 
-input[type=text] {
+.form-wrapper input[type=text] {
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
@@ -16,7 +16,7 @@ input[type=text] {
     box-sizing: border-box;
 }
 
-input[type=submit] {
+.form-wrapper input[type=submit] {
     width: 100%;
     background-color:green;
     color: white;
@@ -27,7 +27,7 @@ input[type=submit] {
     cursor: pointer;
 }
 
-input[type=submit]:hover {
+.form-wrapper input[type=submit]:hover {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 

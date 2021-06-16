@@ -1,4 +1,6 @@
-Start(/)
-Terminvereinbarung(/user/appointments/new)
-/
-Anmelden(/auth/login)
+@link[Start(/)]
+@link[Terminvereinbarung(/user/appointments/new)]
+
+@flipside[]
+
+@link[Anmelden(/auth/login)]

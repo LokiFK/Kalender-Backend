@@ -10,6 +10,22 @@
     require './controllers/UserController.php';
 
 
+    TemplateHTML::interpreteNavTemplate('@link[Start(../../)]
+    @link[Terminvereinbarung(/user/appointments/new)]
+    @link[Terminübersicht(/user/appointments/overview)]
+    
+    @flipside[]
+    
+    @dropdown[
+        title="{{ username }}()"
+        items="
+            Profil(/user/profile)
+            Abmelden(/auth/logout)
+        "
+    ]');
+
+
+
     $routes = new Routes();
 
     $routes->get('/', 'GeneralController@startPage');

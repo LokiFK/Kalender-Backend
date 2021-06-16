@@ -21,6 +21,7 @@
         {
             return Response::viewObject($component, new ReplaceData($data, $safeData, $loopData));
         }
+        
         public static function viewObject($component, $replaceData){
             $content = Response::load($component, $replaceData);
             if ($content !== null) { return $content; }
@@ -211,55 +212,55 @@
                     return $content;
                 }   
             }
-                $iterationNr = 1;
-                foreach ($array as $aKey => $data) {
-                    if(is_array($data)){
-                        $replaceData->loopData[$sonderpfad] = $data;
-                    }    
-                    $iteration = Response::processTags($parts[1], "noName", $replaceData);
-                    $iteration = str_replace("{{ ".$parts[0].".iterationNr }}", $iterationNr, $iteration);
-                    $iteration = str_replace("{{ ".$parts[0].".key }}", $aKey, $iteration);
-                    if (is_string($data)) {
-                        $iteration = str_replace("{{ " . $parts[0] . " }}", $data, $iteration);
-                    } else if (is_array($data)) {
-                        foreach ($data as $key => $value) {  
-                            if (is_string($key) && is_string($value)) {
-                                $iteration = str_replace("{{ " . $key . " }}", $value, $iteration);
-                                // version where you can access dict like in generalcontroller@landingPage
-                                $iteration = str_replace("{{ " . $parts[0] . "." . $key . " }}", $value, $iteration);
-                            }      
-                        }
+            $iterationNr = 1;
+            foreach ($array as $aKey => $data) {
+                if(is_array($data)){
+                    $replaceData->loopData[$sonderpfad] = $data;
+                }    
+                $iteration = Response::processTags($parts[1], "noName", $replaceData);
+                $iteration = str_replace("{{ ".$parts[0].".iterationNr }}", $iterationNr, $iteration);
+                $iteration = str_replace("{{ ".$parts[0].".key }}", $aKey, $iteration);
+                if (is_string($data)) {
+                    $iteration = str_replace("{{ " . $parts[0] . " }}", $data, $iteration);
+                } else if (is_array($data)) {
+                    foreach ($data as $key => $value) {  
+                        if (is_string($key) && is_string($value)) {
+                            $iteration = str_replace("{{ " . $key . " }}", $value, $iteration);
+                            // version where you can access dict like in generalcontroller@landingPage
+                            $iteration = str_replace("{{ " . $parts[0] . "." . $key . " }}", $value, $iteration);
+                        }      
                     }
-                    $content = $content . $iteration;
-                    $iterationNr++;
                 }
-                if(array_key_exists($sonderpfad, $replaceData->loopData)){
-                    unset($replaceData->loopData[$sonderpfad]);
-                }
-                return $content;
+                $content = $content . $iteration;
+                $iterationNr++;
+            }
+            if(array_key_exists($sonderpfad, $replaceData->loopData)){
+                unset($replaceData->loopData[$sonderpfad]);
+            }
+            return $content;
         }
 
 
-        public static function nav($navContentLink, $absolutOrigin, $replaceData){
-            if($navContentLink == "{{ navContentLink }}"){
-                if($absolutOrigin == "{{ absolutOrigin }}"){
+        public static function nav($navContentLink, $absolutOrigin, $replaceData) {
+            if ($navContentLink == "{{ navContentLink }}") {
+                if ($absolutOrigin == "{{ absolutOrigin }}") {
                     return "<!-- Navigationsleiste konnte leider nicht geladen werden. navContentLink nicht gefunden. -->";
                 } 
                 $i = 0;        //definitly needs improving
                 $j = -1;
-                while($j !== false){
+                while ($j !== false) {
                     $i = $j;
                     $j = strpos($absolutOrigin, "/", $j+1);
                 }
                 $navContentLink = substr($absolutOrigin, 0, $i)."/nav";
             }
-            if(is_file("./public/html/".$navContentLink.".html")){
+
+            if (is_file("./public/html/".$navContentLink.".html")) {
                 $content = Response::viewObject($navContentLink, $replaceData);
-                if(substr($content, 0, 6) == "Link: "){
+                if (substr($content, 0, 6) == "Link: ") {
                     $navContentLink = substr($content, 6, strpos($content, ";", 6)-6);
                 }
-            }
-            if(!is_file("./public/html/".$navContentLink.".nav")){
+            } else if (!is_file("./public/html/".$navContentLink.".nav")) {
                 return "<!-- Navigationsleiste konnte leider nicht geladen werden. Datei($navContentLink) nicht gefunden. -->";
             }
             $navContent = file_get_contents("./public/html/".$navContentLink.".nav");
@@ -282,8 +283,10 @@
             $side = "left";
             $elementNr = -1;
             $umbruch = -1;
+            
             foreach($lines as $line){
-                if(substr($line, 0, 1) == "/"){            //Wechsel zur rechten Seite
+                echo htmlspecialchars($list) . "<br><br>";
+                if (substr($line, 0, 1) == "/") {            //Wechsel zur rechten Seite
                     $side = "right";
                     $umbruch = $elementNr;
                 } else {
@@ -295,8 +298,9 @@
                     }
                     $content = substr($line, 0, $startParam);
                     $param = substr($line, $startParam+1, strpos($line, ")", $startParam+1) - 1-$startParam);
-                    if(substr($content, 0, 1) == "-"){      //Unterpunkte eines Dropdown
-                        if(!array_key_exists($elementNr, $dropdown)){
+
+                    if (substr($content, 0, 1) == "-") {      //Unterpunkte eines Dropdown
+                        if (!array_key_exists($elementNr, $dropdown)) {
                             $dropdown[$elementNr] = array();
                         }
                         $content = substr($content, 1);
@@ -305,7 +309,7 @@
                         if($param != ""){
                             $param = explode(", ", $param);
                             if($param[0] != ""){
-                            $href="href=\"" . $param[0] . "\"";
+                                $href="href=\"" . $param[0] . "\"";
                             }
                             if(count($param)>1 && $param[1] != ""){
                                 $style = $style."#navDropdownElement".count($dropdown[$elementNr])."{width:" . $param[1] . ";}";

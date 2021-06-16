@@ -100,7 +100,7 @@
 
         public static function logout()
         {
-            $token = Auth::getCheckedToken();
+            $token = Auth::getToken();
 
             DB::query('UPDATE `session` SET `end` = :end WHERE `token` = :token', [':token' => $token, ':end' => date('Y-M-D H:M:S')]);
         }
@@ -113,7 +113,7 @@
 
         private static function isValidToken($token): bool
         {
-            $erg = DB::query("SELECT `end` FROM `session` WHERE `token` = :token AND (`end` IS NULL OR `end` < :end);", [':token' => $token, ":end" => date('Y-M-D H:M:S')]);
+            $erg = DB::query("SELECT `end` FROM `session` WHERE `token` = :token AND (`end` IS NULL OR `end` < :end);", [':token' => $token, ":end" => date('Y/m/d h:i:sa')]);
             if (count($erg) == 1) {
                 if ($erg[0]['end'] != null) {
                     $date = new DateTime();
@@ -146,7 +146,6 @@
         public static function getCheckedToken() {
             $token = Auth::getToken();
             if ($token == null) {
-                debug_print_backtrace();
                 ErrorUI::error(401, 'Invalid Token');
                 exit;
             }
@@ -161,7 +160,7 @@
         }
         public static function getTokenWithUnapprovedUsers() {
             $token = Auth::getGivenToken();
-            if (Auth::isValidToken($token, false)) {
+            if (Auth::isValidToken($token)) {
                 return $token;
             }
         }

@@ -8,5 +8,6 @@
     require_once './helpers/Middleware.php';
     require_once './helpers/UI.php';
     require_once './helpers/Form.php';
+    require_once './helpers/TemplateHTML.php';
 
 ?>

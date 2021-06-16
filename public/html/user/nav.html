@@ -1,5 +1,5 @@
 {?php 
-    if(Auth::isLoggedIn()){
+    if (Auth::isLoggedIn()) {
         $username = Auth::getUsername();
         $replaceData->data['username'] = $username;
         return "Link: user/navUser;";

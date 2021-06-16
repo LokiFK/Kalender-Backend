@@ -1,7 +1,13 @@
-Start(/)
-Terminvereinbarung(/user/appointments/new)
-Terminübersicht(/user/appointments/overview)
-/
-{{ username }}()
--Profil(/user/profile)
--Abmelden(/auth/logout)
+@link[Start(../../)]
+@link[Terminvereinbarung(/user/appointments/new)]
+@link[Terminübersicht(/user/appointments/overview)]
+
+@flipside[]
+
+@dropdown[
+    title="{{ username }}()";
+    items="
+        Profil(/user/profile),
+        Abmelden(/auth/logout)
+    "
+]

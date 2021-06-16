@@ -5,8 +5,12 @@
         public function landingPage(Request $req, Response $res){
             $allAppointmentTypes = ['Sprechstunde', 'Belastungs-EKG', 'HNO-Allgemeinuntersuchung','HNO-Allgemeinuntersuchung', 'Belastungs-EKG', 'Sprechstunde','Sprechstunde','HNO-Allgemeinuntersuchung', 'Belastungs-EKG', 'Sprechstunde', 'Belastungs-EKG', 'HNO-Allgemeinuntersuchung'];
 
+            $username = Auth::isLoggedIn() ? Auth::getUsername() : "";
+            
             echo $res->view('user/landingPage',
-                [],
+                [
+                    'username' => $username
+                ],
                 [],
                 [
                     'appointments' => [
