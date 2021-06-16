@@ -153,7 +153,7 @@
         }
         public static function getToken() {
             $token = Auth::getTokenWithUnapprovedUsers();
-            $res = DB::query("select count(*) as Anzahl from session, account where session.userID = account.userID and createdAdd is not null and token = :token", [":token"=>$token]);
+            $res = DB::query("select count(*) as Anzahl from session, account where session.userID = account.userID and createdAt is not null and token = :token", [":token"=>$token]);
             if ($res[0]['Anzahl'] == 1) {
                 return $token;
             }
