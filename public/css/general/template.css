@@ -1,21 +1,28 @@
-*{
+* {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
 }
+
 body {
-    background-color: #f2f2f2;
+    background-color: rgb(221, 221, 221);
     font-family: 'Open Sans', sans-serif;
 }
-#nav{
-    margin:0;
+
+#nav {
+    position: fixed;
+    top: 0;
+    width: calc(100% - 20px);
+    margin-left: 10px;
+    margin-right: 10px;
 }
-#footer{
-    position: absolute;
-    width: 100%;
+
+#footer {
+    left: 0;
     bottom: 0;
+    width: 100%;
 }
-/*#content{
-    background-color:lightgreen;
-    padding-top:0;
-}*/
+
+#content {
+    margin-top: 80px;
+}
