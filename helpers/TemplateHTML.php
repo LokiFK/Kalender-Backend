@@ -24,9 +24,10 @@
                 }
             }
 
-            $navTemplate = file_get_contents("./public/html/" . $navPath . ".nav");
-
-            return TemplateHTML::interpreteNavTemplate($navTemplate);
+           if (is_file("./public/html/" . $navPath . ".nav")) {
+                return TemplateHTML::interpreteNavTemplate( file_get_contents("./public/html/" . $navPath . ".nav"));
+            }
+            return "<!-- Navbar not found -->"; 
         }
 
         public static function interpreteNavTemplate(string $navTemplate): string
