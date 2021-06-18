@@ -1,7 +1,9 @@
 {?php
     if(Auth::getStatus()==0){
         return "@link[Anmelden(/auth/login)]";    
-    } else if(Auth::getStatus()==1){
+    }
+    $replaceData->data['username'] = Auth::getAccount()['username'];
+    if(Auth::getStatus()==1){
         return 
         '@dropdown[
             title={{ username }};
