@@ -12,15 +12,15 @@
             $this->routes = array();
         }
 
-        public function get($route, $activator)
+        public function get($route, $activator, $neededStatus = 0)
         {
-            $newRoute = new Route($route, 'GET', $activator);
+            $newRoute = new Route($route, 'GET', $activator, $neededStatus);
             array_push($this->routes, $newRoute);
         }
 
-        public function post($route, $activator)
+        public function post($route, $activator, $neededStatus = 0)
         {
-            $newRoute = new Route( $route, 'POST', $activator);
+            $newRoute = new Route( $route, 'POST', $activator, $neededStatus);
             array_push($this->routes, $newRoute);
         }
 
@@ -34,11 +34,16 @@
             for ($i=0; $i < count($this->routes); $i++) {
                 if ($this->routes[$i]->getRoute() == $path) {
                     if ($_SERVER['REQUEST_METHOD'] == $this->routes[$i]->getMethod()) {
-                        $activator = explode('@', $this->routes[$i]->getActivator());
-                        $class = new $activator[0]();
-                        $method = $activator[1];
-                        $class->$method(new Request($_REQUEST, $_SERVER['REQUEST_METHOD']), new Response());
-                        return;
+                        if($this->routes[$i]->getNeededStatus() <= Auth::getStatus()){
+                            $activator = explode('@', $this->routes[$i]->getActivator());
+                            $class = new $activator[0]();
+                            $method = $activator[1];
+                            $class->$method(new Request($_REQUEST, $_SERVER['REQUEST_METHOD']), new Response());
+                            return;
+                        } else {
+                            echo "Bitte bei Account mit dne notwendigen Berechtigungen anmelden.";
+                            exit();    
+                        }
                     }
                 }
             }
@@ -51,12 +56,14 @@
         private $route;
         private $method;
         private $activator;
+        private $neededStatus;
 
-        public function __construct($route, $method, $activator)
+        public function __construct($route, $method, $activator, $neededStatus)
         {
             $this->route = $route;
             $this->method = $method;
             $this->activator = $activator;
+            $this->neededStatus = $neededStatus;
         }
 
         public function getRoute()
@@ -72,6 +79,11 @@
         public function getActivator()
         {
             return $this->activator;
+        }
+
+        public function getNeededStatus()
+        {
+            return $this->neededStatus;
         }
     }
 

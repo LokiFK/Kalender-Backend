@@ -17,9 +17,9 @@
             ErrorUI::error($errCode, $msg);
         }
 
-        public static function view(string $component, array $data = array(), array $safeData = array(), array $loopData = array())
+        public static function view(string $component, array $data = array(), array $safeData = array(), array $loopData = array(), $stuff = null)
         {
-            return TemplateHTML::load($component, new ReplaceData($data, $safeData, $loopData));
+            return TemplateHTML::load($component, new ReplaceData($data, $safeData, $loopData, $stuff));
         }
     }
 
@@ -27,12 +27,14 @@
         public array $data;
         public array $safeData;
         public array $loopData;
+        public $stuff;
 
-        public function __construct($data, $safeData, $loopData)
+        public function __construct($data, $safeData, $loopData, $stuff)
         {
             $this->data = $data;
             $this->safeData = $safeData;
             $this->loopData = $loopData;
+            $this->stuff = $stuff;
         }
     }
 ?>

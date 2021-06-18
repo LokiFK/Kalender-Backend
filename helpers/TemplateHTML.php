@@ -25,7 +25,9 @@
             }
 
             if (is_file("./public/html/" . $navPath . ".nav")) {
-                $navTemplate = file_get_contents("./public/html/" . $navPath . ".nav");
+                $navTemplate = TemplateHTML::load("@nav:".$navPath, $replaceData);
+                //echo $navTemplate;
+                //return $navTemplate;
                 return TemplateHTML::interpreteNavTemplate($navTemplate);
             }
             return "<!-- Navbar not found -->"; 
@@ -137,17 +139,39 @@
 
         public static function load(string $componentName, ReplaceData $replaceData): string
         {
-            $pathHTML = "./public/html/" . $componentName . ".html";
+            $path = "";
+            if(substr($componentName, 0, 5) == "@nav:"){
+                $path = "./public/html/". substr($componentName, 5) . ".nav";
+            } else {
+                $path = "./public/html/" . $componentName . ".html";
+            }
 
-            if (is_file($pathHTML)) {
-                $component = file_get_contents($pathHTML);
+            if (is_file($path)) {
+                $component = file_get_contents($path);
                 $content = TemplateHTML::processTags($component, $componentName, $replaceData);
 
-                if ($content !== null) { return $content; }
+                if ($content !== null) { 
+                    /*if(substr($componentName, 0, 5) == "@nav:"){
+                        TemplateHTML::interpreteNavTemplate($content);
+                    }*/    
+                    return $content; 
+                }
             }
 
             ErrorUI::error(500, 'Error setting up HTML');
             exit;
+        }
+        public static function fileExists($componentName){
+            $path = "";
+            if(substr($componentName, 0, 5) == "@nav:"){
+                $path = "./public/html/". substr($componentName, 5) . ".nav";
+            } else {
+                $path = "./public/html/" . $componentName . ".html";
+            }
+            if (is_file($path)) {
+                return true;
+            }
+            return false;    
         }
 
         private static function processTags(string $component, string $componentName, ReplaceData $replaceData)
@@ -307,8 +331,8 @@
 
         public static function loadCodeSnippets($innerData, $replaceData)
         {
-            $innerData = str_replace(' ', '', $innerData);
-            if (is_file("./public/html/" . $innerData . ".html")) {
+            //$innerData = str_replace(' ', '', $innerData);
+            if (TemplateHTML::fileExists($innerData)) {
                 return TemplateHTML::load($innerData, $replaceData);
             }
             return "<!--CodeSnippet nicht gefunden-->";

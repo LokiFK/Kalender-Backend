@@ -4,26 +4,43 @@
 
     class Auth {
         
-        static $status;
-        static $user;
-        static $account;
-        static $admin;
+        private static $status;
+        private static $token;
+        private static $user;
+        private static $account;
+        private static $admin;
 
 		const DURATION = 'PT30M';
 
+        public static function getToken(){
+            return self::$token;
+        }
+        public static function getStatus(){
+            return self::$status;
+        }
+        public static function getUser(){
+            return self::$user;
+        }
+        public static function getAccount(){
+            return self::$account;
+        }
+        public static function getAdmin(){
+            return self::$admin;
+        }
+
         public static function start(){
-            $token = Auth::getGivenToken();
-            if($token == null){
+            self::$token = Auth::getGivenToken();
+            if(self::$token == null){
                 self::$status=0;
                 return;
             }
-            $res = DB::query("SELECT `userID`, `end` FROM `session` WHERE `token` = :token  AND (`end` IS NULL OR `end` < :end);", [':token' => $token, ":end" => date('Y/m/d h:i:sa')] );
+            $res = DB::query("SELECT `userID`, `end` FROM `session` WHERE `token` = :token  AND (`end` IS NULL OR `end` > :end);", [':token' => self::$token, ":end" => date('Y/m/d h:i:sa')] );
             if (count($res) == 1) {
                 if ($res[0]['end'] != null) {
                     $date = new DateTime();
                     $date->add(new DateInterval(Auth::DURATION));
                     $end = $date->format('Y/m/d h:i:sa');
-                    DB::query("UPDATE `session` SET `end` = :end WHERE `token` = :token;", [':token' => $token, ':end' => $end]);
+                    DB::query("UPDATE `session` SET `end` = :end WHERE `token` = :token;", [':token' => self::$token, ':end' => $end]);
                 } 
                 self::$user = DB::query("SELECT * FROM users WHERE id = :id", [ ':id' => $res[0]['userID'] ])[0];
                 self::$account = DB::query("SELECT * FROM account WHERE userID = :userID", [ ':userID' => $res[0]['userID'] ])[0];
@@ -45,7 +62,8 @@
 
         public static function user()
         {
-            $token = Auth::getCheckedToken();
+            return self::$user;
+            /*$token = Auth::getCheckedToken();
             if (!isset($token)) { return; }
 
             $tokenWithUser = DB::table('session')->where('token = :token', [':token' => $token])->get([new ForeignDataKey('userID', 'users', 'id')]);
@@ -54,13 +72,15 @@
                 exit;
             }
 
-            return $tokenWithUser[0]['user'];
+            return $tokenWithUser[0]['user'];*/
         }
 
         public static function userID()
         {
-            $token = Auth::getCheckedToken();
+            return self::$user['id'];
+            /*$token = Auth::getCheckedToken();
             return DB::table('session')->where('token = :token', [':token' => $token])->get([], ['userID'])[0]['userID'];
+            */
         }
 
         public static function registerUser(User $user)
@@ -139,9 +159,10 @@
 
         public static function logout()
         {
-            $token = Auth::getToken();
-
-            DB::query('UPDATE `session` SET `end` = :end WHERE `token` = :token', [':token' => $token, ':end' => date('Y/m/d h:i:sa')]);
+            //$token = Auth::getToken();
+            if(self::$status>0){
+                DB::query('UPDATE `session` SET `end` = :end WHERE `token` = :token', [':token' => self::$token, ':end' => date('Y/m/d h:i:sa')]);
+            }
         }
 
         public static function userExists($id): bool
@@ -152,7 +173,7 @@
 
         private static function isValidToken($token): bool
         {
-            $erg = DB::query("SELECT `end` FROM `session` WHERE `token` = :token AND (`end` IS NULL OR `end` < :end);", [':token' => $token, ":end" => date('Y/m/d h:i:sa')]);
+            $erg = DB::query("SELECT `end` FROM `session` WHERE `token` = :token AND (`end` IS NULL OR `end` > :end);", [':token' => $token, ":end" => date('Y/m/d h:i:sa')]);
             if (count($erg) == 1) {
                 if ($erg[0]['end'] != null) {
                     $date = new DateTime();
@@ -190,13 +211,13 @@
             }
             return $token;
         }
-        public static function getToken() {
+        /*public static function getToken() {
             $token = Auth::getTokenWithUnapprovedUsers();
             $res = DB::query("select count(*) as Anzahl from session, account where session.userID = account.userID and createdAt is not null and token = :token", [":token"=>$token]);
             if ($res[0]['Anzahl'] == 1) {
                 return $token;
             }
-        }
+        }*/
         public static function getTokenWithUnapprovedUsers() {
             $token = Auth::getGivenToken();
             if (Auth::isValidToken($token)) {

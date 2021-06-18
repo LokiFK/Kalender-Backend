@@ -1,0 +1,16 @@
+@link[Start(/)]
+@link[Terminvereinbarung(/user/appointments/new)]
+{?php 
+    if(Auth::getStatus()>1){
+        return "@link[Terminübersicht(/user/appointments/overview)]";
+    }
+?}
+
+@flipside[]
+
+{?php 
+    if(Auth::getStatus()>2){
+        return "@link[Mitarbeiterbereich(/admin/landingPage)]";
+    }
+?}
+{+ @nav:general/userInfo +}

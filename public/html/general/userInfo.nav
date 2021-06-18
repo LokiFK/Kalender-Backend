@@ -1,0 +1,24 @@
+{?php
+    if(Auth::getStatus()==0){
+        return "@link[Anmelden(/auth/login)]";    
+    } else if(Auth::getStatus()==1){
+        return 
+        '@dropdown[
+            title={{ username }};
+            items="
+                Email bestätigen(/auth/account/notApproved),
+                Abmelden(/auth/logout)
+            "
+        ]'; 
+    } else {
+        return 
+        '@dropdown[
+            title={{ username }};
+            items="
+                Profil(/user/profile),
+                Abmelden(/auth/logout)
+            "
+        ]'; 
+    }
+
+?}

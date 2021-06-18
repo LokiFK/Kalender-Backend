@@ -1,0 +1,6 @@
+@link[Start(/admin/landingPage)]
+
+@flipside[]
+
+@link[Patientenbereich(/user/landingPage)]
+{+ @nav:general/userInfo +}
