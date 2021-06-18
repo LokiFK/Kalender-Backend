@@ -3,8 +3,8 @@
     header("Access-Control-Allow-Origin: *");
     header("Access-Control-Allow-Headers: *");
 
-    require_once './Auth/Auth.php';
     require './helpers/index.php';
+    require_once './Auth/Auth.php';
     require './controllers/GeneralController.php';
     require './controllers/AuthController.php';
     require './controllers/UserController.php';

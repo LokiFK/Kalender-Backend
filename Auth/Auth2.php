@@ -66,13 +66,13 @@
                     $tmp=false;
                 }
             }
-            $start = date('Y-M-D H:M:S');
+            $start = date('Y/m/d h:i:sa');
             if($isEndless) {
                 $end = null;
             } else {
                 $date = new DateTime();
                 $date->add(new DateInterval(Auth::DURATION));
-                $end = $date->format('Y-M-D H:M:S');
+                $end = $date->format('Y/m/d h:i:sa');
             }
             DB::query("INSERT INTO session (userid, token, start, end, ip) VALUES (:userID, :token, :start, :end, :ip);", [':userID' => $userID, ':token' => $token, ':start' => $start, ':end' => $end, ':ip'=>$ip]);
         }
@@ -111,7 +111,7 @@
                 if ($erg[0]['end'] != null) {
                     $date = new DateTime();
                     $date->add(new DateInterval(Auth::DURATION));
-                    $end = $date->format('Y-M-D H:M:S');
+                    $end = $date->format('Y/m/d h:i:sa');
                     DB::query("update session set end = :end where userid = :userid and token = :token;", [':userid'=>$userid, ':token'=>$token, ':end'=>$end]);
                 } 
                 return true;
@@ -134,7 +134,7 @@
             else if (isset($_GET['token']) && $_GET['userid']) { $token = $_GET['token']; $userid = $_GET['userid']; }
             else { return false; }
             if (Auth::isValidToken($token, $userid)) {
-                $end = date('Y-M-D H:M:S');
+                $end = date('Y/m/d h:i:sa');
                 DB::query("update session set end = :end where userid = :userid and token = :token;", [':userid'=>$userid, ':token'=>$token, ':end'=>$end]);
                 return true;
             }

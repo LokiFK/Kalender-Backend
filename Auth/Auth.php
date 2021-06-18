@@ -1,8 +1,47 @@
 <?php
 
+    Auth::start();
+
     class Auth {
         
+        static $status;
+        static $user;
+        static $account;
+        static $admin;
+
 		const DURATION = 'PT30M';
+
+        public static function start(){
+            $token = Auth::getGivenToken();
+            if($token == null){
+                self::$status=0;
+                return;
+            }
+            $res = DB::query("SELECT `userID`, `end` FROM `session` WHERE `token` = :token  AND (`end` IS NULL OR `end` < :end);", [':token' => $token, ":end" => date('Y/m/d h:i:sa')] );
+            if (count($res) == 1) {
+                if ($res[0]['end'] != null) {
+                    $date = new DateTime();
+                    $date->add(new DateInterval(Auth::DURATION));
+                    $end = $date->format('Y/m/d h:i:sa');
+                    DB::query("UPDATE `session` SET `end` = :end WHERE `token` = :token;", [':token' => $token, ':end' => $end]);
+                } 
+                self::$user = DB::query("SELECT * FROM users WHERE id = :id", [ ':id' => $res[0]['userID'] ])[0];
+                self::$account = DB::query("SELECT * FROM account WHERE userID = :userID", [ ':userID' => $res[0]['userID'] ])[0];
+                if(self::$account['createdAt']!=null){
+                    $res2 = DB::query("SELECT * FROM `admin` WHERE userID = :userID", [ ':userID' => $res[0]['userID'] ]);
+                    if(count($res2)==1){
+                        self::$admin = $res2[0];
+                        self::$status = 3;
+                    } else {
+                        self::$status = 2;
+                    }
+                } else {
+                    self::$status = 1;
+                }
+            } else {
+                self::$status = 0;
+            }
+        }
 
         public static function user()
         {
@@ -61,7 +100,7 @@
                     ErrorUI::error(605, $e);
                 }
             }
-            DB::query("INSERT INTO notapproved (userID, code, datetime) VALUES (:userID, :code, :date);", [':userID' => $userID, ':code' => $code, ':date' => date('Y-M-D H:M:S')]);
+            DB::query("INSERT INTO notapproved (userID, code, datetime) VALUES (:userID, :code, :date);", [':userID' => $userID, ':code' => $code, ':date' => date('Y/m/d h:i:sa')]);
             return $code;
         }
 
@@ -81,12 +120,12 @@
                 $account = $accounts[0];
                 if (password_verify($password, $account['password'])) {
                     $token = Auth::createNewToken();
-                    $start = date('Y-M-D H:M:S');
+                    $start = date('Y/m/d h:i:sa');
                     $end = null;
                     if (!$remember) {
                         $date = new DateTime();
                         $date->add(new DateInterval(Auth::DURATION));
-                        $end = $date->format('Y-M-D H:M:S');
+                        $end = $date->format('Y/m/d h:i:sa');
                     }
                     DB::query(
                         "INSERT INTO `session` (`userid`, `token`, `start`, `end`) VALUES (:userID, :token, :start, :end);",
@@ -102,7 +141,7 @@
         {
             $token = Auth::getToken();
 
-            DB::query('UPDATE `session` SET `end` = :end WHERE `token` = :token', [':token' => $token, ':end' => date('Y-M-D H:M:S')]);
+            DB::query('UPDATE `session` SET `end` = :end WHERE `token` = :token', [':token' => $token, ':end' => date('Y/m/d h:i:sa')]);
         }
 
         public static function userExists($id): bool
@@ -118,7 +157,7 @@
                 if ($erg[0]['end'] != null) {
                     $date = new DateTime();
                     $date->add(new DateInterval(Auth::DURATION));
-                    $end = $date->format('Y-M-D H:M:S');
+                    $end = $date->format('Y/m/d h:i:sa');
                     DB::query("UPDATE `session` SET `end` = :end WHERE `token` = :token;", [':token' => $token, ':end' => $end]);
                 } 
                 return true;
