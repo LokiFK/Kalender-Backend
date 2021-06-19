@@ -38,6 +38,7 @@
 
     $routes->get('/auth/account/approve', 'AuthController@approve');
     $routes->get('/auth/account/notApproved', 'AuthController@notApproved');
+    $routes->post('/auth/account/notApproved', 'AuthController@notApproved');
 
     // Login
     $routes->get('/auth/login', 'AuthController@login');

@@ -24,7 +24,8 @@
         public static function query(string $query, array $params = array())
         {
             try {
-                $stmt = DB::connect()->prepare($query);
+                $db = DB::connect();
+                $stmt = $db->prepare($query);
                 $stmt->execute($params);
 
                 if (strtoupper(explode(' ', $query)[0]) == 'SELECT') {
@@ -33,8 +34,10 @@
                         return $result;
                     }
                 } else if (strtoupper(explode(' ', $query)[0]) == 'INSERT') {
-                    return DB::connect()->lastInsertID();
-                }
+                    return $db->lastInsertId();
+                } /*else if (strtoupper(explode(' ', $query)[0]) == 'UPDATE' || strtoupper(explode(' ', $query)[0]) == 'DELETE') {
+                    return DB::connect()->affected_rows;
+                }*/
             } catch (PDOException $e) {
                 ErrorUI::errorFiveHundred($e);
                 exit;

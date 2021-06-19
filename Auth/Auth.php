@@ -85,10 +85,10 @@
 
         public static function registerUser(User $user)
         {
-            DB::query("INSERT INTO users (firstname, lastname, salutation, insurance, birthday, patientID) VALUES (:firstname, :lastname, :salutation, :insurance, :birthday, :patientID)", [':firstname' => $user->firstname, ':lastname' => $user->lastname, ':salutation' => $user->salutation, ':insurance' => $user->insurance, ':birthday' => $user->birthday, ':patientID' => $user->patientID]);
-            $userID = DB::table('users')->where('firstname = :firstname', [':firstname' => $user->firstname])->get([], ['id'])[0]['id'];
+            return DB::query("INSERT INTO users (firstname, lastname, salutation, insurance, birthday, patientID) VALUES (:firstname, :lastname, :salutation, :insurance, :birthday, :patientID)", [':firstname' => $user->firstname, ':lastname' => $user->lastname, ':salutation' => $user->salutation, ':insurance' => $user->insurance, ':birthday' => $user->birthday, ':patientID' => $user->patientID]);
+            /*$userID = DB::table('users')->where('firstname = :firstname', [':firstname' => $user->firstname])->get([], ['id'])[0]['id'];    //nich bsonders sicher
             
-            return $userID;
+            return $userID;*/
         }
 
         public static function registerAccount(Account $account, $approvalNeeded)
@@ -127,10 +127,10 @@
         public static function approveAccount($code) {
             $res = DB::query("select userID from notapproved where code = :code", [":code"=>$code]);
             if(count($res)==1){
-                DB::query("UPDATE account SET createdAt = " . date('Y-M-D') . " WHERE userID = :userID;", [':userID' => $res[0]['userID']]);
-                return true;
+                DB::query("UPDATE account SET createdAt = :date WHERE userID = :userID;", [':userID' => $res[0]['userID'], ":date"=>date('Y-M-D') ]);
+                return $res[0]['userID'];
             }
-            return false;
+            return null;
         }
 
         public static function login($username, $password, bool $remember)
@@ -139,22 +139,25 @@
             if(count($accounts)==1){
                 $account = $accounts[0];
                 if (password_verify($password, $account['password'])) {
-                    $token = Auth::createNewToken();
-                    $start = date('Y/m/d h:i:sa');
-                    $end = null;
-                    if (!$remember) {
-                        $date = new DateTime();
-                        $date->add(new DateInterval(Auth::DURATION));
-                        $end = $date->format('Y/m/d h:i:sa');
-                    }
-                    DB::query(
-                        "INSERT INTO `session` (`userid`, `token`, `start`, `end`) VALUES (:userID, :token, :start, :end);",
-                        [':userID' => $account['userID'], ':token' => $token, ':start' => $start, ':end' => $end]
-                    );
-                    return $token;
+                    Auth::specialLogin($account['userID'], $remember);
                 }
             }
             return null;    
+        }
+        public static function specialLogin($userID, $remember){
+            $token = Auth::createNewToken();
+            $start = date('Y/m/d h:i:sa');
+            $end = null;
+            if (!$remember) {
+                $date = new DateTime();
+                $date->add(new DateInterval(Auth::DURATION));
+                $end = $date->format('Y/m/d h:i:sa');
+            }
+            DB::query(
+                "INSERT INTO `session` (`userid`, `token`, `start`, `end`) VALUES (:userID, :token, :start, :end);",
+                [':userID' => $userID, ':token' => $token, ':start' => $start, ':end' => $end]
+            );
+            return $token;
         }
 
         public static function logout()
