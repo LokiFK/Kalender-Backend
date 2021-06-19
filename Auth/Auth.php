@@ -139,7 +139,7 @@
             if(count($accounts)==1){
                 $account = $accounts[0];
                 if (password_verify($password, $account['password'])) {
-                    Auth::specialLogin($account['userID'], $remember);
+                    return Auth::specialLogin($account['userID'], $remember);
                 }
             }
             return null;    

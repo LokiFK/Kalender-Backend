@@ -50,8 +50,13 @@
         }
 
         public function overview(Request $req, Response $res){
-            $view = $res->view('user/overview');
-            echo $view; 
+            if($req->getMethod() == "GET"){
+                $data = DB::query("SELECT * from appointment, treatment WHERE appointment.treatmentID=treatment.id and appointment.userID=:userID", [":userID"=>Auth::getUser()['id']]);
+                $view = $res->view('user/overview', array(), array(), [ "appointments"=>$data ]);
+                echo $view;
+            } else {
+
+            } 
         }
 
         public function profile(Request $req, Response $res){

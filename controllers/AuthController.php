@@ -72,7 +72,7 @@
                     echo $res->view("auth/notApproved");
                 } else if ($req->getMethod() == "POST") {
                     if(isset($req->getBody()['email'])){
-                        DB::query("UPDATE account SET email = :email WHERE userID = :userID", [ 'email'=>$req->getBody()['email'], 'userID'=>Auth::getUser()['id'] ]);
+                        DB::query("UPDATE account SET email = :email WHERE userID = :userID", [ ':email'=>$req->getBody()['email'], ':userID'=>Auth::getUser()['id'] ]);
                     }
                     $code = Auth::createNewCode(Auth::getUser()['id']);
 
