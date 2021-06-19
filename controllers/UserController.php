@@ -2,7 +2,7 @@
 
     class UserController {
 
-        public function landingPage(Request $req, Response $res){
+        public function landingPage(Request $req, Response $res) {
             $allAppointmentTypes = ['Sprechstunde', 'Belastungs-EKG', 'HNO-Allgemeinuntersuchung','HNO-Allgemeinuntersuchung', 'Belastungs-EKG', 'Sprechstunde','Sprechstunde','HNO-Allgemeinuntersuchung', 'Belastungs-EKG', 'Sprechstunde', 'Belastungs-EKG', 'HNO-Allgemeinuntersuchung'];
             
             echo $res->view('user/landingPage',
@@ -49,17 +49,50 @@
             echo $view;
         }
 
-        public function overview(Request $req, Response $res){
-            $view = $res->view('user/overview');
+        public function overview(Request $req, Response $res)
+        {
+            Middleware::status(2);
+
+            $view = $res->view('user/overview',
+                [],
+                [],
+                [
+                    'appointments' => [
+                        [
+                            'type' => 'Sprechstunde',
+                            'start' => '16.06.2021 17:00',
+                            'end' => '16.06.2021 18:00',
+                            'status' => 'Approved',
+                            'statusColor' => 'green'
+                        ],
+                        [
+                            'type' => 'Belastungs-EKG',
+                            'start' => '17.06.2021 17:00',
+                            'end' => '17.06.2021 18:00',
+                            'status' => 'Waiting',
+                            'statusColor' => 'orange'
+                        ],
+                        [
+                            'type' => 'HNO-Allgemeinuntersuchung',
+                            'start' => '17.06.2021 20:00',
+                            'end' => '17.06.2021 22:00',
+                            'status' => 'Not Approved',
+                            'statusColor' => 'red'
+                        ]
+                    ],
+                ]
+            );
             echo $view; 
         }
 
-        public function profile(Request $req, Response $res){
+        public function profile(Request $req, Response $res) {
             $view = $res->view('user/profile');
             echo $view; 
         }
 
         public function get(Request $req, Response $res) {
+            Middleware::status(2);
+            
             $view = $res->view('user/profile');
             echo $view;
         }

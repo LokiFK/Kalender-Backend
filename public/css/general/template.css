@@ -2,11 +2,17 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
 }
 
 body {
     background-color: rgb(221, 221, 221);
-    font-family: 'Open Sans', sans-serif;
+    height: 100%;
+}
+
+.main-wrapper {
+    padding: 0 0 100px;
+    position: relative;
 }
 
 #nav {
@@ -21,6 +27,8 @@ body {
     left: 0;
     bottom: 0;
     width: 100%;
+    position: fixed;
+    box-shadow: 0 0 15px rgb(165, 165, 165);
 }
 
 #content {

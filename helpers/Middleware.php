@@ -9,6 +9,14 @@
                 exit;
             }
         }
+
+        public static function status(int $status)
+        {
+            if (Auth::getStatus() < $status) {
+                ErrorUI::error(401, 'You dont\'t have the permission to view this page.');
+                exit;
+            }
+        }
     }
 
 ?>

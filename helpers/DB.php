@@ -2,6 +2,7 @@
 
     class DB {
 
+        public const DATE_FORMAT = "Y/m/d H:i:s";
         public const ASC = 0;
         public const DESC = 1;
         const host = '127.0.0.1';

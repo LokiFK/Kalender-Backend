@@ -7,7 +7,7 @@
             if ($navPath == "{{ navContentLink }}") {
                 if ($absolutOrigin == "{{ absolutOrigin }}") {
                     return "<!-- Navigationsleiste konnte leider nicht geladen werden. navContentLink nicht gefunden. -->";
-                } 
+                }
                 $i = 0;        //definitly needs improving
                 $j = -1;
                 while ($j !== false) {
@@ -55,14 +55,21 @@
 
                 // create html for the tag
                 if ($tagName == "@link") {
-                    $interpretedLink = TemplateHTML::interpreteNavLink($tagContent);
-                    $html .= "
-                        <li class=\"nav-list-item link\">
-                            <form action=\"" . $interpretedLink['path'] . "\" method=\"GET\">
-                                <input type=\"submit\" value=\"" . $interpretedLink['name'] . "\">
-                            </form>
-                        </li>
-                    ";
+                    
+                    $split = explode(', status', $tagContent);
+                    $status = $split[1];
+                    $tagContent = $split[0];
+
+                    if (TemplateHTML::interpretStatus($status)) {
+                        $interpretedLink = TemplateHTML::interpreteNavLink($tagContent);
+                        $html .= "
+                            <li class=\"nav-list-item link\">
+                                <form action=\"" . $interpretedLink['path'] . "\" method=\"GET\">
+                                    <input type=\"submit\" value=\"" . $interpretedLink['name'] . "\">
+                                </form>
+                            </li>
+                        ";
+                    }
                 } else if ($tagName == "@dropdown") {
                     $html = TemplateHTML::interpreteNavDropdown($tagContent, $html);
                 } else if ($tagName == "@flipside") {
@@ -74,6 +81,31 @@
             return $html;
         }
 
+        public static function interpretStatus($status): bool
+        {
+            $status = preg_replace('/\s/', '', $status);
+            $status = str_replace('status', '', $status);
+            
+            $statusNr = substr($status, strlen($status)-1, 1);
+            $comparator = substr($status, 0, strlen($status)-1);
+            
+            if ($comparator == "==") {
+                return Auth::getToken() == $statusNr;
+            } else if ($comparator == "<") {
+                return Auth::getToken() < $statusNr;
+            } else if ($comparator == "<=") {
+                return Auth::getToken() <= $statusNr;
+            } else if ($comparator == ">") {
+                return Auth::getToken() > $statusNr;
+            } else if ($comparator == ">=") {
+                return Auth::getToken() >= $statusNr;
+            } else if ($comparator == "<>") {
+                return Auth::getToken() != $statusNr;
+            } else {
+                return false;
+            }
+        }
+
         public static function interpreteNavDropdown(string $tagContent, string $html): string
         {
             $dict = array();
@@ -83,11 +115,17 @@
 
                 foreach ($dict as $dataPart) {
                     $key = preg_replace('/\s/', '', explode('=', $dataPart)[0]);
-                    if (strpos(explode('=', $dataPart)[1], '{{')) {
+                    
+                    if (strpos($dataPart, 'status')) {
+                        if (!self::interpretStatus($dataPart)) {
+                            return $html;
+                        }
+                    } else if (strpos(explode('=', $dataPart)[1], '{{')) {
                         $value = str_replace(['"', '()'], '', explode('=', $dataPart)[1]);
                     } else {
                         $value = preg_replace('/\s/', '', explode('=', $dataPart)[1]);
                     }
+
                     $dropdownData[$key] = $value;
                 }
                 
@@ -95,7 +133,7 @@
                 
                 $html .= "
                     <li class=\"nav-list-item dropdown\">
-                        <span>$dropdownData[title]</span>
+                        <p>$dropdownData[title]</p>
                         <div class=\"dropdown-content-wrapper\">
                             <div class=\"dropdown-content\">
                 ";
@@ -140,7 +178,7 @@
         public static function load(string $componentName, ReplaceData $replaceData): string
         {
             $path = "";
-            if(substr($componentName, 0, 5) == "@nav:"){
+            if (substr($componentName, 0, 5) == "@nav:") {
                 $path = "./public/html/". substr($componentName, 5) . ".nav";
             } else {
                 $path = "./public/html/" . $componentName . ".html";
@@ -153,7 +191,7 @@
                 if ($content !== null) { 
                     /*if(substr($componentName, 0, 5) == "@nav:"){
                         TemplateHTML::interpreteNavTemplate($content);
-                    }*/    
+                    }*/
                     return $content; 
                 }
             }

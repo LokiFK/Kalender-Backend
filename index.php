@@ -19,11 +19,11 @@
     $routes->get('/user/landingPage', 'UserController@landingPage');
     $routes->get('/user/appointments/new', 'UserController@new');
     $routes->get('/user/appointments/new2', 'UserController@new2');
-    $routes->get('/user/appointments/overview', 'UserController@overview', 2);
+    $routes->get('/user/appointments/overview', 'UserController@overview');
     $routes->get('/api/user/appointments/termine', 'UserController@termine');
 
     // Profile
-    $routes->get('/user/profile', 'UserController@get', 2);
+    $routes->get('/user/profile', 'UserController@get');
     $routes->post('/user/profile/update', 'UserController@update');
     $routes->post('/user/profile/delete', 'UserController@delete');
 
@@ -54,7 +54,7 @@
     
 
     // --- ADMIN --- \\
-    $routes->get('/admin/landingPage', 'AdminController@landingPage', 3);
+    $routes->get('/admin/landingPage', 'AdminController@landingPage');
 
 
     $routes->listen();

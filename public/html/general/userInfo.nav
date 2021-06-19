@@ -1,26 +1,19 @@
-{?php
-    if(Auth::getStatus()==0){
-        return "@link[Anmelden(/auth/login)]";    
-    }
-    $replaceData->data['username'] = Auth::getAccount()['username'];
-    if(Auth::getStatus()==1){
-        return 
-        '@dropdown[
-            title={{ username }};
-            items="
-                Email bestätigen(/auth/account/notApproved),
-                Abmelden(/auth/logout)
-            "
-        ]'; 
-    } else {
-        return 
-        '@dropdown[
-            title={{ username }};
-            items="
-                Profil(/user/profile),
-                Abmelden(/auth/logout)
-            "
-        ]'; 
-    }
+@link[Anmelden(/auth/login), status==0]
 
-?}
+@dropdown[
+    title={{ username }};
+    items="
+        Email bestätigen(/auth/account/notApproved),
+        Abmelden(/auth/logout)
+    ";
+    status==1
+]
+
+@dropdown[
+    title={{ username }};
+    items="
+        Profil(/user/profile),
+        Abmelden(/auth/logout)
+    ";
+    status<>1
+]
