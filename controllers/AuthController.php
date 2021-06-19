@@ -127,6 +127,43 @@
             }
             Path::redirect('../../../');
         }
+        public function resetLink(Request $req, Response $res){
+            if ($req->getMethod() == "GET") {
+                echo $res->view('auth/resetLink');
+            } else if ($req->getMethod() == "POST") {
+                $validatedData = Form::validate($req->getBody(), ['email']);
+                $code = Auth::createNewResetCode($validatedData['email']);
+                
+                $link =  $_SERVER['HTTP_HOST'].'/auth/account/resetPassword?code='.$code;
+                echo "mail: <a href=\"$link\">".$link."</a><br>";
+                echo "<a href=>automatische Rückleitung</a>";
+                    
+                /*$from = "FROM Terminplanung @noreply";
+                $subject = "Account bestätigen";
+                $msg = "BlaBlaBla Hier ihr anmelde Link: '.$link;
+                mail($account->email, $subject, $msg, $from);
+                    
+                Path::redirect('');
+                */
+            }    
+        }
+        public function resetPassword(Request $req, Response $res){
+            if ($req->getMethod() == "GET") {
+                $data = Form::validate($req->getBody(), ['code']);
+                echo $res->view('auth/resetPassword', ["code"=>$data['code']]);
+            } else if ($req->getMethod() == "POST") {
+                $data = Form::validate($req->getBody(), ['password', 'code']); 
+                $userID = Auth::resetPassword($data['code'], $data['password']);
+                if($userID!=null){
+                    $token = Auth::specialLogin($userID, false);
+                    setcookie('token', $token, time() + 60 * 60 * 24 * 30, '/');
+                    Path::redirect('../../../');
+                } else {
+                    ErrorUI::errorMsg(500, 'bad request');
+                    exit(); 
+                }
+            } 
+        }    
 
         public function permissions(Request $req, Response $res)
         {

@@ -40,6 +40,11 @@
     $routes->get('/auth/account/notApproved', 'AuthController@notApproved');
     $routes->post('/auth/account/notApproved', 'AuthController@notApproved');
 
+    $routes->get('/auth/account/resetLink', 'AuthController@resetLink');
+    $routes->post('/auth/account/resetLink', 'AuthController@resetLink');
+    $routes->get('/auth/account/resetPassword', 'AuthController@resetPassword');
+    $routes->post('/auth/account/resetPassword', 'AuthController@resetPassword');
+
     // Login
     $routes->get('/auth/login', 'AuthController@login');
     $routes->post('/auth/login', 'AuthController@login');

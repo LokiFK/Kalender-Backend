@@ -132,6 +132,34 @@
             }
             return null;
         }
+        public static function createNewResetCode($email){
+            $res = DB::query("SELECT userID from account WHERE email = :email", [":email"=>$email]);
+            if(count($res)==1){
+                try {
+                    $code = bin2hex(random_bytes(25));
+                } catch (Exception $e) {
+                    ErrorUI::error(605, $e);
+                }
+                while (count(DB::table('passwordreset')->where('code = :code', [':code' => $code])->get()) > 0) {
+                    try {
+                        $code = bin2hex(random_bytes(25));
+                    } catch (Exception $e) {
+                        ErrorUI::error(605, $e);
+                    }
+                }
+                DB::query("INSERT INTO passwordreset (userID, code, datetime, isUsed) VALUES (:userID, :code, :date, :isUsed);", [':userID' => $res[0]['userID'], ':code' => $code, ':date' => date('Y/m/d h:i:sa'), ':isUsed'=>false]);
+                return $code; 
+            }
+        }
+        public static function resetPassword($code, $password){
+            $res = DB::query("select userID from passwordreset where code = :code", [":code"=>$code]);
+            if(count($res)==1){
+                DB::query("UPDATE passwordreset SET isUsed = false WHERE code = :code;", [ ':code'=>$code ]);
+                DB::query("UPDATE account SET password = :password WHERE userID = :userID;", [':userID' => $res[0]['userID'], ":password"=>password_hash($password, PASSWORD_DEFAULT) ]);
+                return $res[0]['userID'];
+            }
+            return null;
+        }
 
         public static function login($username, $password, bool $remember)
         {
