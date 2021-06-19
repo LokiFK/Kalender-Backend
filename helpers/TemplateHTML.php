@@ -120,7 +120,7 @@
                         if (!self::interpretStatus($dataPart)) {
                             return $html;
                         }
-                    } else if (strpos(explode('=', $dataPart)[1], '{{')) {
+                    } else if (strpos($dataPart, '{{')) {
                         $value = str_replace(['"', '()'], '', explode('=', $dataPart)[1]);
                     } else {
                         $value = preg_replace('/\s/', '', explode('=', $dataPart)[1]);

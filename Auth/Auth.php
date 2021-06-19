@@ -106,7 +106,7 @@
                 }
                 DB::query("INSERT INTO account (userID, username, email, password, createdAt) VALUES (:userID, :username, :email, :password, :createdAt);",[':userID' => $account->userID, ':username' => $account->username, ':email' => $account->email, ':password' => password_hash($account->password, PASSWORD_DEFAULT), ':createdAt' => $created]);
                 
-                if($approvalNeeded){
+                if ($approvalNeeded) {
                     return Auth::createNewCode($account->userID);
                 }
             }
@@ -137,6 +137,7 @@
             }
             return null;
         }
+
         public static function createNewResetCode($email){
             $res = DB::query("SELECT userID from account WHERE email = :email", [":email"=>$email]);
             if(count($res)==1){
@@ -152,10 +153,11 @@
                         ErrorUI::error(605, $e);
                     }
                 }
-                DB::query("INSERT INTO passwordreset (userID, code, datetime, isUsed) VALUES (:userID, :code, :date, :isUsed);", [':userID' => $res[0]['userID'], ':code' => $code, ':date' => date('Y/m/d h:i:sa'), ':isUsed'=>false]);
+                DB::query("INSERT INTO passwordreset (userID, code, datetime, isUsed) VALUES (:userID, :code, :date, :isUsed);", [':userID' => $res[0]['userID'], ':code' => $code, ':date' => date(DB::DATE_FORMAT), ':isUsed'=>false]);
                 return $code; 
             }
         }
+
         public static function resetPassword($code, $password){
             $res = DB::query("select userID from passwordreset where code = :code", [":code"=>$code]);
             if(count($res)==1){
@@ -179,12 +181,12 @@
         }
         public static function specialLogin($userID, $remember){
             $token = Auth::createNewToken();
-            $start = date('Y/m/d h:i:sa');
+            $start = date(DB::DATE_FORMAT);
             $end = null;
             if (!$remember) {
                 $date = new DateTime();
                 $date->add(new DateInterval(Auth::DURATION));
-                $end = $date->format('Y/m/d h:i:sa');
+                $end = $date->format(DB::DATE_FORMAT);
             }
             DB::query(
                 "INSERT INTO `session` (`userid`, `token`, `start`, `end`) VALUES (:userID, :token, :start, :end);",
@@ -248,6 +250,7 @@
             }
             return $token;
         }
+
         /*public static function getToken() {
             $token = Auth::getTokenWithUnapprovedUsers();
             $res = DB::query("select count(*) as Anzahl from session, account where session.userID = account.userID and createdAt is not null and token = :token", [":token"=>$token]);
@@ -255,12 +258,14 @@
                 return $token;
             }
         }*/
+        
         public static function getTokenWithUnapprovedUsers() {
             $token = Auth::getGivenToken();
             if (Auth::isValidToken($token)) {
                 return $token;
             }
         }
+        
         public static function getGivenToken()
         {
             $token = "";

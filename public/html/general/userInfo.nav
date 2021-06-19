@@ -15,5 +15,5 @@
         Profil(/user/profile),
         Abmelden(/auth/logout)
     ";
-    status<>1
+    status>1
 ]

@@ -53,7 +53,7 @@
             }
         }
 
-        public function approve(Request $req, Response $res){
+        public function approve(Request $req, Response $res) {
             $data = Form::validate($req->getBody(), ['code']);
             $id = Auth::approveAccount($data['code']);
             if($id!=null){
@@ -66,31 +66,29 @@
                 exit();
             }
         }
-        public function notApproved(Request $req, Response $res){
-            if(Auth::getStatus() == 1){
-                if($req->getMethod() == "GET"){
-                    echo $res->view("auth/notApproved");
-                } else if ($req->getMethod() == "POST") {
-                    if(isset($req->getBody()['email'])){
-                        DB::query("UPDATE account SET email = :email WHERE userID = :userID", [ ':email'=>$req->getBody()['email'], ':userID'=>Auth::getUser()['id'] ]);
-                    }
-                    $code = Auth::createNewCode(Auth::getUser()['id']);
 
-                    $link =  $_SERVER['HTTP_HOST'].'/auth/account/approve?code='.$code;
-                    echo "mail: <a href=\"$link\">".$link."</a><br>";
-                    echo "<a href=../../../auth/account/notApproved>automatische Rückleitung</a>";
-                    
-                    /*$from = "FROM Terminplanung @noreply";
-                    $subject = "Account bestätigen";
-                    $msg = "BlaBlaBla Hier ihr anmelde Link: '.$link;
-                    mail($account->email, $subject, $msg, $from);
-                    
-                    Path::redirect('../../../auth/account/emailApproved');
-                    */
-                }    
-            } else {
-                ErrorUI::errorMsg(500, 'bad request');
-                exit();
+        public function notApproved(Request $req, Response $res) {
+            Middleware::statusEqualTo(1);
+
+            if ($req->getMethod() == "GET") {
+                echo $res->view("auth/notApproved");
+            } else if ($req->getMethod() == "POST") {
+                if (isset($req->getBody()['email'])) {
+                    DB::query("UPDATE account SET email = :email WHERE userID = :userID", [ ':email'=>$req->getBody()['email'], ':userID'=>Auth::getUser()['id'] ]);
+                }
+                $code = Auth::createNewCode(Auth::getUser()['email']);
+
+                $link =  $_SERVER['HTTP_HOST'].'/auth/account/approve?code='.$code;
+                echo "mail: <a href=\"$link\">".$link."</a><br>";
+                echo "<a href=../../../auth/account/notApproved>automatische Rückleitung</a>";
+                
+                /*$from = "FROM Terminplanung @noreply";
+                $subject = "Account bestätigen";
+                $msg = "BlaBlaBla Hier ihr anmelde Link: '.$link;
+                mail($account->email, $subject, $msg, $from);
+                
+                Path::redirect('../../../auth/account/emailApproved');
+                */
             }
         }
 
@@ -100,20 +98,17 @@
                 echo $res->view('auth/login');
             } else if ($req->getMethod() == "POST") {
                 $validatedData = Form::validate($req->getBody(), ['username', 'password']);
-                $remember = false;
-                if(isset($req->getBody()['remember']) && $req->getBody()['remember'] == 'on'){
-                    $remember = true;
-                }
+                $remember = isset($req->getBody()['remember']) && $req->getBody()['remember'] == 'on';
+
                 $token = Auth::login($validatedData['username'], $validatedData['password'], $remember);
-                //echo $token;
-                if($token!=null){
+                if ($token != null) {
                     setcookie('token', $token, time() + 60 * 60 * 24 * 30, '/');
 
                     $res = DB::query("select count(*) as Anzahl from session, account where session.userID = account.userID and token = :token and createdAt is not null", [":token"=>$token]);
                     if($res[0]['Anzahl']==1){   //approved
-                        Path::redirect('../../../');
+                        Path::redirect(Path::ROOT);
                     } else {
-                        Path::redirect('../../../auth/account/notApproved');
+                        Path::redirect(Path::ROOT . "auth/account/notApproved");
                     }
                 } else {
                     echo "wrong username or password";      //todo
@@ -121,12 +116,14 @@
                 }
             }
         }
+
         public function logout(Request $req, Response $res){
-            if(Auth::logout()!=true){
+            if (Auth::logout() != true) {
 
             }
-            Path::redirect('../../../');
+            Path::redirect(Path::ROOT);
         }
+
         public function resetLink(Request $req, Response $res){
             if ($req->getMethod() == "GET") {
                 echo $res->view('auth/resetLink');
@@ -157,7 +154,7 @@
                 if($userID!=null){
                     $token = Auth::specialLogin($userID, false);
                     setcookie('token', $token, time() + 60 * 60 * 24 * 30, '/');
-                    Path::redirect('../../../');
+                    Path::redirect(Path::ROOT);
                 } else {
                     ErrorUI::errorMsg(500, 'bad request');
                     exit(); 

@@ -2,6 +2,8 @@
 
 
     class Path {
+        const ROOT = "../../../../";
+
         public static function getPath()
         {
             $url = $_SERVER['REQUEST_URI'];

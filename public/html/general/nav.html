@@ -1,4 +1,7 @@
 {% styles %}
 {?php 
+    if (Auth::getStatus() > 1) {
+        $replaceData->data['username'] = Auth::getAccount()['username'];
+    }
     return TemplateHTML::nav("{{ navContentLink }}", "{{ absolutOrigin }}", $replaceData);
 ?}

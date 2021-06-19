@@ -51,7 +51,7 @@
 
         public function overview(Request $req, Response $res)
         {
-            Middleware::status(2);
+            Middleware::statusBiggerOrEqualTo(2);
 
             if($req->getMethod() == "GET"){
                 /*$data = DB::query("SELECT * from appointment, treatment WHERE appointment.treatmentID=treatment.id and appointment.userID=:userID", [":userID"=>Auth::getUser()['id']]);
@@ -98,7 +98,7 @@
         }
 
         public function get(Request $req, Response $res) {
-            Middleware::status(2);
+            Middleware::statusBiggerOrEqualTo(2);
             
             $view = $res->view('user/profile');
             echo $view;
