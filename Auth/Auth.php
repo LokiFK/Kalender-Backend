@@ -90,10 +90,10 @@
 
         public static function registerUser(User $user)
         {
-            DB::query("INSERT INTO users (firstname, lastname, salutation, insurance, birthday, patientID) VALUES (:firstname, :lastname, :salutation, :insurance, :birthday, :patientID)", [':firstname' => $user->firstname, ':lastname' => $user->lastname, ':salutation' => $user->salutation, ':insurance' => $user->insurance, ':birthday' => $user->birthday, ':patientID' => $user->patientID]);
-            $userID = DB::table('users')->where('firstname = :firstname', [':firstname' => $user->firstname])->get([], ['id'])[0]['id'];
+            return DB::query("INSERT INTO users (firstname, lastname, salutation, insurance, birthday, patientID) VALUES (:firstname, :lastname, :salutation, :insurance, :birthday, :patientID)", [':firstname' => $user->firstname, ':lastname' => $user->lastname, ':salutation' => $user->salutation, ':insurance' => $user->insurance, ':birthday' => $user->birthday, ':patientID' => $user->patientID]);
+            /*$userID = DB::table('users')->where('firstname = :firstname', [':firstname' => $user->firstname])->get([], ['id'])[0]['id'];    //nich bsonders sicher
             
-            return $userID;
+            return $userID;*/
         }
 
         public static function registerAccount(Account $account, $approvalNeeded)
@@ -132,10 +132,38 @@
         public static function approveAccount($code) {
             $res = DB::query("select userID from notapproved where code = :code", [":code"=>$code]);
             if(count($res)==1){
-                DB::query("UPDATE account SET createdAt = " . date(DB::DATE_FORMAT) . " WHERE userID = :userID;", [':userID' => $res[0]['userID']]);
-                return true;
+                DB::query("UPDATE account SET createdAt = :date WHERE userID = :userID;", [':userID' => $res[0]['userID'], ":date"=>date(DB::DATE_FORMAT) ]);
+                return $res[0]['userID'];
             }
-            return false;
+            return null;
+        }
+        public static function createNewResetCode($email){
+            $res = DB::query("SELECT userID from account WHERE email = :email", [":email"=>$email]);
+            if(count($res)==1){
+                try {
+                    $code = bin2hex(random_bytes(25));
+                } catch (Exception $e) {
+                    ErrorUI::error(605, $e);
+                }
+                while (count(DB::table('passwordreset')->where('code = :code', [':code' => $code])->get()) > 0) {
+                    try {
+                        $code = bin2hex(random_bytes(25));
+                    } catch (Exception $e) {
+                        ErrorUI::error(605, $e);
+                    }
+                }
+                DB::query("INSERT INTO passwordreset (userID, code, datetime, isUsed) VALUES (:userID, :code, :date, :isUsed);", [':userID' => $res[0]['userID'], ':code' => $code, ':date' => date('Y/m/d h:i:sa'), ':isUsed'=>false]);
+                return $code; 
+            }
+        }
+        public static function resetPassword($code, $password){
+            $res = DB::query("select userID from passwordreset where code = :code", [":code"=>$code]);
+            if(count($res)==1){
+                DB::query("UPDATE passwordreset SET isUsed = false WHERE code = :code;", [ ':code'=>$code ]);
+                DB::query("UPDATE account SET password = :password WHERE userID = :userID;", [':userID' => $res[0]['userID'], ":password"=>password_hash($password, PASSWORD_DEFAULT) ]);
+                return $res[0]['userID'];
+            }
+            return null;
         }
 
         public static function login($username, $password, bool $remember)
@@ -144,22 +172,25 @@
             if(count($accounts)==1){
                 $account = $accounts[0];
                 if (password_verify($password, $account['password'])) {
-                    $token = Auth::createNewToken();
-                    $start = date(DB::DATE_FORMAT);
-                    $end = null;
-                    if (!$remember) {
-                        $date = new DateTime();
-                        $date->add(new DateInterval(Auth::DURATION));
-                        $end = $date->format(DB::DATE_FORMAT);
-                    }
-                    DB::query(
-                        "INSERT INTO `session` (`userid`, `token`, `start`, `end`) VALUES (:userID, :token, :start, :end);",
-                        [':userID' => $account['userID'], ':token' => $token, ':start' => $start, ':end' => $end]
-                    );
-                    return $token;
+                    return Auth::specialLogin($account['userID'], $remember);
                 }
             }
             return null;
+        }
+        public static function specialLogin($userID, $remember){
+            $token = Auth::createNewToken();
+            $start = date('Y/m/d h:i:sa');
+            $end = null;
+            if (!$remember) {
+                $date = new DateTime();
+                $date->add(new DateInterval(Auth::DURATION));
+                $end = $date->format('Y/m/d h:i:sa');
+            }
+            DB::query(
+                "INSERT INTO `session` (`userid`, `token`, `start`, `end`) VALUES (:userID, :token, :start, :end);",
+                [':userID' => $userID, ':token' => $token, ':start' => $start, ':end' => $end]
+            );
+            return $token;
         }
 
         public static function logout()

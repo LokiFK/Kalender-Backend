@@ -2,7 +2,7 @@
 {# extend general/template@main #}
 {% styles %}
 
-<div class="overview-wrapper">
+<!--<div class="overview-wrapper">
     <div class="appointments">
         <h2 class="heading">Alle Termine</h2>
         <div class="appointments-list">
@@ -24,4 +24,9 @@
              !}
         </div>
     </div>
-</div>
+</div>-->
+<ul id=appointmentsList>
+{! appointments:
+    <li class=appointment id=appointment{{ appointments.iterationNr }}>{{ appointments.start }}<br>{{ appointments.name }}</li>
+ !}
+</ul>

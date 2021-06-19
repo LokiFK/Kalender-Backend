@@ -1,0 +1,8 @@
+{[ title=>Account bestätigt, navContentLink=>user/nav ]}
+{# extend general/template@main #}
+<form action="/auth/account/resetLink" method="POST">
+    <label for="email">E-mail ändern:</label>
+    <input type="text" name="email"><br>
+    
+    <input type="submit" value="Passwort zurücksetzen">
+</form>

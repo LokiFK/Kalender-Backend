@@ -53,36 +53,43 @@
         {
             Middleware::status(2);
 
-            $view = $res->view('user/overview',
-                [],
-                [],
-                [
-                    'appointments' => [
-                        [
-                            'type' => 'Sprechstunde',
-                            'start' => '16.06.2021 17:00',
-                            'end' => '16.06.2021 18:00',
-                            'status' => 'Approved',
-                            'statusColor' => 'green'
+            if($req->getMethod() == "GET"){
+                /*$data = DB::query("SELECT * from appointment, treatment WHERE appointment.treatmentID=treatment.id and appointment.userID=:userID", [":userID"=>Auth::getUser()['id']]);
+                $view = $res->view('user/overview', array(), array(), [ "appointments"=>$data ]);
+                echo $view;*/
+                $view = $res->view('user/overview',
+                    [],
+                    [],
+                    [
+                        'appointments' => [
+                            [
+                                'type' => 'Sprechstunde',
+                                'start' => '16.06.2021 17:00',
+                                'end' => '16.06.2021 18:00',
+                                'status' => 'Approved',
+                                'statusColor' => 'green'
+                            ],
+                            [
+                                'type' => 'Belastungs-EKG',
+                                'start' => '17.06.2021 17:00',
+                                'end' => '17.06.2021 18:00',
+                                'status' => 'Waiting',
+                                'statusColor' => 'orange'
+                            ],
+                            [
+                                'type' => 'HNO-Allgemeinuntersuchung',
+                                'start' => '17.06.2021 20:00',
+                                'end' => '17.06.2021 22:00',
+                                'status' => 'Not Approved',
+                                'statusColor' => 'red'
+                            ]
                         ],
-                        [
-                            'type' => 'Belastungs-EKG',
-                            'start' => '17.06.2021 17:00',
-                            'end' => '17.06.2021 18:00',
-                            'status' => 'Waiting',
-                            'statusColor' => 'orange'
-                        ],
-                        [
-                            'type' => 'HNO-Allgemeinuntersuchung',
-                            'start' => '17.06.2021 20:00',
-                            'end' => '17.06.2021 22:00',
-                            'status' => 'Not Approved',
-                            'statusColor' => 'red'
-                        ]
-                    ],
-                ]
-            );
-            echo $view; 
+                    ]
+                );
+                echo $view;
+            } else {
+
+            }
         }
 
         public function profile(Request $req, Response $res) {
