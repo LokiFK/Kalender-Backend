@@ -1,7 +1,12 @@
 #form {
     color: black;
     padding: 15px;
-    width: 100%;
+    width: fit-content;
+}
+
+#field {
+    width: fit-content;
+    min-width: 20%;
 }
 
 #title {

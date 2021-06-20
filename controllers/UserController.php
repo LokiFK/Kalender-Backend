@@ -4,7 +4,7 @@
 
         public function new(Request $req, Response $res){
             $treatments = DB::query("SELECT * from treatment;");
-            //$treatments = [ ["name"=>"b1"], ["name"=>"b2"], ["name"=>"b3"] ];
+            // $treatments = [ ["name"=>"b1"], ["name"=>"b2"], ["name"=>"b3"] ];
             $view = $res->view('user/new', array(), array(), [ "treatments"=>$treatments ]);
             echo $view;
         }
@@ -28,11 +28,18 @@
 
         public function profile(Request $req, Response $res){
             $view = $res->view('user/profile');
-            echo $view; 
+            echo $view;
         }
 
         public function get(Request $req, Response $res) {
-            $view = $res->view('user/profile');
+            $userId = Auth::userID();
+            $user = DB::table('users')->where("id = :id",[':id'=>$userId])->get();
+            if(count($user)>0) {
+                $user = $user[0];
+            } else {
+                $res->errorVisual(507, "Error");
+            }
+            $view = $res->view('user/profile', ['firstname' => $user['firstname'], 'lastname' => $user['lastname'], 'salutation' => $user['salutation'], 'insurance' => $user['insurance'], 'birthday' => $user['birthday']]);
             echo $view;
         }
 
