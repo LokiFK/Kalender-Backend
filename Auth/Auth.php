@@ -19,22 +19,30 @@
         public static function getToken() {
             return self::$token;
         }
+        
         public static function getStatus() {
             return self::$status;
         }
+        
         public static function getUser() {
             return self::$user;
         }
+        
         public static function getAccount() {
             return self::$account;
         }
+
         public static function getAdmin() {
             return self::$admin;
         }
 
+        public static function getUserID() {
+            return self::$user['id'];
+        }
+
         public static function start() {
-            self::$token = Auth::getGivenToken();
-            if (self::$token == null) {
+            self::$token = self::getGivenToken();
+            if (self::$token == null && !self::isLoggedIn()) {
                 self::$status = self::GUEST;
                 return;
             }
@@ -42,7 +50,7 @@
             if (count($res) == 1) {
                 if ($res[0]['end'] != null) {
                     $date = new DateTime();
-                    $date->add(new DateInterval(Auth::DURATION));
+                    $date->add(new DateInterval(self::DURATION));
                     $end = $date->format(DB::DATE_FORMAT);
                     DB::query("UPDATE `session` SET `end` = :end WHERE `token` = :token;", [':token' => self::$token, ':end' => $end]);
                 } 
@@ -62,107 +70,68 @@
             } else {
                 self::$status = self::GUEST;
             }
-
         }
 
-        public static function user()
+        public static function registerUser(User $user): array
         {
-            return self::$user;
-            /*$token = Auth::getCheckedToken();
-            if (!isset($token)) { return; }
-
-            $tokenWithUser = DB::table('session')->where('token = :token', [':token' => $token])->get([new ForeignDataKey('userID', 'users', 'id')]);
-            if (!isset($tokenWithUser)) {
-                ErrorUI::error(401, 'Invalid Token');
-                exit;
-            }
-
-            return $tokenWithUser[0]['user'];*/
-        }
-
-        public static function userID()
-        {
-            return self::$user['id'];
-            /*$token = Auth::getCheckedToken();
-            return DB::table('session')->where('token = :token', [':token' => $token])->get([], ['userID'])[0]['userID'];
-            */
-        }
-
-        public static function registerUser(User $user)
-        {
-            return DB::query("INSERT INTO users (firstname, lastname, salutation, insurance, birthday, patientID) VALUES (:firstname, :lastname, :salutation, :insurance, :birthday, :patientID)", [':firstname' => $user->firstname, ':lastname' => $user->lastname, ':salutation' => $user->salutation, ':insurance' => $user->insurance, ':birthday' => $user->birthday, ':patientID' => $user->patientID]);
-            /*$userID = DB::table('users')->where('firstname = :firstname', [':firstname' => $user->firstname])->get([], ['id'])[0]['id'];    //nich bsonders sicher
-            
-            return $userID;*/
+            return DB::query(
+                "INSERT INTO `users` (`firstname`, `lastname`, `salutation`, `insurance`, `birthday`, `patientID`) VALUES (:firstname, :lastname, :salutation, :insurance, :birthday, :patientID)",
+                [':firstname' => $user->firstname, ':lastname' => $user->lastname, ':salutation' => $user->salutation, ':insurance' => $user->insurance, ':birthday' => $user->birthday, ':patientID' => $user->patientID]
+            );
         }
 
         public static function registerAccount(Account $account, $approvalNeeded)
         {
             if (Auth::userExists($account->userID)) {
-                if ($approvalNeeded) {                    //unterscheidet approved User von nicht approved User
-                    $created = null;
+                if ($approvalNeeded) {
+                    $createdAt = null;
                 } else {
-                    $created = date(DB::DATE_FORMAT);
+                    $createdAt = date(DB::DATE_FORMAT);
                 }
-                DB::query("INSERT INTO account (userID, username, email, password, createdAt) VALUES (:userID, :username, :email, :password, :createdAt);",[':userID' => $account->userID, ':username' => $account->username, ':email' => $account->email, ':password' => password_hash($account->password, PASSWORD_DEFAULT), ':createdAt' => $created]);
+                DB::query(
+                    "INSERT INTO account (userID, username, email, password, createdAt) VALUES (:userID, :username, :email, :password, :createdAt);",
+                    [':userID' => $account->userID, ':username' => $account->username, ':email' => $account->email, ':password' => password_hash($account->password, PASSWORD_DEFAULT), ':createdAt' => $createdAt]
+                );
                 
                 if ($approvalNeeded) {
                     return Auth::createNewCode($account->userID);
                 }
             }
         }
-        public static function createNewCode($userID)
-        {
-            try {
-                $code = bin2hex(random_bytes(25));
-            } catch (Exception $e) {
-                ErrorUI::error(605, $e);
-            }
-            while (count(DB::table('notapproved')->where('code = :code', [':code' => $code])->get()) > 0) {
-                try {
-                    $code = bin2hex(random_bytes(25));
-                } catch (Exception $e) {
-                    ErrorUI::error(605, $e);
-                }
-            }
-            DB::query("INSERT INTO notapproved (userID, code, datetime) VALUES (:userID, :code, :date);", [':userID' => $userID, ':code' => $code, ':date' => date(DB::DATE_FORMAT)]);
-            return $code;
-        }
 
         public static function approveAccount($code) {
-            $res = DB::query("select userID from notapproved where code = :code", [":code"=>$code]);
-            if(count($res)==1){
-                DB::query("UPDATE account SET createdAt = :date WHERE userID = :userID;", [':userID' => $res[0]['userID'], ":date"=>date(DB::DATE_FORMAT) ]);
+            $res = DB::table("notapproved")->where("`code` = :code", [":code"=>$code])->get([], ['userID']);
+            if (count($res) == 1) {
+                DB::query(
+                    "UPDATE `account` SET `createdAt` = :date WHERE `userID` = :userID;",
+                    [':userID' => $res[0]['userID'], ":date" => date(DB::DATE_FORMAT)]
+                );
                 return $res[0]['userID'];
             }
             return null;
         }
 
-        public static function createNewResetCode($email){
-            $res = DB::query("SELECT userID from account WHERE email = :email", [":email"=>$email]);
-            if(count($res)==1){
-                try {
-                    $code = bin2hex(random_bytes(25));
-                } catch (Exception $e) {
-                    ErrorUI::error(605, $e);
-                }
-                while (count(DB::table('passwordreset')->where('code = :code', [':code' => $code])->get()) > 0) {
-                    try {
-                        $code = bin2hex(random_bytes(25));
-                    } catch (Exception $e) {
-                        ErrorUI::error(605, $e);
-                    }
-                }
-                DB::query("INSERT INTO passwordreset (userID, code, datetime, isUsed) VALUES (:userID, :code, :date, :isUsed);", [':userID' => $res[0]['userID'], ':code' => $code, ':date' => date(DB::DATE_FORMAT), ':isUsed'=>false]);
+        public static function createNewResetCode(string $email) {
+            $res = DB::query("SELECT `userID` FROM `account` WHERE `email` = :email", [":email" => $email]);
+            if (count($res) == 1) {
+                $code = self::createCheckedRandomHash("passwordreset", "code");
+                
+                DB::query(
+                    "INSERT INTO `passwordreset` (`userID`, `code`, `datetime`, `isUsed`) VALUES (:userID, :code, :date, :isUsed);",
+                    [':userID' => $res[0]['userID'], ':code' => $code, ':date' => date(DB::DATE_FORMAT), ':isUsed' => false]
+                );
                 return $code; 
             }
         }
 
         public static function resetPassword($code, $password){
-            $res = DB::query("select userID from passwordreset where code = :code", [":code"=>$code]);
-            if(count($res)==1){
-                DB::query("UPDATE passwordreset SET isUsed = false WHERE code = :code;", [ ':code'=>$code ]);
-                DB::query("UPDATE account SET password = :password WHERE userID = :userID;", [':userID' => $res[0]['userID'], ":password"=>password_hash($password, PASSWORD_DEFAULT) ]);
+            $res = DB::table("passwordreset")->where("`code` = :code", [":code" => $code])->get([], ['userID']);
+            if (count($res) == 1) {
+                DB::query("UPDATE `passwordreset` SET `isUsed` = false WHERE `code` = :code;", [':code' => $code]);
+                DB::query(
+                    "UPDATE `account` SET `password` = :password WHERE `userID` = :userID;",
+                    [':userID' => $res[0]['userID'], ":password" => password_hash($password, PASSWORD_DEFAULT)]
+                );
                 return $res[0]['userID'];
             }
             return null;
@@ -171,16 +140,16 @@
         public static function login($username, $password, bool $remember)
         {
             $accounts = DB::table('account')->where('username = :username', [':username' => $username])->get();
-            if(count($accounts)==1){
-                $account = $accounts[0];
+            if (count($accounts) == 1) {
+                $account = $accounts[0]; // has to be unneccessary, username has to be unique
                 if (password_verify($password, $account['password'])) {
                     return Auth::specialLogin($account['userID'], $remember);
                 }
             }
             return null;
         }
-        public static function specialLogin($userID, $remember){
-            $token = Auth::createNewToken();
+        public static function specialLogin($userID, $remember) {
+            $token = self::createCheckedRandomHash("session", "token");
             $start = date(DB::DATE_FORMAT);
             $end = null;
             if (!$remember) {
@@ -206,13 +175,13 @@
 
         public static function userExists($id): bool
         {
-            $res = DB::query("SELECT `id` FROM `users` WHERE id = :id;", [':id' => $id]);
+            $res = DB::table("users")->where("`id` = :id;", [':id' => $id])->get([], ['id']);
             return count($res) > 0;
         }
 
         private static function isValidToken($token): bool
         {
-            $erg = DB::query("SELECT `end` FROM `session` WHERE `token` = :token AND (`end` IS NULL OR `end` > :end);", [':token' => $token, ":end" => date(DB::DATE_FORMAT)]);
+            $erg = DB::table("session")->where("`token` = :token AND (`end` IS NULL OR `end` > :end);", [':token' => $token, ":end" => date(DB::DATE_FORMAT)])->get([], ['end']);
             if (count($erg) == 1) {
                 if ($erg[0]['end'] != null) {
                     $date = new DateTime();
@@ -225,23 +194,6 @@
             return false;
         }
 
-        public static function createNewToken()
-        {
-            try {
-                $token = bin2hex(random_bytes(25));
-            } catch (Exception $e) {
-                ErrorUI::error(605, $e);
-            }
-            while (count(DB::table('session')->where('token = :token', [':token' => $token])->get()) > 0) {
-                try {
-                    $token = bin2hex(random_bytes(25));
-                } catch (Exception $e) {
-                    ErrorUI::error(605, $e);
-                }
-            }
-            return $token;
-        }
-
         public static function getCheckedToken() {
             $token = Auth::getToken();
             if ($token == null) {
@@ -250,14 +202,6 @@
             }
             return $token;
         }
-
-        /*public static function getToken() {
-            $token = Auth::getTokenWithUnapprovedUsers();
-            $res = DB::query("select count(*) as Anzahl from session, account where session.userID = account.userID and createdAt is not null and token = :token", [":token"=>$token]);
-            if ($res[0]['Anzahl'] == 1) {
-                return $token;
-            }
-        }*/
         
         public static function getTokenWithUnapprovedUsers() {
             $token = Auth::getGivenToken();
@@ -266,7 +210,7 @@
             }
         }
         
-        public static function getGivenToken()
+        public static function getGivenToken(): string
         {
             $token = "";
             if (isset($_POST['token'])) $token = $_POST['token'];
@@ -278,18 +222,20 @@
 
         public static function isLoggedIn(): bool
         {
-            $token = Auth::getToken();
-            //echo "token: ".$token;
-            return $token!=null;
+            return self::getTokenWithUnapprovedUsers() != null;
         }
 
         public static function getUsername(): string
         {
-            //return "testusername";
-            $token = Auth::getCheckedToken();
-            $username = DB::query("SELECT username FROM `account`, `session` WHERE account.userID = `session`.userID AND token = :token;", [':token' => $token]);
+            /*$token = Auth::getCheckedToken();
+            $username = DB::query("SELECT `username` FROM `account`, `session` WHERE `account`.`userID` = `session`.`userID` AND `token` = :token;", [':token' => $token]);
             if (count($username) > 0) {
                 return $username[0]['username'];
+            }
+            return "Default";*/
+
+            if (self::$status > 1) {
+                return self::$account['username'];
             }
             return "Default";
         }
@@ -298,6 +244,35 @@
         {
             $res = DB::query("SELECT count(*) AS 'Anzahl' FROM users WHERE id = :userid;", [':userid' => $userID]);
             return $res[0]['Anzahl'] > 0;
+        }
+
+        public static function createRandomHash(): string
+        {
+            try {
+                return bin2hex(random_bytes(25));
+            } catch (Exception $e) {
+                ErrorUI::error(605, $e);
+            }
+        }
+
+        public static function createCheckedRandomHash(string $table, string $columnName)
+        {
+            $code = self::createRandomHash();
+            while (count(DB::table($table)->where($columnName . ' = :code', [':code' => $code])->get()) > 0) {
+                $code = self::createRandomHash();
+            }
+            return $code;
+        }
+        
+        public static function createNewCode($userID)
+        {
+            $code = self::createCheckedRandomHash("notapproved", "code");
+
+            DB::query(
+                "INSERT INTO `notapproved` (`userID`, `code`, `datetime`) VALUES (:userID, :code, :date);",
+                [':userID' => $userID, ':code' => $code, ':date' => date(DB::DATE_FORMAT)]
+            );
+            return $code;
         }
     }
 
