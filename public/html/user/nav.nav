@@ -1,0 +1,8 @@
+@link[Start(/), status>=0]
+@link[Terminvereinbarung(/user/appointments/new), status>=0]
+@link[Terminübersicht(/user/appointments/overview), status>=1]
+
+@flipside[]
+
+@link[Mitarbeiterbereich(/admin/landingPage), status>=2]
+{+ @nav:general/userInfo +}

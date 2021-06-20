@@ -11,4 +11,21 @@
             }
             return $formData;
         }
+
+        public static function require($formData, array $requires): array
+        {
+            Form::validate($formData, $requires);
+
+            $missingColumns = array();
+
+            foreach ($requires as $key => $value) {
+                if (!isset($formData[$key]) || (isset($formData[$key]) && empty($formData[$key]))) {
+                    array_push($missingColumns, $key);
+                }
+            }
+
+            return $missingColumns;
+        }
     }
+
+?>

@@ -1,19 +1,36 @@
-*{
+* {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-}
-body {
-    background-color: #f2f2f2;
     font-family: 'Open Sans', sans-serif;
 }
-#nav{
-    margin:0;
+
+body {
+    background-color: rgb(221, 221, 221);
+    height: 100%;
 }
-/*#content{
-    background-color:lightgreen;
-    padding-top:0;
-}*/
-#footer{
-    background-color:rgb(130, 175, 130);
+
+.main-wrapper {
+    padding: 0 0 100px;
+    position: relative;
+}
+
+#nav {
+    position: fixed;
+    top: 0;
+    width: calc(100% - 20px);
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#footer {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    position: fixed;
+    box-shadow: 0 0 15px rgb(165, 165, 165);
+}
+
+#content {
+    margin-top: 80px;
 }

@@ -1,4 +1,4 @@
-{[ title=>Login, navContentLink=>general/navGuest ]}
+{[ title=>Login, navContentLink=>user/nav ]}
 {# extend general/template@main #}
 {% css/auth/form %}
 <div class="form-wrapper">
@@ -7,6 +7,10 @@
         <input type="text" name="username"><br>
         <label for="password">Passwort</label>
         <input type="text" name="password"><br>
+        <input type="checkbox" name="remember"><label for="remember">angemeldet bleiben</label><br>
+        <!--checkbox angemeldet bleiben-->
+        <a href="/auth/user/create">registrieren</a>    <br>
+        <a href="/auth/account/resetLink">Passwort vergessen</a>
 
         <input type="submit" value="Anmelden">
     </form>

@@ -1,3 +1,32 @@
 {[ title=>Terminübersicht ]}
 {# extend general/template@main #}
-Terminübersicht...
+{% styles %}
+
+<!--<div class="overview-wrapper">
+    <div class="appointments">
+        <h2 class="heading">Alle Termine</h2>
+        <div class="appointments-list">
+            <div class="appointments-list-item">
+                <div class="row">
+                    <div class="row-item"><h4 class="type">Typ</h4></div>
+                    <div class="row-item"><h4 class="time">Uhrzeit</h4></div>
+                    <div class="row-item"><h4 class="status" style="color: {{ appointments.statusColor }};">Status</h4></div>
+                </div>
+            </div>
+            {! appointments: 
+                <div class="appointments-list-item">
+                    <div class="row">
+                        <div class="row-item"><p class="type">{{ appointments.type }}</p></div>
+                        <div class="row-item"><p class="time">{{ appointments.start }} - {{ appointments.end }}</p></div>
+                        <div class="row-item"><p class="status" style="color: {{ appointments.statusColor }};">{{ appointments.status }}</p></div>
+                    </div>
+                </div>
+             !}
+        </div>
+    </div>
+</div>-->
+<ul id=appointmentsList>
+{! appointments:
+    <li class=appointment id=appointment{{ appointments.iterationNr }}>{{ appointments.start }}<br>{{ appointments.type }}</li>
+ !}
+</ul>

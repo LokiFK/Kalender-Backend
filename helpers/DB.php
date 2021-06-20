@@ -2,6 +2,7 @@
 
     class DB {
 
+        public const DATE_FORMAT = "Y/m/d H:i:s";
         public const ASC = 0;
         public const DESC = 1;
         const host = '127.0.0.1';
@@ -16,7 +17,7 @@
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 return $pdo;
             } catch (PDOException $e) {
-                ErrorUI::errorFiveHundred($e);
+                ErrorUI::error(500, 'Error connecting to DB');
                 exit;
             }
         }
@@ -24,7 +25,8 @@
         public static function query(string $query, array $params = array())
         {
             try {
-                $stmt = DB::connect()->prepare($query);
+                $db = DB::connect();
+                $stmt = $db->prepare($query);
                 $stmt->execute($params);
 
                 if (strtoupper(explode(' ', $query)[0]) == 'SELECT') {
@@ -33,8 +35,10 @@
                         return $result;
                     }
                 } else if (strtoupper(explode(' ', $query)[0]) == 'INSERT') {
-                    return DB::connect()->lastInsertID();
-                }
+                    return $db->lastInsertId();
+                } /*else if (strtoupper(explode(' ', $query)[0]) == 'UPDATE' || strtoupper(explode(' ', $query)[0]) == 'DELETE') {
+                    return DB::connect()->affected_rows;
+                }*/
             } catch (PDOException $e) {
                 ErrorUI::errorFiveHundred($e);
                 exit;

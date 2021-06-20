@@ -1,0 +1,36 @@
+.footer-wrap {
+    width: 100%;
+    background-color: rgb(165, 165, 165);
+    border-top: 0 0 10px rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    bottom: 0;
+}
+
+.footer-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.footer-list-item {
+    list-style-type: none;
+    text-align: center;
+    padding: 10px;
+}
+
+.footer-link {
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+    font-size: 15px;
+    padding: 15px 40px;
+}
+
+.footer-link:hover {
+    animation: linear fade-in-text 0.5s;
+    color: blue;
+}
+
+@keyframes fade-in-text {
+    from { color: white; }
+    to { color: blue; }
+}

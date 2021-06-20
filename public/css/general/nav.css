@@ -1,52 +1,82 @@
-#navList{
+.nav, .nav-list {
+    height: 50px;
+    box-shadow: 0 0 15px rgb(0, 54, 0);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.nav-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 30px;
+    padding-right: 30px;
+    background-color: green;
     list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    
-    background-color:green;
 }
-.navElementLink{
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-}
-.navElementLink:hover {
-    background-color:darkgreen;
-}
-.left {
-    float: left;
-}
-.right {
-    float: right;
+
+.left, .right {
+    display: flex;
+    flex-direction: row;
 }
 
 
-.navDropdown {
+.dropdown {
+    position: relative;
+    padding: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.dropdown-content-wrapper {
+    background-color: transparent;
+    padding-top: 5px;
     display: none;
-    background-color:rgb(0, 160, 0);
-    /*float: right;
-    width: 25%;*/
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.3); 
-}
-.navDropdownList{
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;    
-}
-.navDropdownElement, .navDropdownElementLink{
-    width:100%;
-}
-.navDropdownElementLink{
-    display: block;
-    color: white;
+    position: absolute;
     text-align: center;
-    padding: 12px 14px;
-    text-decoration: none;
+    width: 100%;
 }
-.navDropdownElementLink:hover {
+
+.dropdown-content {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    background-color: rgb(0, 160, 0);
+    padding: 5px;
+}
+
+.dropdown form {
+    margin: 5px;
+}
+
+.dropdown p {
+    cursor: pointer;
+}
+
+input[type=submit] {
+    padding: 5px;
+    outline: 0;
+    border: 0;
+    cursor: pointer;
+    border-radius: 10px;
+    background-color: transparent;
+}
+
+.link form input {
+    padding: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-size: 16px;
+    background-color: green;
+}
+
+.dropdown form input {
+    width: 100%;
+}
+
+.dropdown:hover .dropdown-content-wrapper {
+    display: block;
+}
+
+.nav-list-item form input:hover {
     background-color:darkgreen;
 }

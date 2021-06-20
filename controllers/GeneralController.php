@@ -3,8 +3,11 @@
     class GeneralController{
 
         public function startPage(Request $req, Response $res){
-            $controller = new UserController(); 
-            $controller->new($req,$res);
+            if(Auth::getStatus()>2){
+                Path::redirect('/admin/landingPage');
+            } else {
+                Path::redirect('/user/landingPage');
+            }
         }
 
     }
