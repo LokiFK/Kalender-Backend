@@ -166,7 +166,7 @@
         {
             Middleware::auth();
 
-            $userID = Auth::userID();
+            $userID = Auth::getUser()['id'];
             
             $adminRelation = DB::table('admin')->where('userID = :userID', [':userID' => $userID])->get();
             return count($adminRelation) > 0
