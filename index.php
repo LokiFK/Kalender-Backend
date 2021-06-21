@@ -70,6 +70,7 @@
     $routes->post('/admin/treatments', 'AdminController@treatments');
     $routes->get('/admin/treatment/change', 'AdminController@treatmentChange');
     $routes->post('/admin/treatment/change', 'AdminController@treatmentChange');
+    $routes->get('/admin/appointment/new', 'AdminController@newAppointment');
 
 
     $routes->listen();
