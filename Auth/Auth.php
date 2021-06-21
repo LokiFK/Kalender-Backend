@@ -37,6 +37,7 @@
         }
 
         public static function getUserID() {
+            if(self::$user==null) return null;
             return self::$user['id'];
         }
 
