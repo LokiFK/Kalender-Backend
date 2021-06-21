@@ -1,0 +1,14 @@
+{[ title=>Raumnummer ändern, navContentLink=>admin/nav ]}
+{# extend general/template@main #}
+<form action="/admin/treatment/change?type=change&name={{ name }}" method="POST">
+    <label for="newName">Name:</label>
+    <input type="text" name="newName" value="{{ name }}"><br>
+    <label for="duration">Dauer:</label>
+    <input type="number" name="duration" value="{{ duration }}"><br>
+    <label for="nrDoctors">benötigte Anzahl Doktors:</label>
+    <input type="number" name="nrDoctors" value="{{ nrDoctors }}"><br>
+    <label for="nrNurses">benötigte Anzahl Arzthelfer:</label>
+    <input type="number" name="nrNurses" value="{{ nrNurses }}"><br>
+
+    <input type="submit" value="ändern">
+</form>

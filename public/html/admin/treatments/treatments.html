@@ -1,0 +1,11 @@
+{[ title=>Behandlungen, navContentLink=>admin/nav ]}
+{# extend general/template@main #}
+<ul>
+{! treatments:
+    <li>{{ treatments.name }} <br> 
+        <a href="treatment/change?name={{ treatments.name }}&type=changeRequest">Daten ändern</a> <br>
+        <a href="treatment/change?name={{ treatments.name }}&type=delete">löschen</a>
+    </li>
+ !}
+</ul>
+<a href="treatment/change?type=newRequest">Behandlung hinzufügen</a>

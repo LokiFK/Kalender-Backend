@@ -3,9 +3,65 @@
     class AdminController {
 
         public function landingPage(Request $req, Response $res) {
-            Middleware::status(3);
+            Middleware::statusBiggerOrEqualTo(3);
             echo $res->view('admin/landingPage');
         }
+
+        public function rooms(Request $req, Response $res) {
+            Middleware::statusBiggerOrEqualTo(3);
+            $data = DB::query("SELECT * from room;");
+            echo $res->view('admin/rooms/rooms', array(), array(), ['rooms'=>$data ]);
+        }
+        public function roomChange(Request $req, Response $res) {
+            Middleware::statusBiggerOrEqualTo(3);
+            $data = Form::validate($req->getBody(), ['type']);
+            if($data['type']=="delete"){
+                $data = Form::validate($req->getBody(), ['number']);
+                DB::query("DELETE FROM room WHERE number = :number", [":number"=>$data['number']]);
+                Path::redirect(Path::ROOT."admin/rooms");
+            } else if($data['type']=="changeRequest"){
+                $data = Form::validate($req->getBody(), ['number']);
+                echo $res->view("admin/rooms/changeRoom", ['number'=>$data['number']]);
+            } else if($data['type']=="change"){
+                $data = Form::validate($req->getBody(), ['number', 'newNumber']);
+                DB::query("UPDATE room SET number=:newNumber WHERE number = :number", [":number"=>$data['number'], ":newNumber"=>$data['newNumber']]);
+                Path::redirect(Path::ROOT."admin/rooms");
+            } else if($data['type']=="newRequest"){
+                echo $res->view("admin/rooms/newRoom");
+            } else if($data['type']=="new"){
+                $data = Form::validate($req->getBody(), ['number']);
+                DB::query("INSERT INTO room(number) VALUES (:number)", [":number"=>$data['number']]);
+                Path::redirect(Path::ROOT."admin/rooms");
+            }
+        }    
+        public function treatments(Request $req, Response $res) {
+            Middleware::statusBiggerOrEqualTo(3);
+            $data = DB::query("SELECT * from treatment;");
+            echo $res->view('admin/treatments/treatments',  [], [], ['treatments'=>$data]);
+        }
+        public function treatmentChange(Request $req, Response $res) {
+            Middleware::statusBiggerOrEqualTo(3);
+            $data = Form::validate($req->getBody(), ['type']);
+            if($data['type']=="delete"){
+                $data = Form::validate($req->getBody(), ['name']);
+                DB::query("DELETE FROM treatment WHERE name = :name", [":name"=>$data['name']]);
+                Path::redirect(Path::ROOT."admin/treatments");
+            } else if($data['type']=="changeRequest"){
+                $data = Form::validate($req->getBody(), ['name']);
+                $dbData = DB::query("SELECT * FROM treatment WHERE name=:name", [':name'=>$data['name']])[0];
+                echo $res->view("admin/treatments/changeTreatment", $dbData);
+            } else if($data['type']=="change"){
+                $data = Form::validate($req->getBody(), ['name', 'newName', 'duration', 'nrDoctors', 'nrNurses']);
+                DB::query("UPDATE treatment SET name=:newName, duration=:duration, nrDoctors=:nrDoctors, nrNurses=:nrNurses WHERE name = :name", [":name"=>$data['name'], ":newName"=>$data['newName'], ':duration'=>$data['duration'], ':nrDoctors'=>$data['nrDoctors'], 'nrNurses'=>$data['nrNurses']]);
+                Path::redirect(Path::ROOT."admin/treatments");
+            } else if($data['type']=="newRequest"){
+                echo $res->view("admin/treatments/newTreatment");
+            } else if($data['type']=="new"){
+                $data = Form::validate($req->getBody(), ['name', 'duration', 'nrDoctors', 'nrNurses']);
+                DB::query("INSERT INTO treatment(name, duration, nrDoctors, nrNurses) VALUES (:name, :duration, :nrDoctors, :nrNurses)", [":name"=>$data['name'], ':duration'=>$data['duration'], ':nrDoctors'=>$data['nrDoctors'], 'nrNurses'=>$data['nrNurses']]);
+                Path::redirect(Path::ROOT."admin/treatments");
+            }
+        } 
     }
 
 ?>

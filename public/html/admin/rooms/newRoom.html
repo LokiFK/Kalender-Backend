@@ -1,0 +1,8 @@
+{[ title=>neuer Raum, navContentLink=>admin/nav ]}
+{# extend general/template@main #}
+<form action="/admin/room/change?type=new" method="POST">
+    <label for="number">Number:</label>
+    <input type="text" name="number"><br>
+
+    <input type="submit" value="hinzufügen">
+</form>
