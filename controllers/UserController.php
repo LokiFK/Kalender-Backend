@@ -105,7 +105,8 @@
             } else {
                 $res->errorVisual(507, "Error");
             }
-            $view = $res->view('user/profile', ['firstname' => $user['firstname'], 'lastname' => $user['lastname'], 'salutation' => $user['salutation'], 'insurance' => $user['insurance'], 'birthday' => $user['birthday']]);
+            $birthday = date('Y-m-d', strtotime($user['birthday']));
+            $view = $res->view('user/profile', ['firstname' => $user['firstname'], 'lastname' => $user['lastname'], 'salutation' => $user['salutation'], 'insurance' => $user['insurance'], 'birthday' => $birthday]);
             echo $view;
         }
 
