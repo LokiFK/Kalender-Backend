@@ -90,17 +90,17 @@
             $comparator = substr($status, 0, strlen($status)-1);
             
             if ($comparator == "==") {
-                return Auth::getToken() == $statusNr;
+                return Auth::getStatus() == $statusNr;
             } else if ($comparator == "<") {
-                return Auth::getToken() < $statusNr;
+                return Auth::getStatus() < $statusNr;
             } else if ($comparator == "<=") {
-                return Auth::getToken() <= $statusNr;
+                return Auth::getStatus() <= $statusNr;
             } else if ($comparator == ">") {
-                return Auth::getToken() > $statusNr;
+                return Auth::getStatus() > $statusNr;
             } else if ($comparator == ">=") {
-                return Auth::getToken() >= $statusNr;
+                return Auth::getStatus() >= $statusNr;
             } else if ($comparator == "<>") {
-                return Auth::getToken() != $statusNr;
+                return Auth::getStatus() != $statusNr;
             } else {
                 return false;
             }
