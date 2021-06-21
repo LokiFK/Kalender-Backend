@@ -39,10 +39,10 @@
                     echo "Fehler";      //todo
                 }
 
-                $link =  $_SERVER['HTTP_HOST'].'/auth/account/approve?code='.$code;
+                $link =  '../../../auth/account/approve?code='.$code;
                 echo "mail: <a href=\"$link\">".$link."</a><br>";
                 echo "<a href=../../../auth/account/notApproved>automatische Weiterleitung</a>";
-                    
+
                 /*$from = "FROM Terminplanung @noreply";
                 $subject = "Account bestätigen";
                 $msg = "BlaBlaBla Hier ihr anmelde Link: '.$link;
