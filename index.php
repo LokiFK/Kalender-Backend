@@ -19,8 +19,12 @@
     $routes->get('/user/landingPage', 'UserController@landingPage');
     $routes->get('/user/appointments/new', 'UserController@new');
     $routes->get('/user/appointments/new2', 'UserController@new2');
+    $routes->get('/user/appointments/new3', 'UserController@new3');
     $routes->get('/user/appointments/overview', 'UserController@overview');
-    $routes->get('/api/user/appointments/termine', 'UserController@termine');
+
+
+
+
 
     // Profile
     $routes->get('/user/profile', 'UserController@get');
