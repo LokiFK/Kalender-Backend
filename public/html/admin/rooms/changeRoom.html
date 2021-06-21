@@ -1,0 +1,8 @@
+{[ title=>Raumnummer ändern, navContentLink=>admin/nav ]}
+{# extend general/template@main #}
+<form action="/admin/room/change?type=change&number={{ number }}" method="POST">
+    <label for="newNumber">neue Nummer:</label>
+    <input type="text" name="newNumber"><br>
+
+    <input type="submit" value="ändern">
+</form>

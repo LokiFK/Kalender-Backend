@@ -1,0 +1,11 @@
+{[ title=>Räume, navContentLink=>admin/nav ]}
+{# extend general/template@main #}
+<ul>
+{! rooms:
+    <li>{{ rooms.number }} <br> 
+        <a href="room/change?number={{ rooms.number }}&type=changeRequest">Nummer ändern</a> <br>
+        <a href="room/change?number={{ rooms.number }}&type=delete">löschen</a>
+    </li>
+ !}
+</ul>
+<a href="room/change?type=newRequest">Raum hinzufügen</a>
