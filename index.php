@@ -52,6 +52,7 @@
     $routes->get('/auth/account/resetUserdata', 'AuthController@resetUserdata');
     $routes->post('/auth/account/resetUserdata', 'AuthController@resetUserdata');
     $routes->get('/auth/account/dataReset', 'AuthController@dataReset');
+    $routes->post('/auth/account/dataReset', 'AuthController@dataReset');
 
     // Login
     $routes->get('/auth/login', 'AuthController@login');

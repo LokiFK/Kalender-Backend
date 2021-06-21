@@ -2,8 +2,8 @@
 {% css/user/profile %}
 {# extend general/template@main #}
 <h3 id="title">Hallo {{ username }}, bitte ändere hier Deine Daten</h3>
-<form id="form">
-    <label for="firstName">Anrede</label><br>
+<form action="/auth/account/dataReset" method="POST">
+    <label for="salutation">Anrede</label><br>
         <select value={{ salutation }}>
             <option value="" selected disabled hidden>{{ salutation }}</option>
             <option>Frau</option>
@@ -13,21 +13,19 @@
         </select>
     <br>
     <label for="firstName">Vorname</label><br>
-    <input id="field" type="text" name="firstName" value={{ firstname }}></input>
+    <input type="text" name="firstName" value={{ firstname }}></input>
     <br>
-    <label for="firstName">Nachname</label><br>
-    <input type="text" id="field" name="firstName" value={{ lastname }}></input>
+    <label for="lastName">Nachname</label><br>
+    <input type="text" name="lastName" value={{ lastname }}></input>
     <br>
-    <label for="firstName">Geburtsdatum</label><br>
-    <input type="date" id="field" name="firstName" value={{ birthday }}></input>
+    <label for="birthday">Geburtsdatum</label><br>
+    <input type="date" name="birthday" value={{ birthday }}></input>
     <br>
-    <label for="firstName">Verischerung</label><br>
-    <input type="text" id="field" name="firstName" value={{ insurance }}></input>
+    <label for="insurance">Verischerung</label><br>
+    <input type="text" name="insurance" value={{ insurance }}></input>
     <br>
-    <label for="firstName">Email</label><br>
-    <input type="text" id="field" name="firstName" value={{ email }}></input>
-</form>
-
-<form action="/auth/account/resetUserdata" method="GET">
+    <label for="email">Email</label><br>
+    <input type="text" name="email" value={{ email }}></input>
     <input type="submit" value="Daten ändern">
 </form>
+

@@ -12,6 +12,23 @@
             return $formData;
         }
 
+        public static function validateNewData($formData, array $columns)
+        {
+            foreach ($columns as $column) {
+                if (!isset($formData[$column]) || $formData[$column] == null) {
+                    ErrorUI::error(400, 'Bad request');
+                    exit;
+                }
+            }
+            $data = [];
+            $count = 0;
+            foreach ($columns as $column) {
+                $count ++; 
+                $data = array_pad($data, $count, $formData[$column]);
+            }
+            return $data;
+        }
+
         public static function require($formData, array $requires): array
         {
             Form::validate($formData, $requires);
