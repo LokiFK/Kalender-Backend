@@ -98,7 +98,6 @@
         }
 
         public function get(Request $req, Response $res) {
-<<<<<<< HEAD
             $userId = Auth::userID();
             $user = DB::table('users')->where("id = :id",[':id'=>$userId])->get();
             if(count($user)>0) {
@@ -107,11 +106,6 @@
                 $res->errorVisual(507, "Error");
             }
             $view = $res->view('user/profile', ['firstname' => $user['firstname'], 'lastname' => $user['lastname'], 'salutation' => $user['salutation'], 'insurance' => $user['insurance'], 'birthday' => $user['birthday']]);
-=======
-            Middleware::statusBiggerOrEqualTo(2);
-            
-            $view = $res->view('user/profile');
->>>>>>> f1c56c49c372f66f42072d90fe8193d49255c96b
             echo $view;
         }
 
