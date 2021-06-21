@@ -1,6 +1,9 @@
-@link[Start(/admin/landingPage), status>=0]
+@link[Start(/admin/landingPage), status>=3]
+
+@link[Räume(/admin/rooms), status>=3]
+@link[Behandlungen(/admin/treatments), status>=3]
 
 @flipside[]
 
-@link[Patientenbereich(/user/landingPage), status>=0]
+@link[Patientenbereich(/user/landingPage), status>=3]
 {+ @nav:general/userInfo +}

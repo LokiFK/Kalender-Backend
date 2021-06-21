@@ -62,6 +62,11 @@
     // --- ADMIN --- \\
     $routes->get('/admin/landingPage', 'AdminController@landingPage');
 
+    $routes->get('/auth/rooms', 'AdminController@rooms');
+    $routes->post('/auth/rooms', 'AdminController@rooms');
+    $routes->get('/auth/treatments', 'AdminController@treatments');
+    $routes->post('/auth/treatments', 'AdminController@treatments');
+
 
     $routes->listen();
 
