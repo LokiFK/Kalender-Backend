@@ -21,7 +21,13 @@
     <label for="firstName">Geburtsdatum</label><br>
     <input type="date" id="field" name="firstName" value={{ birthday }}></input>
     <br>
-    
     <label for="firstName">Verischerung</label><br>
     <input type="text" id="field" name="firstName" value={{ insurance }}></input>
+    <br>
+    <label for="firstName">Email</label><br>
+    <input type="text" id="field" name="firstName" value={{ email }}></input>
+</form>
+
+<form action="/auth/account/resetUserdata" method="GET">
+    <input type="submit" value="Daten ändern">
 </form>

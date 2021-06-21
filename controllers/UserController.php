@@ -30,23 +30,37 @@
                 ]
             );
         }
+
         public function new(Request $req, Response $res){
-            $treatments = DB::query("SELECT * from treatment;");
+            $treatments = DB::table("treatment")->get();
+            $allAppointmentTypes = ['b1', 'b2'];
             // $treatments = [ ["name"=>"b1"], ["name"=>"b2"], ["name"=>"b3"] ];
-            $view = $res->view('user/new', array(), array(), [ "treatments"=>$treatments ]);
+            $view = $res->view('user/new', array(), array(), [
+                'appointmentTypes' => $allAppointmentTypes
+            ]);
             echo $view;
         }
+
         public function new2(Request $req, Response $res){
             $data = Form::validate($req->getBody(), ['treatment']);
             $treatment = $data['treatment'];
-            if(DB::query("SELECT count(*) as Anzahl from treatment where name=:treatment;", [ ":treatment"=>$treatment ])[0]['Anzahl']!=1){
+            if (DB::query("SELECT count(*) as Anzahl from treatment where name=:treatment;", [ ":treatment"=>$treatment ])[0]['Anzahl'] != 1) {
                 ErrorUI::error(400, 'Treatment not found.');
             }
-            //$termine = 
-            //$termine = [ [ "datum"=>"14.06.21", "inner"=>[["start"=>"13:00", "end"=>"13:15" ], ["start"=>"14:00", "end"=>"14:15" ]] ], [ "datum"=>"15.06.21", "inner"=>[["start"=>"13:00", "end"=>"13:15" ], ["start"=>"14:00", "end"=>"14:15" ]] ] ];
-            $termine = [ "14.06.2021"=>[["start"=>"13:00", "end"=>"13:15" ], ["start"=>"14:00", "end"=>"14:15" ]], "15.06.2021"=>[["start"=>"13:00", "end"=>"13:15" ], ["start"=>"14:00", "end"=>"14:15" ]]];
-            $view = $res->view('user/new2', [ "treatment"=>$treatment ], array(), [ "termine"=>$termine ]);
+            
+            $allAppointments = DB::query("SELECT a.id, a.start, a.end, b.name FROM appointment a, treatment b WHERE a.`userID` IS NULL AND a.`end` > :end AND a.treatmentID = b.id AND b.name = :name", [':end' => date(DB::DATE_FORMAT), ':name' => $treatment]);
+
+            $view = $res->view('user/new2', [ "treatment"=>$treatment ], array(), [ "appointments"=>$allAppointments ]);
             echo $view;
+        }
+
+        public function new3(Request $req, Response $res)
+        {
+            $data = Form::validate($req->getBody(), ['id']);
+            
+            DB::query("UPDATE `appointment` SET `userID` = " . Auth::getUserID() . " WHERE `id` = :id", [':id' => $data['id']]);
+
+            Path::redirect(Path::ROOT . "user/appointments/overview");
         }
 
         public function overview(Request $req, Response $res)
@@ -57,60 +71,23 @@
                 $data = DB::query("SELECT * from appointment, treatment WHERE appointment.treatmentID=treatment.id and appointment.userID=:userID", [":userID"=>Auth::getUser()['id']]);
                 $view = $res->view('user/overview', array(), array(), [ "appointments"=>$data ]);
                 echo $view;
-
-                // statussse = bestätigt, abgelehnt, warten, wahrgenommen
-
-
-                /*$view = $res->view('user/overview',
-                    [],
-                    [],
-                    [
-                        'appointments' => [
-                            [
-                                'name' => 'Sprechstunde',
-                                'start' => '16.06.2021 17:00',
-                                'end' => '16.06.2021 18:00',
-                                'status' => 'Approved', bestätigt
-                                'statusColor' => 'green'
-                            ],
-                            [
-                                'type' => 'Belastungs-EKG',
-                                'start' => '17.06.2021 17:00',
-                                'end' => '17.06.2021 18:00',
-                                'status' => 'Waiting', warten
-                                'statusColor' => 'orange'
-                            ],
-                            [
-                                'type' => 'HNO-Allgemeinuntersuchung',
-                                'start' => '17.06.2021 20:00',
-                                'end' => '17.06.2021 22:00',
-                                'status' => 'Not Approved', nicht bestätigt
-                                'statusColor' => 'red'
-                            ]
-                        ],
-                    ]
-                );
-                echo $view;*/
             } else {
 
             }
         }
 
         public function profile(Request $req, Response $res) {
-            $view = $res->view('user/profile');
-            echo $view;
-        }
-
-        public function get(Request $req, Response $res) {
             $userId = Auth::getUserID();
             $user = DB::table('users')->where("id = :id",[':id'=>$userId])->get();
-            if(count($user)>0) {
+            $account = DB::table('account')->where("userID = :id", [':id'=>$userId])->get();
+            if(count($user)>0 && count($account)>0) {
                 $user = $user[0];
+                $account = $account[0];
             } else {
-                $res->errorVisual(507, "Error");
+                $res->errorVisual(500, "Nutzer nicht gefunden");
             }
             $birthday = date('Y-m-d', strtotime($user['birthday']));
-            $view = $res->view('user/profile', ['firstname' => $user['firstname'], 'lastname' => $user['lastname'], 'salutation' => $user['salutation'], 'insurance' => $user['insurance'], 'birthday' => $birthday]);
+            $view = $res->view('user/profile', ['firstname' => $user['firstname'], 'lastname' => $user['lastname'], 'salutation' => $user['salutation'], 'insurance' => $user['insurance'], 'birthday' => $birthday, 'email' => $account['email']]);
             echo $view;
         }
 

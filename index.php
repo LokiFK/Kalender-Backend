@@ -19,35 +19,36 @@
     $routes->get('/user/landingPage', 'UserController@landingPage');
     $routes->get('/user/appointments/new', 'UserController@new');
     $routes->get('/user/appointments/new2', 'UserController@new2');
+    $routes->get('/user/appointments/new3', 'UserController@new3');
     $routes->get('/user/appointments/overview', 'UserController@overview');
-    $routes->get('/api/user/appointments/termine', 'UserController@termine');
+
+
+
+
 
     // Profile
-    $routes->get('/user/profile', 'UserController@get');
+    $routes->get('/user/profile', 'UserController@profile');
     $routes->post('/user/profile/update', 'UserController@update');
     $routes->post('/user/profile/delete', 'UserController@delete');
 
     
     // --- AUTH --- \\
     // Register
-    $routes->get('/auth/user/create', 'AuthController@createUser');
-    $routes->post('/auth/user/create', 'AuthController@createUser');
+    $routes->both('/auth/user/create', 'AuthController@createUser');
     
-    $routes->get('/auth/account/create', 'AuthController@createAccount');
-    $routes->post('/auth/account/create', 'AuthController@createAccount');
+    $routes->both('/auth/account/create', 'AuthController@createAccount');
 
     $routes->get('/auth/account/approve', 'AuthController@approve');
-    $routes->get('/auth/account/notApproved', 'AuthController@notApproved');
-    $routes->post('/auth/account/notApproved', 'AuthController@notApproved');
+    $routes->both('/auth/account/notApproved', 'AuthController@notApproved');
 
-    $routes->get('/auth/account/resetLink', 'AuthController@resetLink');
-    $routes->post('/auth/account/resetLink', 'AuthController@resetLink');
-    $routes->get('/auth/account/resetPassword', 'AuthController@resetPassword');
-    $routes->post('/auth/account/resetPassword', 'AuthController@resetPassword');
+    $routes->both('/auth/account/resetLink', 'AuthController@resetLink');
+    $routes->both('/auth/account/resetPassword', 'AuthController@resetPassword');
+
+    $routes->both('/auth/account/resetUserdata', 'AuthController@resetUserdata');
+    $routes->both('/auth/account/dataReset', 'AuthController@dataReset');
 
     // Login
-    $routes->get('/auth/login', 'AuthController@login');
-    $routes->post('/auth/login', 'AuthController@login');
+    $routes->both('/auth/login', 'AuthController@login');
 
     // Logout
     $routes->get('/auth/logout', 'AuthController@logout');
@@ -62,14 +63,12 @@
     // --- ADMIN --- \\
     $routes->get('/admin/landingPage', 'AdminController@landingPage');
 
-    $routes->get('/admin/rooms', 'AdminController@rooms');
-    $routes->post('/admin/rooms', 'AdminController@rooms');
-    $routes->get('/admin/room/change', 'AdminController@roomChange');
-    $routes->post('/admin/room/change', 'AdminController@roomChange');
-    $routes->get('/admin/treatments', 'AdminController@treatments');
-    $routes->post('/admin/treatments', 'AdminController@treatments');
-    $routes->get('/admin/treatment/change', 'AdminController@treatmentChange');
-    $routes->post('/admin/treatment/change', 'AdminController@treatmentChange');
+    $routes->both('/admin/rooms', 'AdminController@rooms');
+    $routes->both('/admin/room/change', 'AdminController@roomChange');
+    $routes->both('/admin/treatments', 'AdminController@treatments');
+    $routes->both('/admin/treatment/change', 'AdminController@treatmentChange');
+    $routes->both('/admin/appointment/new', 'AdminController@newAppointment');
+    $routes->both('/admin/pending', 'AdminController@pending');
 
 
     $routes->listen();

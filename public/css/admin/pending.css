@@ -1,0 +1,76 @@
+.overview-wrapper {
+    margin-top: 30px;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.row-item {
+    flex-basis: 0;
+    flex-grow: 1;
+}
+
+.appointments {
+    width: 100%;
+}
+
+.appointments-list {
+    width: 100%;
+    list-style-type: none;
+    text-align: center;
+}
+
+.appointments-list-item {
+    cursor: pointer;
+    height: 50px;
+    line-height: 50px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    margin: 15px;
+    background-color: white;
+}
+
+.appointments-list-item .status {
+    text-align: end;
+}
+
+.appointments-list-item .type {
+    text-align: start;
+}
+
+.appointments-list-item p {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.appointments-list-item div.row {
+    justify-content: space-between;
+}
+
+.appointments-list-item:hover {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+}
+
+.heading {
+    text-align: center;
+}
+
+.btn-form-confirm {
+    height: 40px;
+    line-height: 38px;
+    margin: 20px;
+    margin-top: 5px;
+    border-radius: 10px;
+}
+
+.green {
+    background-color: green;
+}
+
+.red {
+    background-color: red;
+}

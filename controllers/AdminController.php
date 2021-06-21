@@ -1,19 +1,20 @@
 <?php
 
     class AdminController {
+        
+        public function __construct() {
+            Middleware::statusBiggerOrEqualTo(3);
+        }
 
         public function landingPage(Request $req, Response $res) {
-            Middleware::statusBiggerOrEqualTo(3);
             echo $res->view('admin/landingPage');
         }
 
         public function rooms(Request $req, Response $res) {
-            Middleware::statusBiggerOrEqualTo(3);
             $data = DB::query("SELECT * from room;");
             echo $res->view('admin/rooms/rooms', array(), array(), ['rooms'=>$data ]);
         }
         public function roomChange(Request $req, Response $res) {
-            Middleware::statusBiggerOrEqualTo(3);
             $data = Form::validate($req->getBody(), ['type']);
             if($data['type']=="delete"){
                 $data = Form::validate($req->getBody(), ['number']);
@@ -35,12 +36,10 @@
             }
         }    
         public function treatments(Request $req, Response $res) {
-            Middleware::statusBiggerOrEqualTo(3);
             $data = DB::query("SELECT * from treatment;");
             echo $res->view('admin/treatments/treatments',  [], [], ['treatments'=>$data]);
         }
         public function treatmentChange(Request $req, Response $res) {
-            Middleware::statusBiggerOrEqualTo(3);
             $data = Form::validate($req->getBody(), ['type']);
             if($data['type']=="delete"){
                 $data = Form::validate($req->getBody(), ['name']);
@@ -62,6 +61,37 @@
                 Path::redirect(Path::ROOT."admin/treatments");
             }
         } 
+        public function newAppointment(Request $req, Response $res){
+            if ($req->getMethod() == "GET") {
+                $treatments = DB::query("SELECT * FROM treatment ORDER BY name");
+                $rooms = DB::query("SELECT * FROM room ORDER BY number");
+                echo $res->view("admin/newAppointment", [], [], ["treatments"=>$treatments, "rooms"=>$rooms]);
+            } else if ($req->getMethod() == "POST") {
+                $data = Form::validate($req->getBody(), ['start', 'end', 'room', 'treatment']);
+                DB::query("INSERT INTO appointment(treatmentID, roomID, start, end) VALUES (:treatment, :room, :start, :end)", [":treatment"=>$data["treatment"], ":room"=>$data["room"], ":start"=>$data["start"], ":end"=>$data["end"]]);
+                Path::redirect(Path::ROOT."admin/appointment/new");
+            } 
+        }
+
+        public function pending(Request $req, Response $res)
+        {
+            if ($req->getMethod() == "GET") {
+                $appointments = DB::query("SELECT a.id, a.start, a.end, b.firstname, b.lastname, b.insurance FROM `appointment` a, `users` b WHERE `status` = 'warten' AND a.userID = b.id");
+                echo $res->view('admin/pending', [], [], ['appointments' => $appointments]);
+            } else {
+                $data = Form::validate($req->getBody(), ['id', 'action']);
+
+                // statusse = bestätigt, abgelehnt, warten, wahrgenommen
+
+                if ($data['action'] == 'approve') {
+                    DB::query('UPDATE `appointment` SET `status` = :status WHERE `id` = :id', [':status' => 'bestätigt', ':id' => $data['id']]);
+                } else if ($data['action'] == 'decline') {
+                    DB::query('UPDATE `appointment` SET `status` = :status WHERE `id` = :id', [':status' => 'abgelehnt', ':id' => $data['id']]);
+                }
+
+                Path::redirect(Path::ROOT . 'admin/pending');
+            }
+        }
     }
 
 ?>

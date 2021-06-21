@@ -39,10 +39,10 @@
                     echo "Fehler";      //todo
                 }
 
-                $link =  '../../../auth/account/approve?code='.$code;
+                $link =  $_SERVER['HTTP_HOST'].'/auth/account/approve?code='.$code;
                 echo "mail: <a href=\"$link\">".$link."</a><br>";
                 echo "<a href=../../../auth/account/notApproved>automatische Weiterleitung</a>";
-
+                    
                 /*$from = "FROM Terminplanung @noreply";
                 $subject = "Account bestätigen";
                 $msg = "BlaBlaBla Hier ihr anmelde Link: '.$link;
@@ -161,6 +161,56 @@
                 }
             } 
         }    
+
+        public function resetUserdata(Request $req, Response $res) {
+            if ($req->getMethod() == "GET") {
+                echo $res->view('auth/resetUserdata');
+            } else {
+                $userID = Auth::getUserID();
+                $data = Form::validate($req->getBody(), ['email', 'password']);
+                if (count($data)>0) {
+                    $accounts = DB::table('account')->where('email = :email', [':email' => $data['email']])->get();
+                    if (count($accounts) == 1) {
+                        $account = $accounts[0]; // has to be unneccessary, username has to be unique
+                        if (password_verify($data['password'], $account['password'])) {
+                            $token = Auth::specialLogin($userID, false);
+                            setcookie('token', $token, time() + 60 * 60 * 24 * 30, '/');
+                            Path::redirect(Path::ROOT . 'auth/account/dataReset');
+                        }
+                    }
+                }
+            }
+        }
+
+        public function dataReset(Request $req, Response $res) {
+            $userId = Auth::getUserID();
+            $user = DB::table('users')->where("id = :id",[':id'=>$userId])->get();
+            $account = DB::table('account')->where("userID = :id", [':id'=>$userId])->get();
+            if(count($user)>0 && count($account)>0) {
+                $user = $user[0];
+                $account = $account[0];
+            } else {
+                $res->errorVisual(500, "Nutzer nicht gefunden");
+            }
+            if ($req->getMethod() == "GET") {
+                $birthday = date('Y-m-d', strtotime($user['birthday']));
+                $view = $res->view('auth/dataReset', ['firstname' => $user['firstname'], 'lastname' => $user['lastname'], 'salutation' => $user['salutation'], 'insurance' => $user['insurance'], 'birthday' => $birthday, 'email' => $account['email']]);
+                echo $view;
+            } else {
+                $birthday = $req->getBody()['birthday'];
+                if ($birthday == null) {
+                    echo "Bitte alles ausfüllen";
+                    $view = $res->view('auth/dataReset', ['firstname' => $user['firstname'], 'lastname' => $user['lastname'], 'salutation' => $user['salutation'], 'insurance' => $user['insurance'], 'birthday' => $birthday, 'email' => $account['email']]);
+                    echo $view;
+                }
+                $data = Form::validateNewData($req->getBody(), ['firstName', 'lastName', 'insurance']);
+                $changeData = array('firstName', 'lastName', 'insurance');
+                for ($i = 0; $i < count($changeData); $i++) {
+                    DB::query("UPDATE users SET $changeData[$i]=:data WHERE id=:userId", [':data'=>$data[$i], ':userId'=>$userId]);
+                }
+
+            }
+        }
 
         public function permissions(Request $req, Response $res)
         {

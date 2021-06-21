@@ -1,0 +1,31 @@
+{[ title=>Profil ]}
+{% css/user/profile %}
+{# extend general/template@main #}
+<h3 id="title">Hallo {{ username }}, bitte ändere hier Deine Daten</h3>
+<form action="/auth/account/dataReset" method="POST">
+    <label for="salutation">Anrede</label><br>
+        <select value={{ salutation }}>
+            <option value="" selected disabled hidden>{{ salutation }}</option>
+            <option>Frau</option>
+            <option>Herr</option>
+            <option>Divers</option>
+            <option>keine Angabe</option>
+        </select>
+    <br>
+    <label for="firstName">Vorname</label><br>
+    <input type="text" name="firstName" value={{ firstname }}></input>
+    <br>
+    <label for="lastName">Nachname</label><br>
+    <input type="text" name="lastName" value={{ lastname }}></input>
+    <br>
+    <label for="birthday">Geburtsdatum</label><br>
+    <input type="date" name="birthday" value={{ birthday }}></input>
+    <br>
+    <label for="insurance">Verischerung</label><br>
+    <input type="text" name="insurance" value={{ insurance }}></input>
+    <br>
+    <label for="email">Email</label><br>
+    <input type="text" name="email" value={{ email }}></input>
+    <input type="submit" value="Daten ändern">
+</form>
+
