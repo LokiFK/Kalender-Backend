@@ -1,19 +1,20 @@
 <?php
 
     class AdminController {
+        
+        public function __construct() {
+            Middleware::statusBiggerOrEqualTo(3);
+        }
 
         public function landingPage(Request $req, Response $res) {
-            Middleware::statusBiggerOrEqualTo(3);
             echo $res->view('admin/landingPage');
         }
 
         public function rooms(Request $req, Response $res) {
-            Middleware::statusBiggerOrEqualTo(3);
             $data = DB::query("SELECT * from room;");
             echo $res->view('admin/rooms/rooms', array(), array(), ['rooms'=>$data ]);
         }
         public function roomChange(Request $req, Response $res) {
-            Middleware::statusBiggerOrEqualTo(3);
             $data = Form::validate($req->getBody(), ['type']);
             if($data['type']=="delete"){
                 $data = Form::validate($req->getBody(), ['number']);
@@ -35,12 +36,10 @@
             }
         }    
         public function treatments(Request $req, Response $res) {
-            Middleware::statusBiggerOrEqualTo(3);
             $data = DB::query("SELECT * from treatment;");
             echo $res->view('admin/treatments/treatments',  [], [], ['treatments'=>$data]);
         }
         public function treatmentChange(Request $req, Response $res) {
-            Middleware::statusBiggerOrEqualTo(3);
             $data = Form::validate($req->getBody(), ['type']);
             if($data['type']=="delete"){
                 $data = Form::validate($req->getBody(), ['name']);
@@ -76,8 +75,6 @@
 
         public function pending(Request $req, Response $res)
         {
-            Middleware::statusBiggerOrEqualTo(3);
-
             if ($req->getMethod() == "GET") {
                 $appointments = DB::query("SELECT a.id, a.start, a.end, b.firstname, b.lastname, b.insurance FROM `appointment` a, `users` b WHERE `status` = 'warten' AND a.userID = b.id");
                 echo $res->view('admin/pending', [], [], ['appointments' => $appointments]);
