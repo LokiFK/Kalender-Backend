@@ -62,6 +62,17 @@
                 Path::redirect(Path::ROOT."admin/treatments");
             }
         } 
+        public function newAppointment(Request $req, Response $res){
+            if ($req->getMethod() == "GET") {
+                $treatments = DB::query("SELECT * FROM treatment ORDER BY name");
+                $rooms = DB::query("SELECT * FROM room ORDER BY number");
+                echo $res->view("admin/newAppointment", [], [], ["treatments"=>$treatments, "rooms"=>$rooms]);
+            } else if ($req->getMethod() == "POST") {
+                $data = Form::validate($req->getBody(), ['start', 'end', 'room', 'treatment']);
+                DB::query("INSERT INTO appointment(treatmentID, roomID, start, end) VALUES (:treatment, :room, :start, :end)", [":treatment"=>$data["treatment"], ":room"=>$data["room"], ":start"=>$data["start"], ":end"=>$data["end"]]);
+                Path::redirect(Path::ROOT."admin/appointment/new");
+            } 
+        }
     }
 
 ?>
