@@ -19,8 +19,12 @@
     $routes->get('/user/landingPage', 'UserController@landingPage');
     $routes->get('/user/appointments/new', 'UserController@new');
     $routes->get('/user/appointments/new2', 'UserController@new2');
+    $routes->get('/user/appointments/new3', 'UserController@new3');
     $routes->get('/user/appointments/overview', 'UserController@overview');
-    $routes->get('/api/user/appointments/termine', 'UserController@termine');
+
+
+
+
 
     // Profile
     $routes->get('/user/profile', 'UserController@profile');
@@ -66,10 +70,14 @@
     // --- ADMIN --- \\
     $routes->get('/admin/landingPage', 'AdminController@landingPage');
 
-    $routes->get('/auth/rooms', 'AdminController@rooms');
-    $routes->post('/auth/rooms', 'AdminController@rooms');
-    $routes->get('/auth/treatments', 'AdminController@treatments');
-    $routes->post('/auth/treatments', 'AdminController@treatments');
+    $routes->get('/admin/rooms', 'AdminController@rooms');
+    $routes->post('/admin/rooms', 'AdminController@rooms');
+    $routes->get('/admin/room/change', 'AdminController@roomChange');
+    $routes->post('/admin/room/change', 'AdminController@roomChange');
+    $routes->get('/admin/treatments', 'AdminController@treatments');
+    $routes->post('/admin/treatments', 'AdminController@treatments');
+    $routes->get('/admin/treatment/change', 'AdminController@treatmentChange');
+    $routes->post('/admin/treatment/change', 'AdminController@treatmentChange');
 
 
     $routes->listen();

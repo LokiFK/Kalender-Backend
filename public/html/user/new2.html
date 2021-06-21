@@ -1,18 +1,30 @@
 {[ title=>Terminvereinbarung ]}
 {# extend general/template@main #}
+{% styles %}
 
-<ul id=terminListe>
-{! termine:
-    <li class=datum id=datum{{ termine.iterationNr }}>
-        {{ termine.key }}
-        <ul class=uhrzeitenListe id=uhrzeitenList{{ termine.iterationNr }}>
-        {! termine/inner:
-            <li class=termin id=termin{{ termine.iterationNr }}.{{ termine/inner.iterationNr }}>
-                <a class=terminLink id=terminLink{{ termine.iterationNr }}.{{ termine/inner.iterationNr }} href="/user/appointments/new3?treatment={{ treatment }}&date={{ termine.key }}&start={{ start }}&end={{ end }}">{{ start }} bis {{ end }}</a>
-            </li>
-         !}
-        </ul>
-    </li>
- !}
-</ul>
-
+<div class="overview-wrapper">
+    <div class="appointments">
+        <h2 class="heading">Alle Termine</h2>
+        <div class="appointments-list">
+            <div class="appointments-list-item">
+                <div class="row">
+                    <div class="row-item"><h4 class="name">Name</h4></div>
+                    <div class="row-item"><h4 class="start">Start</h4></div>
+                    <div class="row-item"><h4 class="end">Ende</h4></div>
+                </div>
+            </div>
+            {! appointments: 
+                <form action="/user/appointments/new3" method="GET" id="form-{{ appointments.id }}">
+                    <input type="hidden" name="id" value="{{ appointments.id }}">
+                    <div class="appointments-list-item" onclick="document.getElementById('form-{{ appointments.id }}').submit();">
+                        <div class="row">
+                            <div class="row-item"><p class="name">{{ appointments.name }}</p></div>
+                            <div class="row-item"><p class="start">{{ appointments.start }}</p></div>
+                            <div class="row-item"><p class="end">{{ appointments.end }}</p></div>
+                        </div>
+                    </div>
+                </form>
+             !}
+        </div>
+    </div>
+</div>

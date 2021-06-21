@@ -1,9 +1,18 @@
 {[ title=>Terminvereinbarung ]}
 {# extend general/template@main #}
+{% styles %}
 
-<ul id=treatments>
-{! treatments:
-     <li class=treatment id=treatment{{ treatments.iterationNr }}><a href="/user/appointments/new2?treatment={{ name }}">{{ name }}</a></li>
- !}
-</ul>
+<div class="create-appointment">
+    <h3>Für welchen Anlass benötigen Sie einen Termin?</h3>
+    <div class="appointment-types">
+        {! appointmentTypes: 
+            <div class="appointment-types-item">
+                <form action="/user/appointments/new2" method="GET">
+                    <input type="hidden" name="treatment" value="{{ appointmentTypes }}">
+                    <input type="submit" value="{{ appointmentTypes }}">
+                </form>
+            </div>
+         !}
+    </div>
+</div>
 

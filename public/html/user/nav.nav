@@ -4,5 +4,5 @@
 
 @flipside[]
 
-@link[Mitarbeiterbereich(/admin/landingPage), status>=3]
+@link[Mitarbeiterbereich(/admin/landingPage), status>2]
 {+ @nav:general/userInfo +}

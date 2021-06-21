@@ -27,6 +27,8 @@
     padding: 10px;
     margin-left: 10px;
     margin-right: 10px;
+    min-width: 100px;
+    text-align: center;
 }
 
 .dropdown-content-wrapper {
