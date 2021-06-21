@@ -59,26 +59,18 @@
     text-align: center;
 }
 
-
-
-.color-bestätigt {
-    color: green;
-}
-
-.color-abgelehnt {
-    color: red;
-}
-
-.color-warten {
-    color: orange;
-}
-
-.color-wahrgenommen {
-    color: blue;
-}
-
 .btn-form-confirm {
-    margin: 3px;
+    height: 40px;
+    line-height: 38px;
+    margin: 20px;
+    margin-top: 5px;
+    border-radius: 10px;
+}
 
-    background-color: blue;
+.green {
+    background-color: green;
+}
+
+.red {
+    background-color: red;
 }

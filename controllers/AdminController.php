@@ -79,7 +79,7 @@
             Middleware::statusBiggerOrEqualTo(3);
 
             if ($req->getMethod() == "GET") {
-                $appointments = DB::query("SELECT a.start, a.end, b.firstname, b.lastname, b.insurance FROM `appointment` a, `users` b WHERE `status` = 'warten' AND a.userID = b.id");
+                $appointments = DB::query("SELECT a.id, a.start, a.end, b.firstname, b.lastname, b.insurance FROM `appointment` a, `users` b WHERE `status` = 'warten' AND a.userID = b.id");
                 echo $res->view('admin/pending', [], [], ['appointments' => $appointments]);
             } else {
                 $data = Form::validate($req->getBody(), ['id', 'action']);
@@ -91,6 +91,8 @@
                 } else if ($data['action'] == 'decline') {
                     DB::query('UPDATE `appointment` SET `status` = :status WHERE `id` = :id', [':status' => 'abgelehnt', ':id' => $data['id']]);
                 }
+
+                Path::redirect(Path::ROOT . 'admin/pending');
             }
         }
     }

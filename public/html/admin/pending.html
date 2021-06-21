@@ -12,7 +12,7 @@
                     <div class="row-item"><h4 class="insurance">Versicherung</h4></div>
                     <div class="row-item"><h4 class="start">Start</h4></div>
                     <div class="row-item"><h4 class="end">Ende</h4></div>
-                    <div class="row-item"><h4 class="end"></h4></div>
+                    <div class="row-item"><h4 class="placeholder"></h4></div>
                 </div>
             </div>
             {! appointments: 
@@ -24,18 +24,18 @@
                         <div class="row-item"><p class="end">{{ appointments.end }}</p></div>
                         <div class="row-item">
                             <div class="row">
-                                <div class="row-item">
-                                    <form action="/admin/pending" method="post" class="btn-form-confirm">
+                                <div class="row-item btn-form-confirm green">
+                                    <form action="/admin/pending" method="post">
                                         <input type="hidden" name="id" value="{{ appointments.id }}">
                                         <input type="hidden" name="action" value="approve">
-                                        <input type="submit" value="Y">
+                                        <input type="submit" value="Akzeptieren">
                                     </form>
                                 </div>
-                                <div class="row-item">
-                                    <form action="/admin/pending" method="post" class="btn-form-confirm">
+                                <div class="row-item btn-form-confirm red">
+                                    <form action="/admin/pending" method="post">
                                         <input type="hidden" name="id" value="{{ appointments.id }}">
                                         <input type="hidden" name="action" value="decline">
-                                        <input type="submit" value="N">
+                                        <input type="submit" value="Ablehnen">
                                     </form>
                                 </div>
                             </div>
