@@ -11,6 +11,12 @@
         {
             $this->routes = array();
         }
+        
+        public function both($route, $activator)
+        {
+            $this->get($route, $activator);
+            $this->post($route, $activator);
+        }
 
         public function get($route, $activator)
         {
@@ -20,7 +26,7 @@
 
         public function post($route, $activator)
         {
-            $newRoute = new Route( $route, 'POST', $activator);
+            $newRoute = new Route($route, 'POST', $activator);
             array_push($this->routes, $newRoute);
         }
 
