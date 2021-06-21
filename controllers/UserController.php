@@ -54,16 +54,16 @@
             Middleware::statusBiggerOrEqualTo(2);
 
             if($req->getMethod() == "GET"){
-                /*$data = DB::query("SELECT * from appointment, treatment WHERE appointment.treatmentID=treatment.id and appointment.userID=:userID", [":userID"=>Auth::getUser()['id']]);
+                $data = DB::query("SELECT * from appointment, treatment WHERE appointment.treatmentID=treatment.id and appointment.userID=:userID", [":userID"=>Auth::getUser()['id']]);
                 $view = $res->view('user/overview', array(), array(), [ "appointments"=>$data ]);
-                echo $view;*/
-                $view = $res->view('user/overview',
+                echo $view;
+                /*$view = $res->view('user/overview',
                     [],
                     [],
                     [
                         'appointments' => [
                             [
-                                'type' => 'Sprechstunde',
+                                'name' => 'Sprechstunde',
                                 'start' => '16.06.2021 17:00',
                                 'end' => '16.06.2021 18:00',
                                 'status' => 'Approved',
@@ -86,7 +86,7 @@
                         ],
                     ]
                 );
-                echo $view;
+                echo $view;*/
             } else {
 
             }
@@ -98,7 +98,7 @@
         }
 
         public function get(Request $req, Response $res) {
-            $userId = Auth::userID();
+            $userId = Auth::getUserID();
             $user = DB::table('users')->where("id = :id",[':id'=>$userId])->get();
             if(count($user)>0) {
                 $user = $user[0];

@@ -2,7 +2,7 @@
 {# extend general/template@main #}
 {% styles %}
 
-<!--<div class="overview-wrapper">
+<div class="overview-wrapper">
     <div class="appointments">
         <h2 class="heading">Alle Termine</h2>
         <div class="appointments-list">
@@ -16,7 +16,7 @@
             {! appointments: 
                 <div class="appointments-list-item">
                     <div class="row">
-                        <div class="row-item"><p class="type">{{ appointments.type }}</p></div>
+                        <div class="row-item"><p class="type">{{ appointments.name }}</p></div>
                         <div class="row-item"><p class="time">{{ appointments.start }} - {{ appointments.end }}</p></div>
                         <div class="row-item"><p class="status" style="color: {{ appointments.statusColor }};">{{ appointments.status }}</p></div>
                     </div>
@@ -24,9 +24,9 @@
              !}
         </div>
     </div>
-</div>-->
-<ul id=appointmentsList>
+</div>
+<!--<ul id=appointmentsList>
 {! appointments:
     <li class=appointment id=appointment{{ appointments.iterationNr }}>{{ appointments.start }}<br>{{ appointments.type }}</li>
  !}
-</ul>
+</ul>-->
