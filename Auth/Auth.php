@@ -73,7 +73,7 @@
             }
         }
 
-        public static function registerUser(User $user): array
+        public static function registerUser(User $user)
         {
             return DB::query(
                 "INSERT INTO `users` (`firstname`, `lastname`, `salutation`, `insurance`, `birthday`, `patientID`) VALUES (:firstname, :lastname, :salutation, :insurance, :birthday, :patientID)",

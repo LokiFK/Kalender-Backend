@@ -58,3 +58,21 @@
 .heading {
     text-align: center;
 }
+
+
+
+.color-bestätigt {
+    color: green;
+}
+
+.color-abgelehnt {
+    color: red;
+}
+
+.color-warten {
+    color: orange;
+}
+
+.color-wahrgenommen {
+    color: blue;
+}

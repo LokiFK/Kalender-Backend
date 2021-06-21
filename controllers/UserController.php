@@ -57,6 +57,10 @@
                 $data = DB::query("SELECT * from appointment, treatment WHERE appointment.treatmentID=treatment.id and appointment.userID=:userID", [":userID"=>Auth::getUser()['id']]);
                 $view = $res->view('user/overview', array(), array(), [ "appointments"=>$data ]);
                 echo $view;
+
+                // statussse = bestätigt, abgelehnt, warten, wahrgenommen
+
+
                 /*$view = $res->view('user/overview',
                     [],
                     [],
@@ -66,21 +70,21 @@
                                 'name' => 'Sprechstunde',
                                 'start' => '16.06.2021 17:00',
                                 'end' => '16.06.2021 18:00',
-                                'status' => 'Approved',
+                                'status' => 'Approved', bestätigt
                                 'statusColor' => 'green'
                             ],
                             [
                                 'type' => 'Belastungs-EKG',
                                 'start' => '17.06.2021 17:00',
                                 'end' => '17.06.2021 18:00',
-                                'status' => 'Waiting',
+                                'status' => 'Waiting', warten
                                 'statusColor' => 'orange'
                             ],
                             [
                                 'type' => 'HNO-Allgemeinuntersuchung',
                                 'start' => '17.06.2021 20:00',
                                 'end' => '17.06.2021 22:00',
-                                'status' => 'Not Approved',
+                                'status' => 'Not Approved', nicht bestätigt
                                 'statusColor' => 'red'
                             ]
                         ],
@@ -105,7 +109,8 @@
             } else {
                 $res->errorVisual(507, "Error");
             }
-            $view = $res->view('user/profile', ['firstname' => $user['firstname'], 'lastname' => $user['lastname'], 'salutation' => $user['salutation'], 'insurance' => $user['insurance'], 'birthday' => $user['birthday']]);
+            $birthday = date('Y-m-d', strtotime($user['birthday']));
+            $view = $res->view('user/profile', ['firstname' => $user['firstname'], 'lastname' => $user['lastname'], 'salutation' => $user['salutation'], 'insurance' => $user['insurance'], 'birthday' => $birthday]);
             echo $view;
         }
 
