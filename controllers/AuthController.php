@@ -162,6 +162,44 @@
             } 
         }    
 
+        public function resetUserdata(Request $req, Response $res) {
+            if ($req->getMethod() == "GET") {
+                echo $res->view('auth/resetUserdata');
+            }else {
+                $userID = Auth::getUserID();
+                $data = Form::validate($req->getBody(), ['email', 'password']);
+                if (count($data)>0) {
+                    $accounts = DB::table('account')->where('email = :email', [':email' => $data['email']])->get();
+                    if (count($accounts) == 1) {
+                        $account = $accounts[0]; // has to be unneccessary, username has to be unique
+                        if (password_verify($data['password'], $account['password'])) {
+                            $token = Auth::specialLogin($userID, false);
+                            setcookie('token', $token, time() + 60 * 60 * 24 * 30, '/');
+                            Path::redirect(Path::ROOT . 'auth/account/dataReset');
+                        }
+                    }
+                }
+            }
+        }
+
+        public function dataReset(Request $req, Response $res) {
+            if ($req->getMethod() == "GET") {
+                $userId = Auth::getUserID();
+                echo $userId;
+                $user = DB::table('users')->where("id = :id",[':id'=>$userId])->get();
+                $account = DB::table('account')->where("userID = :id", [':id'=>$userId])->get();
+                if(count($user)>0 && count($account)>0) {
+                    $user = $user[0];
+                    $account = $account[0];
+                } else {
+                    $res->errorVisual(500, "Nutzer nicht gefunden");
+                }
+                $birthday = date('Y-m-d', strtotime($user['birthday']));
+                $view = $res->view('auth/dataReset', ['firstname' => $user['firstname'], 'lastname' => $user['lastname'], 'salutation' => $user['salutation'], 'insurance' => $user['insurance'], 'birthday' => $birthday, 'email' => $account['email']]);
+                echo $view;
+            }
+        }
+
         public function permissions(Request $req, Response $res)
         {
             Middleware::auth();

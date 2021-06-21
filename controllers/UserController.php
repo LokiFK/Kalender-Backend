@@ -93,20 +93,17 @@
         }
 
         public function profile(Request $req, Response $res) {
-            $view = $res->view('user/profile');
-            echo $view;
-        }
-
-        public function get(Request $req, Response $res) {
             $userId = Auth::getUserID();
             $user = DB::table('users')->where("id = :id",[':id'=>$userId])->get();
-            if(count($user)>0) {
+            $account = DB::table('account')->where("userID = :id", [':id'=>$userId])->get();
+            if(count($user)>0 && count($account)>0) {
                 $user = $user[0];
+                $account = $account[0];
             } else {
-                $res->errorVisual(507, "Error");
+                $res->errorVisual(500, "Nutzer nicht gefunden");
             }
             $birthday = date('Y-m-d', strtotime($user['birthday']));
-            $view = $res->view('user/profile', ['firstname' => $user['firstname'], 'lastname' => $user['lastname'], 'salutation' => $user['salutation'], 'insurance' => $user['insurance'], 'birthday' => $birthday]);
+            $view = $res->view('user/profile', ['firstname' => $user['firstname'], 'lastname' => $user['lastname'], 'salutation' => $user['salutation'], 'insurance' => $user['insurance'], 'birthday' => $birthday, 'email' => $account['email']]);
             echo $view;
         }
 

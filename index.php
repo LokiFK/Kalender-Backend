@@ -23,7 +23,7 @@
     $routes->get('/api/user/appointments/termine', 'UserController@termine');
 
     // Profile
-    $routes->get('/user/profile', 'UserController@get');
+    $routes->get('/user/profile', 'UserController@profile');
     $routes->post('/user/profile/update', 'UserController@update');
     $routes->post('/user/profile/delete', 'UserController@delete');
 
@@ -44,6 +44,10 @@
     $routes->post('/auth/account/resetLink', 'AuthController@resetLink');
     $routes->get('/auth/account/resetPassword', 'AuthController@resetPassword');
     $routes->post('/auth/account/resetPassword', 'AuthController@resetPassword');
+
+    $routes->get('/auth/account/resetUserdata', 'AuthController@resetUserdata');
+    $routes->post('/auth/account/resetUserdata', 'AuthController@resetUserdata');
+    $routes->get('/auth/account/dataReset', 'AuthController@dataReset');
 
     // Login
     $routes->get('/auth/login', 'AuthController@login');
