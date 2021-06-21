@@ -79,6 +79,9 @@
     $routes->post('/admin/treatments', 'AdminController@treatments');
     $routes->get('/admin/treatment/change', 'AdminController@treatmentChange');
     $routes->post('/admin/treatment/change', 'AdminController@treatmentChange');
+    $routes->get('/admin/appointment/new', 'AdminController@newAppointment');
+    $routes->post('/admin/appointment/new', 'AdminController@newAppointment');
+    $routes->get('/admin/pending', 'AdminController@pending');
 
 
     $routes->listen();

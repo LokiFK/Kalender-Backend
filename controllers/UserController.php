@@ -71,8 +71,6 @@
                 $data = DB::query("SELECT * from appointment, treatment WHERE appointment.treatmentID=treatment.id and appointment.userID=:userID", [":userID"=>Auth::getUser()['id']]);
                 $view = $res->view('user/overview', array(), array(), [ "appointments"=>$data ]);
                 echo $view;
-
-                // statussse = bestätigt, abgelehnt, warten, wahrgenommen
             } else {
 
             }
