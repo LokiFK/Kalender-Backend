@@ -92,6 +92,16 @@
                 Path::redirect(Path::ROOT . 'admin/pending');
             }
         }
+        public function search(Request $req, Response $res){
+            $patients = [];
+            if(isset($req->getBody()['search'])){
+                $search = $req->getBody()['search'];
+                $patients = DB::query("SELECT * FROM users WHERE lastname LIKE :name", [":name"=>$search . "%"]);  
+            } else {
+                $patients = DB::query("SELECT * FROM users"); 
+            }
+            echo $res->view('admin/search/search', ["search"=>$search],[], ["patients"=>$patients]);
+        }
     }
 
 ?>

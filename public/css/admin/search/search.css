@@ -1,0 +1,52 @@
+.overview-wrapper {
+    margin-top: 30px;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.row-item {
+    flex-basis: 0;
+    flex-grow: 1;
+}
+
+.patients {
+    width: 100%;
+}
+
+.patients-list {
+    width: 100%;
+    list-style-type: none;
+    text-align: center;
+}
+
+.patients-list-item {
+    cursor: pointer;
+    height: 50px;
+    line-height: 50px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    margin: 15px;
+    background-color: white;
+}
+
+.patients-list-item p {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.patients-list-item div.row {
+    justify-content: space-between;
+}
+
+.patients-list-item:hover {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+}
+
+.heading {
+    text-align: center;
+}
