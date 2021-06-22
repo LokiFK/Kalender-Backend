@@ -70,7 +70,6 @@
     $routes->both('/admin/appointment/new', 'AdminController@newAppointment');
     $routes->both('/admin/pending', 'AdminController@pending');
 
-
     $routes->listen();
 
 ?>

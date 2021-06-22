@@ -1,33 +1,42 @@
-{[ title=>Profil ]}
-{% css/user/profile %}
+{[ title=>Profil, navContentLink=>user/nav ]}
 {# extend general/template@main #}
+{% css/auth/form %}
+
+<div class="form-wrapper">
 <h3 id="title">Hallo {{ username }}</h3>
 <form id="form">
-    <label for="firstName">Anrede</label><br>
-        <select value={{ salutation }}>
-            <option value="" selected disabled hidden>{{ salutation }}</option>
-            <option>Frau</option>
-            <option>Herr</option>
-            <option>Divers</option>
-            <option>keine Angabe</option>
-        </select>
+    <label for="salutation">Anrede</label><br>
+    <div id="textbox">
+        <label name="salutation">{{ salutation }}</label>
+    </div>
     <br>
     <label for="firstName">Vorname</label><br>
-    <input id="field" type="text" name="firstName" value={{ firstname }}></input>
+    <div id="textbox">
+    <label name="firstName">{{ firstname }}</label>
+    </div>
     <br>
-    <label for="firstName">Nachname</label><br>
-    <input type="text" id="field" name="firstName" value={{ lastname }}></input>
+    <label for="lastName">Nachname</label><br>
+    <div id="textbox">
+    <label>{{ lastname }}</label>
+    </div>
     <br>
-    <label for="firstName">Geburtsdatum</label><br>
-    <input type="date" id="field" name="firstName" value={{ birthday }}></input>
+    <label for="birthday">Geburtsdatum</label><br>
+    <div id="textbox">
+    <label >{{ birthday }}</label>
+    </div>
     <br>
     <label for="firstName">Verischerung</label><br>
-    <input type="text" id="field" name="firstName" value={{ insurance }}></input>
+    <div id="textbox">
+    <label>{{ insurance }}</label>
+    </div>
     <br>
     <label for="firstName">Email</label><br>
-    <input type="text" id="field" name="firstName" value={{ email }}></input>
+    <div id="textbox">
+        <label >{{ email }}</label>
+    </div>
 </form>
 
 <form action="/auth/account/resetUserdata" method="GET">
     <input type="submit" value="Daten ändern">
 </form>
+</div>

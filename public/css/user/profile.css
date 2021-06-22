@@ -12,3 +12,14 @@
 #title {
     margin: 15px;
 }
+
+#content {
+    width: 500px;
+}
+
+#container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 500px;
+}

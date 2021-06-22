@@ -111,8 +111,7 @@
                         Path::redirect(Path::ROOT . "auth/account/notApproved");
                     }
                 } else {
-                    echo "wrong username or password";      //todo
-                    echo $res->view('auth/login');
+                    ErrorUI::popRedirect("Falscher Nutzername oder Passwort", Path::ROOT . "auth/login");
                 }
             }
         }
@@ -201,7 +200,7 @@
             } else {
                 $birthday = $req->getBody()['birthday'];
                 if ($birthday == null) {
-                    echo "Bitte alles ausfüllen";
+                    ErrorUI::popRedirect("Bitte alles ausfüllen", Path::ROOT . 'auth/account/dataReset');
                     $view = $res->view('auth/dataReset', ['firstname' => $user['firstname'], 'lastname' => $user['lastname'], 'salutation' => $user['salutation'], 'insurance' => $user['insurance'], 'birthday' => $birthday, 'email' => $account['email']]);
                     echo $view;
                 }
@@ -210,7 +209,7 @@
                 for ($i = 0; $i < count($changeData); $i++) {
                     DB::query("UPDATE users SET $changeData[$i]=:data WHERE id=:userId", [':data'=>$data[$i], ':userId'=>$userId]);
                 }
-
+                Path::redirect(Path::ROOT . 'user/profile');
             }
         }
 
