@@ -1,17 +1,20 @@
 {[ title=>Profil, navContentLink=>user/nav ]}
 {# extend general/template@main #}
 {% css/auth/form %}
+{% script %}
 <div class="form-wrapper">
     <h3 id="title">Hallo {{ username }}, bitte ändere hier Deine Daten</h3>
     <form action="/auth/account/dataReset" method="POST">
         <label for="salutation">Geschlecht</label><br>
-            <select value={{ salutation }}>
-                <option value="" selected disabled hidden>{{ salutation }}</option>
+            <select onchange="handler2(this)" name="salutation" value="{{ salutation }}">
+                <option selected hidden>{{ salutation }}</option>
                 <option>Frau</option>
                 <option>Mann</option>
                 <option>Divers</option>
                 <option>keine Angabe</option>
+                <option value="sonstiges" id="sonstiges">sonstiges</option>
             </select>
+            <input id="sonstigesFeld" style="display: none;" type="text" onchange="handler(this)"></input> 
         <br>
         <label for="firstName">Vorname</label><br>
         <input type="text" name="firstName" value={{ firstname }}></input>
@@ -23,7 +26,10 @@
         <input type="date" name="birthday" value={{ birthday }}></input>
         <br>
         <label for="insurance">Verischerung</label><br>
-        <input type="text" name="insurance" value={{ insurance }}></input>
+        <select name="insurance" value={{ insurance }}>
+            <option>gesetzlich</option>
+            <option>privat</option>
+        </select>
         <br>
         <label for="email">Email</label><br>
         <input type="text" name="email" value={{ email }}></input>

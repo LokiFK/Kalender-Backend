@@ -1,15 +1,18 @@
 {[ title=>Registrieren, navContentLink=>user/nav ]}
 {# extend general/template@main #}
 {% css/auth/form %}
+{% js/auth/dataReset %}
 <div class="form-wrapper">
     <form action="/auth/user/create" method="POST">
         <label for="salutation">Geschlecht</label><br>
-        <select name="salutation">
-            <option>Frau</option>
-            <option>Mann</option>
-            <option>Divers</option>
-            <option>keine Angabe</option>
-        </select><br>
+            <select onchange="handler2(this)" name="salutation" value="">
+                <option selected>Frau</option>
+                <option>Mann</option>
+                <option>Divers</option>
+                <option>keine Angabe</option>
+                <option value="sonstiges" id="sonstiges">sonstiges</option>
+            </select>
+            <input id="sonstigesFeld" style="display: none;" type="text" onchange="handler(this)"></input> <br>
         <label for="firstname">Vorname</label>
         <input type="text" name="firstname"><br>
         <label for="lastname">Nachname</label>

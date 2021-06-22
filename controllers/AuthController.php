@@ -204,12 +204,32 @@
                     $view = $res->view('auth/dataReset', ['firstname' => $user['firstname'], 'lastname' => $user['lastname'], 'salutation' => $user['salutation'], 'insurance' => $user['insurance'], 'birthday' => $birthday, 'email' => $account['email']]);
                     echo $view;
                 }
-                $data = Form::validateNewData($req->getBody(), ['firstName', 'lastName', 'insurance']);
-                $changeData = array('firstName', 'lastName', 'insurance');
+                $data = Form::validateNewData($req->getBody(), ['firstName', 'lastName', 'insurance', 'birthday', 'salutation', 'email']);
+                $changeData = array('firstname', 'lastname', 'insurance', 'birthday', 'salutation');
                 for ($i = 0; $i < count($changeData); $i++) {
-                    DB::query("UPDATE users SET $changeData[$i]=:data WHERE id=:userId", [':data'=>$data[$i], ':userId'=>$userId]);
+                    if($data[$i] != Auth::getUser()[$changeData[$i]]){
+                      DB::query("UPDATE users SET $changeData[$i]=:data WHERE id=:userId", [':data'=>$data[$i], ':userId'=>$userId]);
+                    }
                 }
-                Path::redirect(Path::ROOT . 'user/profile');
+                if($req->getBody()['email'] != Auth::getAccount()['email']){
+                    echo "1";
+                    DB::query("UPDATE account SET `email`=:data, `createdAt`=null WHERE userID=:userId", [':data'=>$req->getBody()['email'], ':userId'=>$userId]);
+                    echo "hi";
+                    $code = Auth::createNewCode($userId);
+                    $link =  $_SERVER['HTTP_HOST'].'/auth/account/approve?code='.$code;
+                    echo "mail: <a href=\"$link\">".$link."</a><br>";
+                    echo "<a href=../../../auth/account/notApproved>automatische Weiterleitung</a>";
+                        
+                    /*$from = "FROM Terminplanung @noreply";
+                    $subject = "Account bestätigen";
+                    $msg = "BlaBlaBla Hier ihr anmelde Link: '.$link;
+                    mail($account->email, $subject, $msg, $from);
+                        
+                    Path::redirect('../../../auth/account/emailApproved');
+                    */
+                } else {
+                  Path::redirect(Path::ROOT . 'user/profile');
+                }
             }
         }
 

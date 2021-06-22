@@ -43,10 +43,10 @@
 
         public static function start() {
             self::$token = self::getGivenToken();
-            if (self::$token == null && !self::isLoggedIn()) {
+            /*if (self::$token == null && !self::isLoggedIn()) {
                 self::$status = self::GUEST;
                 return;
-            }
+            }*/
             $res = DB::query("SELECT `userID`, `end` FROM `session` WHERE `token` = :token  AND (`end` IS NULL OR `end` > :end);", [':token' => self::$token, ":end" => date(DB::DATE_FORMAT)]);
             if (count($res) == 1) {
                 if ($res[0]['end'] != null) {

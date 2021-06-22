@@ -92,7 +92,8 @@
                 Path::redirect(Path::ROOT . 'admin/pending');
             }
         }
-        public function search(Request $req, Response $res){
+        public function search(Request $req, Response $res){                        //für Echtzeit suche vllt spätewr ajax Lösung
+            $search = "";
             $patients = [];
             if(isset($req->getBody()['search'])){
                 $search = $req->getBody()['search'];
