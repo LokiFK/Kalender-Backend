@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 22. Jun 2021 um 14:36
+-- Erstellungszeit: 22. Jun 2021 um 15:31
 -- Server-Version: 10.4.19-MariaDB
 -- PHP-Version: 8.0.7
 
@@ -46,7 +46,7 @@ INSERT INTO `account` (`userID`, `username`, `email`, `password`, `createdAt`) V
 (4, 'WGREENLAND', 'greenland-wolfgang@gmail.com', 'passwort123456', '2019-04-23'),
 (5, 'malko', 'dara07.malkova@gmail.com', 'bnrovla492!)fn', '2020-08-04'),
 (6, 'juliaf', 'juliafaust@gmx.net', 'hergo49ujoo', '2021-05-03'),
-(13, 'benjamin.ilchmann', 'benjamin.ilchmann@gmail.com', '$2y$10$VpILIoyMRbxXfjZrz6zYHeHeKvHz8n/MI0/sWWLS9gk7wpto33nYS', '2021-06-11');
+(13, 'benjamin.ilchmann', 'benjamin.ilchmann@gmail.com', '$2y$10$W5h8wd.vsB/WeGbYjuuyw./wzHNBVw8VX3mcgTlu9DDvCTCq/xKpa', '2021-06-11');
 
 -- --------------------------------------------------------
 
@@ -95,7 +95,8 @@ CREATE TABLE `appointment` (
 INSERT INTO `appointment` (`id`, `userID`, `treatmentID`, `roomID`, `start`, `end`, `status`) VALUES
 (2, 1, 1, 1, '2020-12-28 16:00:00', '2020-12-28 16:30:00', 'completed'),
 (3, 3, 2, 2, '2021-06-21 12:00:00', '2021-06-21 12:15:00', 'completed'),
-(4, 5, 3, 3, '2021-06-21 12:00:00', '2021-06-21 13:00:00', 'completed');
+(4, 5, 3, 3, '2021-06-21 12:00:00', '2021-06-21 13:00:00', 'completed'),
+(5, NULL, 3, 1, '2021-06-22 12:00:00', '2021-06-22 12:00:15', NULL);
 
 -- --------------------------------------------------------
 
@@ -162,6 +163,13 @@ CREATE TABLE `passwordreset` (
   `isUsed` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Daten für Tabelle `passwordreset`
+--
+
+INSERT INTO `passwordreset` (`id`, `userID`, `code`, `datetime`, `isUsed`) VALUES
+(1, 13, 'a5202c5184df220a5c68e74aa0ebddd454abd429215f4485e4', '2021-06-22 14:40:03', 0);
+
 -- --------------------------------------------------------
 
 --
@@ -198,17 +206,19 @@ CREATE TABLE `session` (
   `userID` int(11) NOT NULL,
   `token` varchar(64) NOT NULL,
   `start` varchar(30) DEFAULT NULL,
-  `end` varchar(30) DEFAULT NULL
+  `end` varchar(30) DEFAULT NULL,
+  `ip` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Daten für Tabelle `session`
 --
 
-INSERT INTO `session` (`id`, `userID`, `token`, `start`, `end`) VALUES
-(1, 1, '13c45e794fbc49093bd8d01c9ffbb77c0e8d2285c45cc9f02b', '0000-00-00 00:00:00', NULL),
-(2, 1, '338c0a3fe7533eca5b89c6cdf451a8ef3ebf16a9a63312b049', '0000-00-00 00:00:00', NULL),
-(3, 13, '2743cd3eb90b4efcba049a46782d6143fb1d6100ee66310cd7', '2021-Jun-Mon 20:Jun:th', NULL);
+INSERT INTO `session` (`id`, `userID`, `token`, `start`, `end`, `ip`) VALUES
+(1, 1, '13c45e794fbc49093bd8d01c9ffbb77c0e8d2285c45cc9f02b', '0000-00-00 00:00:00', NULL, NULL),
+(2, 1, '338c0a3fe7533eca5b89c6cdf451a8ef3ebf16a9a63312b049', '0000-00-00 00:00:00', NULL, NULL),
+(3, 13, '2743cd3eb90b4efcba049a46782d6143fb1d6100ee66310cd7', '2021-Jun-Mon 20:Jun:th', NULL, NULL),
+(4, 13, '450cb58a88079efc0e1ccb5ef9e3b0aaf77f93953b7049f000', '2021/06/22 14:40:47', '2021/06/22 15:56:00', NULL);
 
 -- --------------------------------------------------------
 
@@ -356,7 +366,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT für Tabelle `appointment`
 --
 ALTER TABLE `appointment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT für Tabelle `notapproved`
@@ -368,7 +378,7 @@ ALTER TABLE `notapproved`
 -- AUTO_INCREMENT für Tabelle `passwordreset`
 --
 ALTER TABLE `passwordreset`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT für Tabelle `room`
@@ -380,7 +390,7 @@ ALTER TABLE `room`
 -- AUTO_INCREMENT für Tabelle `session`
 --
 ALTER TABLE `session`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT für Tabelle `treatment`

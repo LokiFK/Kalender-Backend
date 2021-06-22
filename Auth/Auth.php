@@ -159,8 +159,8 @@
                 $end = $date->format(DB::DATE_FORMAT);
             }
             DB::query(
-                "INSERT INTO `session` (`userid`, `token`, `start`, `end`) VALUES (:userID, :token, :start, :end);",
-                [':userID' => $userID, ':token' => $token, ':start' => $start, ':end' => $end]
+                "INSERT INTO `session` (`userid`, `token`, `start`, `end`, `ip`) VALUES (:userID, :token, :start, :end, :ip);",
+                [':userID' => $userID, ':token' => $token, ':start' => $start, ':end' => $end, ":ip"=>$_SERVER["REMOTE_ADDR"]]
             );
             return $token;
         }
