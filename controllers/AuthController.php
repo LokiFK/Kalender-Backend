@@ -177,7 +177,7 @@
                             Path::redirect(Path::ROOT . 'auth/account/dataReset');
                         }
                     } else {
-                        ErrorUI::popRedirect("Bitte Angaben überprüfen", Path::ROOT . 'auth/account/resetUserdata');
+                        ErrorUI::error(401, "Bitte Angaben überprüfen");
                     }
                 } 
             }

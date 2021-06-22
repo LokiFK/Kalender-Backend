@@ -27,7 +27,7 @@
             return $data;
         }
 
-        public static function require($formData, array $requires): array
+        public static function require($formData, array $requires)
         {
             Form::validate($formData, $requires);
 
