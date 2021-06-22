@@ -23,15 +23,15 @@
         }
 
         public static function generalError() {
-            try {
-                self::error(random_int(-700, -600), "Unknown Error");
-            } catch (Exception $e) {
-                self::error(601, $e);
-            }
+            error(0000, "Unknown Error");
         }
 
         public static function errorFiveHundred($errCode)
         {
             ErrorUI::error(500, 'Error: ' . $errCode->getMessage());
+        }
+
+        public static function popRedirect($message, $redirect) {
+            echo "<script>alert('$message'); window.location.href='$redirect';</script>";
         }
     }
