@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 4.6.5.2
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 21. Jun 2021 um 10:25
--- Server-Version: 10.1.21-MariaDB
--- PHP-Version: 5.6.30
+-- Erstellungszeit: 22. Jun 2021 um 14:36
+-- Server-Version: 10.4.19-MariaDB
+-- PHP-Version: 8.0.7
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -277,7 +278,9 @@ INSERT INTO `users` (`id`, `firstname`, `lastname`, `salutation`, `insurance`, `
 --
 ALTER TABLE `account`
   ADD PRIMARY KEY (`userID`),
-  ADD UNIQUE KEY `username` (`username`);
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `username_2` (`username`,`email`),
+  ADD KEY `email` (`email`);
 
 --
 -- Indizes für die Tabelle `admin`
@@ -306,33 +309,38 @@ ALTER TABLE `appointment_admin`
 --
 ALTER TABLE `notapproved`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `userID` (`userID`);
+  ADD UNIQUE KEY `code` (`code`),
+  ADD KEY `userID_2` (`userID`);
 
 --
 -- Indizes für die Tabelle `passwordreset`
 --
 ALTER TABLE `passwordreset`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `code` (`code`),
   ADD KEY `userID` (`userID`);
 
 --
 -- Indizes für die Tabelle `room`
 --
 ALTER TABLE `room`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `number` (`number`);
 
 --
 -- Indizes für die Tabelle `session`
 --
 ALTER TABLE `session`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `token` (`token`),
   ADD KEY `session_ibfk_1` (`userID`);
 
 --
 -- Indizes für die Tabelle `treatment`
 --
 ALTER TABLE `treatment`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
 
 --
 -- Indizes für die Tabelle `users`
@@ -349,36 +357,43 @@ ALTER TABLE `users`
 --
 ALTER TABLE `appointment`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
 --
 -- AUTO_INCREMENT für Tabelle `notapproved`
 --
 ALTER TABLE `notapproved`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
 --
 -- AUTO_INCREMENT für Tabelle `passwordreset`
 --
 ALTER TABLE `passwordreset`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT für Tabelle `room`
 --
 ALTER TABLE `room`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
 --
 -- AUTO_INCREMENT für Tabelle `session`
 --
 ALTER TABLE `session`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
 --
 -- AUTO_INCREMENT für Tabelle `treatment`
 --
 ALTER TABLE `treatment`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
 --
 -- AUTO_INCREMENT für Tabelle `users`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
 --
 -- Constraints der exportierten Tabellen
 --
@@ -427,6 +442,7 @@ ALTER TABLE `passwordreset`
 --
 ALTER TABLE `session`
   ADD CONSTRAINT `session_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`);
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
