@@ -36,4 +36,8 @@
         public static function popRedirect($message, $redirect) {
             echo "<script>alert('$message'); window.location.href='$redirect';</script>";
         }
+
+        public static function tetrisError(){
+            echo Response::view("general/stuff/tetrisError");
+        }
     }
