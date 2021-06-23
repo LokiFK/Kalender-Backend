@@ -103,6 +103,21 @@
             }
             echo $res->view('admin/search/search', ["search"=>$search],[], ["patients"=>$patients]);
         }
+        public function user(Request $req, Response $res){
+            if ($req->getMethod() == "GET") {
+                $userID = Form::validate($req->getBody(), ["id"])["id"];
+                
+            } else {
+
+            }
+        }
+        public function userChange(Request $req, Response $res){
+            if ($req->getMethod() == "GET") {
+
+            } else {
+
+            }
+        }
     }
 
 ?>

@@ -43,10 +43,6 @@
 
         public static function start() {
             self::$token = self::getGivenToken();
-            /*if (self::$token == null && !self::isLoggedIn()) {
-                self::$status = self::GUEST;
-                return;
-            }*/
             $res = DB::query("SELECT `userID`, `end` FROM `session` WHERE `token` = :token  AND (`end` IS NULL OR `end` > :end);", [':token' => self::$token, ":end" => date(DB::DATE_FORMAT)]);
             if (count($res) == 1) {
                 if ($res[0]['end'] != null) {
@@ -55,12 +51,12 @@
                     $end = $date->format(DB::DATE_FORMAT);
                     DB::query("UPDATE `session` SET `end` = :end WHERE `token` = :token;", [':token' => self::$token, ':end' => $end]);
                 } 
-                self::$user = DB::query("SELECT * FROM users WHERE id = :id", [ ':id' => $res[0]['userID'] ])[0];
-                self::$account = DB::query("SELECT * FROM account WHERE userID = :userID", [ ':userID' => $res[0]['userID'] ])[0];
+                $userInfo = new UserInfo($res[0]['userID']);
+                self::$user = $userInfo->user;
+                self::$account = $userInfo->account;
+                self::$admin = $userInfo->admin;
                 if (self::$account['createdAt'] != null) {
-                    $res2 = DB::query("SELECT * FROM `admin` WHERE userID = :userID", [ ':userID' => $res[0]['userID'] ]);
-                    if(count($res2) > 0) {
-                        self::$admin = $res2[0];
+                    if(self::$admin != null) {
                         self::$status = self::ADMIN;
                     } else {
                         self::$status = self::USER;
@@ -311,6 +307,37 @@
             $this->email = $email;
             $this->password = $password;
             $this->approvalNeeded = $approvalNeeded;
+        }
+    }
+    class Admin{
+        public int $userID;
+        public string $role;
+
+        public function __construct($userID, $role)
+        {
+            $this->userID = $userID;
+            $this->role = $role;
+        }
+    }
+    class userInfo{
+        public $user = null;
+        public $account = null;
+        public $admin = null;
+
+        public function __construct($userID)
+        {
+            $res = DB::query("SELECT * FROM users WHERE id = :id", [ ':id' => $userID ]);
+            if(count($res)==1){
+                $this->user = $res[0];
+                $res2 = DB::query("SELECT * FROM account WHERE userID = :userID", [ ':userID' => $userID ]);
+                if(count($res2)==1){
+                    $this->account = $res2[0];
+                }
+                $res3 = DB::query("SELECT * FROM `admin` WHERE userID = :userID", [ ':userID' => $userID ]);
+                if(count($res3)==1){
+                    $this->admin = $res3[0];
+                }
+            }
         }
     }
 
