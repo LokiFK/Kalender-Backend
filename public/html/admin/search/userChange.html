@@ -1,0 +1,44 @@
+{[ title=>Patienten, navContentLink=>admin/nav ]}
+{# extend general/template@main #}
+{% js/auth/dataReset %}
+
+<form action="/auth/account/dataReset" method="POST">
+
+<ul>
+    <li>
+        User: <br>
+            <label for="salutation">Geschlecht</label><br>
+                <select onchange="handler2(this)" name="salutation" value="{{ user.salutation }}">
+                    <option selected hidden>{{ user.salutation }}</option>
+                    <option>Frau</option>
+                    <option>Mann</option>
+                    <option>Divers</option>
+                    <option>keine Angabe</option>
+                    <option value="sonstiges" id="sonstiges">sonstiges</option>
+                </select>
+                <input id="sonstigesFeld" style="display: none;" type="text" onchange="handler(this)"></input> 
+            <br>
+            <label for="firstName">Vorname</label><br>
+            <input type="text" name="firstName" value={{ user.firstname }}></input>
+            <br>
+            <label for="lastName">Nachname</label><br>
+            <input type="text" name="lastName" value={{ user.lastname }}></input>
+            <br>
+            <label for="birthday">Geburtsdatum</label><br>
+            <input type="date" name="birthday" value={{ user.birthday }}></input>
+            <br>
+            <label for="insurance">Verischerung</label><br>
+            <select name="insurance" value={{ user.insurance }}>
+                <option>gesetzlich</option>
+                <option>privat</option>
+            </select>
+            <br>
+            <label for="patientID">PatientenID</label><br>
+            <input type="text" name="patientenID" value={{ user.patientID }}></input>
+    </li>
+    {{ account }}
+    {{ admin }}
+</ul>
+
+<input type="submit" value="Daten ändern">
+</form>
