@@ -105,8 +105,14 @@
         }
         public function user(Request $req, Response $res){
             if ($req->getMethod() == "GET") {
-                $userID = Form::validate($req->getBody(), ["id"])["id"];
-                
+                $userID = Form::validate($req->getBody(),["id"])["id"];
+                $userInfo = new UserInfo($userID);
+                if($userInfo->user != null){
+                    echo $res->view("admin/search/user",[],[],[],$userInfo);
+                } else {
+                    ErrorUI::error(400, 'Bad request');
+                    exit;
+                }
             } else {
 
             }

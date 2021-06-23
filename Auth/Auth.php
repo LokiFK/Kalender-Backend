@@ -55,7 +55,7 @@
                 self::$user = $userInfo->user;
                 self::$account = $userInfo->account;
                 self::$admin = $userInfo->admin;
-                if (self::$account['createdAt'] != null) {
+                if (self::$account['emailApproved'] == true) {
                     if(self::$admin != null) {
                         self::$status = self::ADMIN;
                     } else {
@@ -319,7 +319,7 @@
             $this->role = $role;
         }
     }
-    class userInfo{
+    class UserInfo{
         public $user = null;
         public $account = null;
         public $admin = null;
@@ -332,6 +332,11 @@
                 $res2 = DB::query("SELECT * FROM account WHERE userID = :userID", [ ':userID' => $userID ]);
                 if(count($res2)==1){
                     $this->account = $res2[0];
+                    if ($this->account['createdAt'] != null) {
+                        $this->account['emailApproved'] = true;
+                    } else {
+                        $this->account['emailApproved'] = false;
+                    }
                 }
                 $res3 = DB::query("SELECT * FROM `admin` WHERE userID = :userID", [ ':userID' => $userID ]);
                 if(count($res3)==1){
