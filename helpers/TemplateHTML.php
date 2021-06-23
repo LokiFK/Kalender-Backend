@@ -219,7 +219,11 @@
                 }
                 return $component;
             } else {
-              return str_replace("{{ " . $key . " }}", $value, $component);
+                if($value==null){
+                    return str_replace("{{ " . $key . " }}", "", $component);
+                } else {
+                    return str_replace("{{ " . $key . " }}", $value, $component);
+                }
             }
         }
 
