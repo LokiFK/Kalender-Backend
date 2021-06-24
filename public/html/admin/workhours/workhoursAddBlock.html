@@ -1,10 +1,10 @@
-{[ title=>neue Arbeitszeiten, navContentLink=>admin/nav ]}
+{[ title=>Arbeitszeiten entfernen, navContentLink=>admin/nav ]}
 {# extend general/template@main #}
 {% styles %}
 
 {?php
     return Form::create('/admin/workhours/workhoursAdd?type=workhours', 'POST',
-        new FormField('day', 'Wochentag', 'text'),
+        new FormField('day', 'Datum', 'date'),
         new FormField('start', 'Startzeit', 'text'),
         new FormField('end', 'Endzeit', 'text'),
 
