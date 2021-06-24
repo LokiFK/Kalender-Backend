@@ -9,8 +9,8 @@
         const NOTAPPROVED = 1;
         const USER = 2;
         const ADMIN = 3;
-        const NURSE = 3;
-        const DOCTOR = 3;
+        const NURSE = 4;
+        const DOCTOR = 5;
         
         private static $status;
         private static $token;
