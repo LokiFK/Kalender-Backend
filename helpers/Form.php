@@ -86,8 +86,45 @@
                             return null;
                         }
                     } 
-                } else if($value == "username"){
+                } else if($value == "newEmail"){
+                    $res = DB::query("SELECT count(*) AS Anzahl FROM account WHERE email=:email", [":email"=>$formData[$key]]);
+                    if ($res[0]['Anzahl']>0) {
+                        if($die){
+                            ErrorUI::error(400, 'Diese Email wurde bereits registriert.');
+                            exit;
+                        } else {
+                            return null;
+                        }
+                    }
+                    if (!strstr($formData[$key], '@')) {
+                        if($die){
+                            ErrorUI::error(400, 'Die Email kann nicht richtig sein.');
+                            exit;
+                        } else {
+                            return null;
+                        }
+                    } 
+                } else if($value == "existingEmail"){
+                    $res = DB::query("SELECT count(*) AS Anzahl FROM account WHERE email=:email", [":email"=>$formData[$key]]);
+                    if ($res[0]['Anzahl']==0) {
+                        if($die){
+                            ErrorUI::error(400, 'Bad request');
+                            exit;
+                        } else {
+                            return null;
+                        }
+                    }
+                } else if($value == "newUsername"){
                     if (Auth::usernameExists($formData[$key])) {
+                        if($die){
+                            ErrorUI::error(400, 'Username schon vergeben.');
+                            exit;
+                        } else {
+                            return null;
+                        }
+                    } 
+                } else if($value == "existingUsername"){
+                    if (!Auth::usernameExists($formData[$key])) {
                         if($die){
                             ErrorUI::error(400, 'Username schon vergeben.');
                             exit;

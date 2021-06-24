@@ -179,7 +179,7 @@
                 if ($req->getMethod() == "GET") {
                     echo $res->view("admin/search/accountCreate", ["userID"=>$userID]);
                 } else {
-                    Form::validateDataType($data, ["email","username","password"]);
+                    Form::validateDataType($data, ["email"=>"newEmail","username","password"]);
                     Auth::registerAccount(new Account($userID, $data['username'], $data['email'], $data['password'], false), false);
                     Path::redirect(Path::ROOT . 'admin/search/user?id='.$userID);
                 }
