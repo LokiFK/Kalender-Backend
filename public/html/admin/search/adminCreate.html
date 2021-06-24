@@ -1,0 +1,10 @@
+{[ title=>Adminstatus erstellen, navContentLink=>admin/nav ]}
+{# extend general/template@main #}
+
+Adminstatus: <br>
+    <form action="/admin/search/userChange?id={{ userID }}&type=createAdmin" method="POST">
+        <label for="role">Rolle</label><br>
+        <input type="text" name="role" value={{ admin.role }}></input>
+            
+        <input type="submit" value="erstellen">
+    </form>

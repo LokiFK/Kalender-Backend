@@ -99,13 +99,16 @@
         public static function approveAccount($code) {
             $res = DB::table("notapproved")->where("`code` = :code", [":code"=>$code])->get([], ['userID']);
             if (count($res) == 1) {
-                DB::query(
-                    "UPDATE `account` SET `createdAt` = :date WHERE `userID` = :userID;",
-                    [':userID' => $res[0]['userID'], ":date" => date(DB::DATE_FORMAT)]
-                );
+                Auth::specialApproveAccount($res[0]['userID']);
                 return $res[0]['userID'];
             }
             return null;
+        }
+        public static function specialApproveAccount($userID){
+            return DB::query(
+                "UPDATE `account` SET `createdAt` = :date WHERE `userID` = :userID AND createdAt IS NOT null;",
+                [':userID' => $userID, ":date" => date(DB::DATE_FORMAT)]
+            );
         }
 
         public static function createNewResetCode(string $email) {
@@ -121,17 +124,20 @@
             }
         }
 
-        public static function resetPassword($code, $password){
+        public static function resetPassword($code, $newPassword){
             $res = DB::table("passwordreset")->where("`code` = :code", [":code" => $code])->get([], ['userID']);
             if (count($res) == 1) {
                 DB::query("UPDATE `passwordreset` SET `isUsed` = false WHERE `code` = :code;", [':code' => $code]);
-                DB::query(
-                    "UPDATE `account` SET `password` = :password WHERE `userID` = :userID;",
-                    [':userID' => $res[0]['userID'], ":password" => password_hash($password, PASSWORD_DEFAULT)]
-                );
+                Auth::specialResetPassword($res[0]['userID'], $newPassword);
                 return $res[0]['userID'];
             }
             return null;
+        }
+        public static function specialResetPassword($userID, $newPassword){
+            DB::query(
+                "UPDATE `account` SET `password` = :password WHERE `userID` = :userID;",
+                [':userID' => $userID, ":password" => password_hash($newPassword, PASSWORD_DEFAULT)]
+            );
         }
 
         public static function login($username, $password, bool $remember)
