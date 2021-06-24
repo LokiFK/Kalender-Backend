@@ -67,7 +67,7 @@
                 $rooms = DB::query("SELECT * FROM room ORDER BY number");
                 echo $res->view("admin/newAppointment", [], [], ["treatments"=>$treatments, "rooms"=>$rooms]);
             } else if ($req->getMethod() == "POST") {
-                $data = Form::validate($req->getBody(), ['start'=>"datetime", 'end'=>"datetime", 'room'=>"existingRoomID", 'treatment'=>"existingTreatmentID"]);
+                $data = Form::validateDataType($req->getBody(), ['start'=>"datetime", 'end'=>"datetime", 'room'=>"existingRoomID", 'treatment'=>"existingTreatmentID"]);
                 DB::query("INSERT INTO appointment(treatmentID, roomID, start, end) VALUES (:treatment, :room, :start, :end)", [":treatment"=>$data["treatment"], ":room"=>$data["room"], ":start"=>$data["start"], ":end"=>$data["end"]]);
                 Path::redirect(Path::ROOT."admin/appointment/new");
             } 
@@ -221,7 +221,10 @@
             }
         }
         public function personalAppointments(Request $req, Response $res){
-            
+            Middleware::statusBiggerOrEqualTo(4);
+
+            $appointments = DB::query("SELECT * FROM appointments a, appointment_admin b WHERE a.id = b.appointmentID AND adminID=:userID AND start<:datetime;", [":userID"=>Auth::getUser()['id'], ":datetime"=>date(DB::DATE_FORMAT)]);
+
         }
     }
 
