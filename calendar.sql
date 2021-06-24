@@ -1,32 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 5.1.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Erstellungszeit: 24. Jun 2021 um 09:18
--- Server-Version: 10.4.19-MariaDB
--- PHP-Version: 8.0.7
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Datenbank: `calendar`
---
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `account`
---
-
 CREATE TABLE `account` (
   `userID` int(11) NOT NULL,
   `username` varchar(50) DEFAULT NULL,
@@ -296,21 +267,22 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `firstname`, `lastname`, `salutation`, `insurance`, `birthday`, `patientID`) VALUES
-(1, 'David', 'Ilchmann', 'Herr', 'gesetzlich', '0000-00-00', ''),
-(2, 'Ralph', 'Müller', 'Herr', 'gesetzlich', '1989-05-20', ''),
-(3, 'Gustav ', 'Stresemann', 'Herr', 'privat', '1956-8-12', ''),
-(4, 'Wolfgang', 'Greenland', 'Herr', 'gesetzlich', '2000-04-09', ''),
-(5, 'Dara', 'Malokova', 'Frau', 'gesetzlich', '1999-07-26', ''),
-(6, 'Julia', 'Faust', 'Frau', 'gesetzlich', '1997-05-01', ''),
-(7, 'Barbara', 'Lochmann', 'Frau', 'gesetzlich', '2001-09-11', ''),
-(8, 'David', 'Ramonoff', 'Herr', 'privat', '1980-01-03', ''),
-(9, 'Sergej', 'Mustermann', 'Herr', 'privat', '1998-05-03', ''),
-(10, 'Nina', 'Peterson', 'Frau', 'gesetzlich', '2001-08-05', ''),
-(11, 'Ben', 'Dietrich', 'Herr', 'gesetzlich', '1987-06-27', ''),
-(12, 'Kevin', 'Schlauberg', 'Herr', 'gesetzlich', '2000-03-25', ''),
+(1, 'David', 'Ilchmann', 'männlich', 'gesetzlich', '2003-10-18', ''),
+(2, 'Ralph', 'Müller', 'männlich', 'gesetzlich', '1989-05-20', ''),
+(3, 'Gustav ', 'Stresemann', 'männlich', 'privat', '1956-8-12', ''),
+(4, 'Wolfgang', 'Greenland', 'männlich', 'gesetzlich', '2000-04-09', ''),
+(5, 'Dara', 'Malokova', 'weiblich', 'gesetzlich', '1999-07-26', ''),
+(6, 'Julia', 'Faust', 'weiblich', 'gesetzlich', '1997-05-01', ''),
+(7, 'Barbara', 'Lochmann', 'weiblich', 'gesetzlich', '2001-09-11', ''),
+(8, 'David', 'Ramonoff', 'männlich', 'privat', '1980-01-03', ''),
+(9, 'Sergej', 'Mustermann', 'männlich', 'privat', '1998-05-03', ''),
+(10, 'Nina', 'Peterson', 'weiblich', 'gesetzlich', '2001-08-05', ''),
+(11, 'Ben', 'Dietrich', 'divers', 'gesetzlich', '1987-06-27', ''),
+(12, 'Kevin', 'Schlauberg', 'männlich', 'gesetzlich', '2000-03-25', ''),
 (13, 'Julius', 'Schuchert', 'Thing', 'gesetzlich', '2004-03-10', ''),
-(14, 'a', 'a', 'Mann', 'a', '2021-06-22', ''),
-(15, 'Thing', 'Thing', 'Thing', 'gesetzlich', '2021-06-18', '');
+(14, 'Aaron', 'Lase', 'divers', 'a', '2021-06-22', ''),
+(15, 'Philip', 'Koschnitzki', 'männlich', 'gesetzlich', '2003-05-16', ''),
+(16, 'Karin', 'Kleefuß', 'weiblich', 'privat', '1991-02-03', '');
 
 --
 -- Indizes der exportierten Tabellen
@@ -486,7 +458,3 @@ ALTER TABLE `passwordreset`
 ALTER TABLE `session`
   ADD CONSTRAINT `session_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`);
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
