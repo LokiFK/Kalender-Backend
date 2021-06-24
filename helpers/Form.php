@@ -40,17 +40,13 @@
 
         public static function validateDataType($formData, array $columns, bool $die=true){
             foreach($columns as $key=>$value){
-                if(is_int($key)){       //falls key gleich datentyp
+                if (is_int($key)) {
                     $key = $value;
                 }
-                if($value == "canNull"){
+                print_r($formData);
+                if ($value == "canNull") {
                     if (!isset($formData[$key])) {
-                        if($die){
-                            ErrorUI::error(400, 'Bad request');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Bad request', $die);
                     } 
                 } else if (!isset($formData[$key]) || $formData[$key] == null || $formData[$key] == "") {
                     if($die){
@@ -61,12 +57,7 @@
                     }
                 } else if($value == "int"){
                     if (!is_numeric($formData[$key])) {
-                        if($die){
-                            ErrorUI::error(400, 'Bad request');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Bad request', $die);
                     } 
                 } else if($value == "datetime"){
                     //todo
@@ -76,168 +67,92 @@
                     //todo
                 } else if($value == "incurance"){
                     if (! ($formData[$key]=="gesetzlich" || $formData[$key]=="privat")) {
-                        if($die){
-                            ErrorUI::error(400, 'Bad request');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Bad request', $die);
                     } 
                 } else if($value == "role"){
                     if (! ($formData[$key]=="Sekretär" || $formData[$key]=="Arzt" || $formData[$key]=="Arzthelfer")) {
-                        if($die){
-                            ErrorUI::error(400, 'Bad request');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Bad request', $die);
                     } 
                 } else if($value == "email"){
                     if (!strstr($formData[$key], '@')) {
-                        if($die){
-                            ErrorUI::error(400, 'Die Email kann nicht richtig sein.');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Die Email kann nicht richtig sein.', $die);
                     } 
                 } else if($value == "newEmail"){
                     $res = DB::query("SELECT count(*) AS Anzahl FROM account WHERE email=:email", [":email"=>$formData[$key]]);
                     if ($res[0]['Anzahl']>0) {
-                        if($die){
-                            ErrorUI::error(400, 'Diese Email wurde bereits registriert.');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Diese Email wurde bereits registriert.', $die);
                     }
                     if (!strstr($formData[$key], '@')) {
-                        if($die){
-                            ErrorUI::error(400, 'Die Email kann nicht richtig sein.');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Die Email kann nicht richtig sein.', $die);
                     } 
                 } else if($value == "existingEmail"){
                     $res = DB::query("SELECT count(*) AS Anzahl FROM account WHERE email=:email", [":email"=>$formData[$key]]);
                     if ($res[0]['Anzahl']==0) {
-                        if($die){
-                            ErrorUI::error(400, 'Bad request');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Bad request', $die);
                     }
                 } else if($value == "newUsername"){
                     if (Auth::usernameExists($formData[$key])) {
-                        if($die){
-                            ErrorUI::error(400, 'Username schon vergeben.');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Username schon vergeben.', $die);
                     } 
                 } else if($value == "existingUsername"){
                     if (!Auth::usernameExists($formData[$key])) {
-                        if($die){
-                            ErrorUI::error(400, 'Username schon vergeben.');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Username schon vergeben.', $die);
                     } 
                 } else if(substr($value, 0, 9) == "username:"){
                     if (Auth::usernameExists($formData[$key], substr($value,9))) {
-                        if($die){
-                            ErrorUI::error(400, 'Username schon vergeben.');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Username schon vergeben.', $die);
                     } 
                 } else if($value == "existingRoom"){
                     $res = DB::query("SELECT count(*) AS Anzahl FROM room WHERE number=:number", [":number"=>$formData[$key]]);
                     if ($res[0]['Anzahl']==0) {
-                        if($die){
-                            ErrorUI::error(400, 'Bad request');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Bad request', $die);
                     } 
                 } else if($value == "existingRoomID"){
                     $res = DB::query("SELECT count(*) AS Anzahl FROM room WHERE id=:id", [":id"=>$formData[$key]]);
                     if ($res[0]['Anzahl']==0) {
-                        if($die){
-                            ErrorUI::error(400, 'Bad request');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Bad request', $die);
                     } 
                 } else if($value == "newRoom"){
                     $res = DB::query("SELECT count(*) AS Anzahl FROM room WHERE number=:number", [":number"=>$formData[$key]]);
                     if ($res[0]['Anzahl']>0) {
-                        if($die){
-                            ErrorUI::error(400, 'Nummer schon vergeben.');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Nummer schon vergeben.', $die);
                     } 
                 } else if($value == "existingTreatment"){
                     $res = DB::query("SELECT count(*) AS Anzahl FROM treatment WHERE name=:name", [":name"=>$formData[$key]]);
                     if ($res[0]['Anzahl']==0) {
-                        if($die){
-                            ErrorUI::error(400, 'Bad request');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Bad request', $die);
                     } 
                 } else if($value == "existingTreatmentID"){
                     $res = DB::query("SELECT count(*) AS Anzahl FROM treatment WHERE id=:id", [":id"=>$formData[$key]]);
                     if ($res[0]['Anzahl']==0) {
-                        if($die){
-                            ErrorUI::error(400, 'Bad request');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Bad request', $die);
                     } 
                 } else if($value == "newTreatment"){
                     $res = DB::query("SELECT count(*) AS Anzahl FROM treatment WHERE name=:name", [":name"=>$formData[$key]]);
                     if ($res[0]['Anzahl']>0) {
-                        if($die){
-                            ErrorUI::error(400, 'Name schon vergeben');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Name schon vergeben', $die);
                     } 
                 } else if($value == "agb"){
                     if ($formData[$key] != 'on') {
-                        if($die){
-                            ErrorUI::error(400, 'Bitte Datenschutz- und Nutzungsbedingungen akzeptieren.');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Bitte Datenschutz- und Nutzungsbedingungen akzeptieren.', $die);
                     } 
                 } else if($value == "resetCode"){
                     $res = DB::query("SELECT count(*) AS Anzahl FROM passwordreset WHERE code=:code and isUsed=false", [":code"=>$formData[$key]]);
                     if ($res[0]['Anzahl']==0) {
-                        if($die){
-                            ErrorUI::error(400, 'Bad request');
-                            exit;
-                        } else {
-                            return null;
-                        }
+                        self::errorDataType('Bad request', $die);
                     } 
                 }
             }
             return $formData;
+        }
+
+        private static function errorDataType($msg, $die)
+        {
+            if ($die) {
+                ErrorUI::error(400, $msg);
+                exit;
+            }
+            return null;
         }
 
         public static function require($formData, array $requires)
@@ -265,34 +180,7 @@
                 $html .= $formField->getHTML();
             }
 
-            $html .= "
-                <script>
-                    const allInputs = document.getElementsByClassName('form-input');
-                    for (var i = 0; i < allInputs.length; i++) {
-                        const data = allInputs[i];
-                        document.getElementById(allInputs[i].id).addEventListener('input', function() { checkInputField(data) }, false);
-                    };
-
-                    function checkInputField(inputField) {
-                        $.ajax({
-                            type: 'get', 
-                            url: '../../../form/validate', 
-                            data: JSON.parse(JSON.stringify({
-                                'name': inputField.name,
-                                'value': document.getElementsByName(inputField.name)[0].value,
-                                'validation': document.getElementsByName('validation-' + inputField.name)[0].value
-                            })),
-                            dataType: 'json',
-                            contentType : 'application/json',
-                            success: function (data) {
-                                document.getElementById('feedback-' + inputField.name).style.color = data.color;
-                                document.getElementById('feedback-' + inputField.name).innerHTML = data.feedback;
-                            }
-                        });
-                    }
-                </script>
-                </form>
-            ";
+            $html .= "</form>";
 
             return $html;
         }
@@ -304,18 +192,23 @@
         private $placeholder;
         private $validation;
         private $label;
+        private $options;
 
-        public function __construct($name, $label, $inputType, $defaultValue, array $validation)
+        public function __construct($name, $label, $inputType, $defaultValue="", array $validation=array(), array $options=array())
         {
             $this->name = $name;
             $this->inputType = $inputType;
             $this->defaultValue = $defaultValue;
             $this->validation = $validation;
             $this->label = $label;
+            if ($inputType == "select") {
+                $this->options = $options;
+            }
         }
 
         public function getHTML(): string
         {
+            $returnVal = "";
             $validationString = "";
             for ($i = 0; $i < count($this->validation); $i++) {
                 $validationString .= $this->validation[$i];
@@ -324,12 +217,52 @@
                 }
             }
 
-            return "
-                <input type='hidden' name='validation-$this->name' value=$validationString><br>
-                <label for='$this->name'>$this->label</label>
-                <input class='form-input' id='$this->name' type='$this->inputType' name='$this->name' placeholder='$this->placeholder'><br>
+            $returnVal .= "
+                <input type='hidden' name='$this->name' id='validation-$this->name' value=$validationString><br>
+            ";
+
+            if ($this->inputType == "select") {
+                $returnVal .= "
+                    <label for='select-$this->name'>$this->label</label>
+                    <select class='form-input' id='select-$this->name' name='$this->name'>
+                ";
+
+                for ($i = 0; $i < count($this->options); $i++) {
+                    if ($i == 0) {
+                        $returnVal .= "<option value='" . $this->options[$i] . "'>" . $this->options[$i] . "</option>";
+                        continue;
+                    }
+                    $returnVal .= "<option value='" . $this->options[$i] . "'>" . $this->options[$i] . "</option>";
+                }
+                
+                $returnVal .= "
+                        <option value='sonstiges' id='sonstiges'>Sonstiges</option>
+                    </select>
+                    <input class='form-input' id='sonstigesFeld-$this->name' name='$this->name' style='display: none;' type='text'></input> <br>
+                ";
+            } else {
+                if ($this->inputType == "hidden") {
+                    $returnVal .= "
+                        <input type='hidden' name='$this->name' value='$this->label'><br>
+                    ";
+
+                } else if ($this->inputType == "") {
+                    $returnVal .= "
+                        <input type='submit' name='$this->name' value='$this->label'>
+                    ";
+                } else {
+                    $returnVal .= "
+                        <label for='$this->name'>$this->label</label>
+                        <input class='form-input' id='$this->name' type='$this->inputType' name='$this->name' placeholder='$this->placeholder'><br>
+                    ";
+                }
+            }
+
+            $returnVal .= "
                 <p id='feedback-$this->name'></p>
             ";
+
+            return $returnVal;
         }
     }
 
