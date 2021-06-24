@@ -8,6 +8,7 @@
 @link[Patienten(/admin/search/search), status>=3]
 @link[eigeneTermine(/admin/personalAppointments), status>=4]
 @link[Planen(/admin/generalPlaning), status>=4]
+@link[Arbeitszeiten(/admin/workhours/workhours), status>=4]
 
 @flipside[]
 

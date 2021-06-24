@@ -3,7 +3,7 @@
 {% styles %}
 
 {?php
-    return Form::create('/admin/workhours/workhoursAdd?type=workhours', 'POST',
+    return Form::create('/admin/workhours/workhoursAdd?type=block', 'POST',
         new FormField('day', 'Datum', 'date'),
         new FormField('start', 'Startzeit', 'text'),
         new FormField('end', 'Endzeit', 'text'),

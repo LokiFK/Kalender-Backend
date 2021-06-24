@@ -10,10 +10,10 @@
  !}
 <a href="/admin/workhours/workhoursAdd?type=workhours">neu</a><br>
 <br><br>
-nicht an den Daten:
-{! block: 
-    am {{ block.day }}<br>
-    von {{ block.start }} bis {{ block.end }}
-    <a href="/admin/workhours/workhoursDelete?type=block&id={{ workhours.id }}">löschen</a><br>
+nicht an den Daten: <br>
+{! blocks: 
+    am {{ blocks.day }}<br>
+    von {{ blocks.start }} bis {{ blocks.end }}
+    <a href="/admin/workhours/workhoursDelete?type=block&id={{ blocks.id }}">löschen</a><br>
  !}
 <a href="/admin/workhours/workhoursAdd?type=block">neu</a><br>

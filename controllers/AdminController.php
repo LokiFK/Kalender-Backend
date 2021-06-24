@@ -258,11 +258,12 @@
             } else {
                 if($data['type']=="workhours"){
                     Form::validateDataType($data, ['day'=>"weekday", "start"=>"time", "end"=>"time"]);
-                    DB::query("INSERT INTO workhours(userID, day, start, end) VALUES (:userID, :day, :start, :end)", [":day"=>$data['day'], ":start"=>$data['start'], ":end"=>$data["end"], ":userID"=>Auth::getUser()['id']]);
+                    DB::query("INSERT INTO workhours(patientID, day, start, end) VALUES (:userID, :day, :start, :end)", [":day"=>$data['day'], ":start"=>$data['start'], ":end"=>$data["end"], ":userID"=>Auth::getUser()['id']]);
                 } else if($data['type']=="block"){
                     Form::validateDataType($data, ['day'=>"date", "start"=>"time", "end"=>"time"]);
-                    DB::query("INSERT INTO workhoursblock(userID, day, start, end) VALUES (:userID, :day, :start, :end)", [":day"=>$data['day'], ":start"=>$data['start'], ":end"=>$data["end"], ":userID"=>Auth::getUser()['id']]);
+                    DB::query("INSERT INTO workhoursblock(patientID, day, start, end) VALUES (:userID, :day, :start, :end)", [":day"=>$data['day'], ":start"=>$data['start'], ":end"=>$data["end"], ":userID"=>Auth::getUser()['id']]);
                 }
+                Path::redirect(Path::ROOT . 'admin/workhours/workhours');
             }
         }  
         public static function workhoursDelete(Request $req, Response $res){
@@ -270,9 +271,9 @@
             $data = $req->getBody();
             Form::validateDataType($data, ['type', 'id']);
             if($data['type']=="workhours"){
-                DB::query("DELETE FROM workhours WHERE id=:id AND userID=:userID", [":id"=>$data['id'], ":userID"=>Auth::getUser()['id']]);
+                DB::query("DELETE FROM workhours WHERE id=:id AND patientID=:userID", [":id"=>$data['id'], ":userID"=>Auth::getUser()['id']]);
             } else if($data['type']=="block"){
-                DB::query("DELETE FROM workhoursblock WHERE id=:id AND userID=:userID", [":id"=>$data['id'], ":userID"=>Auth::getUser()['id']]);
+                DB::query("DELETE FROM workhoursblock WHERE id=:id AND patientID=:userID", [":id"=>$data['id'], ":userID"=>Auth::getUser()['id']]);
             }
             Path::redirect(Path::ROOT . 'admin/workhours/workhours');
         }    
