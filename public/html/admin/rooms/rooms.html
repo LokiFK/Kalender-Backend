@@ -4,31 +4,42 @@
 
 <div class="table">
     <h2 class="heading">Alle Termine</h2>
+    <div style="text-align: center;">
+        {?php
+            return Form::create('/admin/room/change', 'GET',
+                new FormField('type', 'newRequest', 'hidden'),
+                new FormField('submit', 'Neu', 'submit')
+            );
+        ?}
+    </div>
+    
     <div class="table-list">
         <div class="table-list-item">
             <div class="row">
-                <div class="row-item"><h4>Raum Nummer</h4></div>
-                <div class="row-item"><h4></h4></div>
-                <div class="row-item"><h4></h4></div>
+                <div class="row-item" style="flex-grow: 3;"><h4>Raum Nummer</h4></div>
+                <div class="row-item" style="flex-grow: 3;"><h4></h4></div>
+                <div class="row-item" style="flex-grow: 1;"><h4></h4></div>
+                <div class="row-item" style="flex-grow: 1;"><h4></h4></div>
             </div>
         </div>
 
         {! rooms: 
             <div class="table-list-item">
                 <div class="row">
-                    <div class="row-item">{{ rooms.number }}</div>
-                    <div class="row-item btn btn-primary">
+                    <div class="row-item" style="flex-grow: 3;">{{ rooms.number }}</div>
+                    <div class="row-item" style="flex-grow: 3;"></div>
+                    <div class="row-item btn btn-primary" style="flex-grow: 1;">
                         {?php
-                            return Form::create('/room/change', 'GET',
+                            return Form::create('/admin/room/change', 'GET',
                                 new FormField('number', '{{ rooms.number }}', 'hidden'),
                                 new FormField('type', 'changeRequest', 'hidden'),
                                 new FormField('submit', 'Nummer ändern', 'submit')
                             );
                          ?}
                     </div>
-                    <div class="row-item btn btn-delete">
+                    <div class="row-item btn btn-delete" style="flex-grow: 1;">
                         {?php
-                            return Form::create('/room/change', 'GET',
+                            return Form::create('/admin/room/change', 'GET',
                                 new FormField('number', '{{ rooms.number }}', 'hidden'),
                                 new FormField('type', 'delete', 'hidden'),
                                 new FormField('submit', 'Löschen', 'submit')
@@ -39,11 +50,4 @@
             </div>
          !}
     </div>
-    
-    {?php
-        return Form::create('/room/change', 'GET',
-            new FormField('type', 'newRequest', 'hidden'),
-            new FormField('submit', 'Nummer ändern', 'submit')
-        );
-     ?}
 </div>

@@ -3,14 +3,23 @@
 {% styles %}
 
 <div class="overview-wrapper">
-    <form action="/admin/search/search" method="POST">
-        <label for="search">Nachname:</label>
-        <input type="text" name="search" value="{{ search }}""><br>
-    
-        <input type="submit" value="suchen">
-    </form>
+    <div class="form-wrapper">
+        Nachname:
+        {?php
+            return Form::create('/admin/treatment/change?type=new', 'POST',
+                new FormField('search', 'Nachname:', 'text', '{{ search }}'),
+                new FormField('submit', 'Suchen', 'submit')
+            );
+        ?}
+    </div>
 
-    <a href="/admin/search/createUser">neuen Patienten erstellen</a>
+    <div class="form-wrapper">
+        {?php
+            return Form::create('/admin/search/createUser', 'GET',
+                new FormField('submit', 'Neuen Patienten erstellen', 'submit')
+            );
+        ?}
+    </div>
 
     <div class="patients">
         <div class="patients-list">

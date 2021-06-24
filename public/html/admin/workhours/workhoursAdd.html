@@ -2,12 +2,15 @@
 {# extend general/template@main #}
 {% styles %}
 
-{?php
-    return Form::create('/admin/workhours/workhoursAdd?type=workhours', 'POST',
-        new FormField('day', 'Wochentag', 'text'),
-        new FormField('start', 'Startzeit', 'text'),
-        new FormField('end', 'Endzeit', 'text'),
+<div class="back-btn" onclick="history.go(-1);" style="margin-left: 10px; font-size: 15px; cursor: pointer;">Zurück</div>
+<div class="form-wrapper">
+    {?php
+        return Form::create('/admin/workhours/workhoursAdd?type=workhours', 'POST',
+            new FormField('day', 'Wochentag', 'text'),
+            new FormField('start', 'Startzeit', 'text'),
+            new FormField('end', 'Endzeit', 'text'),
 
-        new FormField('submit', 'Erstellen', 'submit')
-    );
- ?}
+            new FormField('submit', 'Erstellen', 'submit')
+        );
+    ?}
+</div>

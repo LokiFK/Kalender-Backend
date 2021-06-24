@@ -1,11 +1,52 @@
 {[ title=>Behandlungen, navContentLink=>admin/nav ]}
 {# extend general/template@main #}
-<ul>
-{! treatments:
-    <li>{{ treatments.name }} <br> 
-        <a href="treatment/change?name={{ treatments.name }}&type=changeRequest">Daten ändern</a> <br>
-        <a href="treatment/change?name={{ treatments.name }}&type=delete">löschen</a>
-    </li>
- !}
-</ul>
-<a href="treatment/change?type=newRequest">Behandlung hinzufügen</a>
+
+<div class="table">
+    <h2 class="heading">Alle Behandlungen</h2>
+    <div style="text-align: center;">
+        {?php
+            return Form::create('/admin/treatment/change', 'GET',
+                new FormField('type', 'newRequest', 'hidden'),
+                new FormField('submit', 'Neu', 'submit')
+            );
+        ?}
+    </div>
+    
+    <div class="table-list">
+        <div class="table-list-item">
+            <div class="row">
+                <div class="row-item" style="flex-grow: 3;"><h4>Behandlungsname</h4></div>
+                <div class="row-item" style="flex-grow: 3;"><h4></h4></div>
+                <div class="row-item" style="flex-grow: 1;"><h4></h4></div>
+                <div class="row-item" style="flex-grow: 1;"><h4></h4></div>
+            </div>
+        </div>
+
+        {! treatments: 
+            <div class="table-list-item">
+                <div class="row">
+                    <div class="row-item" style="flex-grow: 3;">{{ treatments.name }}</div>
+                    <div class="row-item" style="flex-grow: 3;"></div>
+                    <div class="row-item btn btn-primary" style="flex-grow: 1;">
+                        {?php
+                            return Form::create('/admin/treatment/change', 'GET',
+                                new FormField('name', '{{ treatments.name }}', 'hidden'),
+                                new FormField('type', 'changeRequest', 'hidden'),
+                                new FormField('submit', 'Daten ändern', 'submit')
+                            );
+                         ?}
+                    </div>
+                    <div class="row-item btn btn-delete" style="flex-grow: 1;">
+                        {?php
+                            return Form::create('/admin/treatment/change', 'GET',
+                                new FormField('name', '{{ treatments.name }}', 'hidden'),
+                                new FormField('type', 'delete', 'hidden'),
+                                new FormField('submit', 'Löschen', 'submit')
+                            );
+                         ?}
+                    </div>
+                </div>
+            </div>
+         !}
+    </div>
+</div>

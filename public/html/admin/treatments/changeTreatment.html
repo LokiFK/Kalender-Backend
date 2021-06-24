@@ -1,12 +1,15 @@
 {[ title=>Raumnummer ändern, navContentLink=>admin/nav ]}
 {# extend general/template@main #}
 
-{?php
-    return Form::create('/admin/treatment/change?type=change&name={{ name }}', 'POST',
-        new FormField('name', 'Name:', 'text'),
-        new FormField('duration', 'Dauer:', 'number'),
-        new FormField('nrDoctors', 'benötigte Anzahl Doktors:', 'number'),
-        new FormField('nrNurses', 'benötigte Anzahl Arzthelfer:', 'number'),
-        new FormField('submit', 'Ändern', 'submit')
-    );
- ?}
+<div class="back-btn" onclick="history.go(-1);" style="margin-left: 10px; font-size: 15px; cursor: pointer;">Zurück</div>
+<div class="form-wrapper">
+    {?php
+        return Form::create('/admin/treatment/change?type=change&name={{ name }}', 'POST',
+            new FormField('name', 'Name:', 'text'),
+            new FormField('duration', 'Dauer:', 'number'),
+            new FormField('nrDoctors', 'benötigte Anzahl Doktors:', 'number'),
+            new FormField('nrNurses', 'benötigte Anzahl Arzthelfer:', 'number'),
+            new FormField('submit', 'Ändern', 'submit')
+        );
+    ?}
+</div>

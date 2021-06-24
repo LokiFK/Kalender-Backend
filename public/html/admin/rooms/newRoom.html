@@ -1,8 +1,13 @@
 {[ title=>neuer Raum, navContentLink=>admin/nav ]}
 {# extend general/template@main #}
-<form action="/admin/room/change?type=new" method="POST">
-    <label for="number">Number:</label>
-    <input type="text" name="number"><br>
 
-    <input type="submit" value="hinzufügen">
-</form>
+<div class="back-btn" onclick="history.go(-1);" style="margin-left: 10px; font-size: 15px; cursor: pointer;">Zurück</div>
+<div class="form-wrapper">
+    {?php
+        return Form::create('/admin/room/change', 'POST',
+            new FormField('type', 'new', 'hidden'),
+            new FormField('number', 'Nummer:', 'text'),
+            new FormField('submit', 'Hinzufügen', 'submit')
+        );
+    ?}
+</div>

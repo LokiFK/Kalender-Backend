@@ -1,8 +1,14 @@
 {[ title=>Raumnummer ändern, navContentLink=>admin/nav ]}
 {# extend general/template@main #}
-<form action="/admin/room/change?type=change&number={{ number }}" method="POST">
-    <label for="newNumber">neue Nummer:</label>
-    <input type="text" name="newNumber"><br>
 
-    <input type="submit" value="ändern">
-</form>
+<div class="back-btn" onclick="history.go(-1);" style="margin-left: 10px; font-size: 15px; cursor: pointer;">Zurück</div>
+<div class="form-wrapper">
+    {?php
+        return Form::create('/admin/room/change', 'POST',
+            new FormField('number', '{{ number }}', 'hidden'),
+            new FormField('type', 'change', 'hidden'),
+            new FormField('newNumber', 'Neue Nummer:', 'text'),
+            new FormField('submit', 'Ändern', 'submit')
+        );
+    ?}
+</div>
