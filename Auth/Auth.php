@@ -9,6 +9,8 @@
         const NOTAPPROVED = 1;
         const USER = 2;
         const ADMIN = 3;
+        const NURSE = 4;
+        const DOCTOR = 5;
         
         private static $status;
         private static $token;
@@ -58,6 +60,11 @@
                 if (self::$account['emailApproved'] == true) {
                     if(self::$admin != null) {
                         self::$status = self::ADMIN;
+                        if(self::$admin['role']=="Arzthelfer"){
+                            self::$status = self::NURSE;
+                        } else if(self::$admin['role']=="Arzt"){
+                            self::$status = self::DOCTOR;
+                        }
                     } else {
                         self::$status = self::USER;
                     }
@@ -95,6 +102,14 @@
                 }
             }
         }
+        public static function registerAdmin(Admin $admin){
+            if (Auth::userExists($admin->userID)) {
+                DB::query(
+                    "INSERT INTO admin(userID, role) VALUES (:userID, :role);",
+                    [':userID' => $admin->userID, ':role'=>$admin->role]
+                );
+            }
+        }
 
         public static function approveAccount($code) {
             $res = DB::table("notapproved")->where("`code` = :code", [":code"=>$code])->get([], ['userID']);
@@ -106,7 +121,7 @@
         }
         public static function specialApproveAccount($userID){
             return DB::query(
-                "UPDATE `account` SET `createdAt` = :date WHERE `userID` = :userID AND createdAt IS NOT null;",
+                "UPDATE `account` SET `createdAt` = :date WHERE `userID` = :userID AND createdAt IS null;",
                 [':userID' => $userID, ":date" => date(DB::DATE_FORMAT)]
             );
         }
@@ -277,8 +292,20 @@
             );
             return $code;
         }
-    }
 
+        public static function usernameExists($username, $userID=null){
+            if(is_numeric($userID)){
+                $res = DB::query("SELECT count(*) as Anzahl from account WHERE username=:username AND userID!=:userID", [":username"=>$username, ":userID"=>$userID]);
+            } else {
+                $res = DB::query("SELECT count(*) as Anzahl from account WHERE username=:username", [":username"=>$username]);
+            }
+            if($res[0]['Anzahl']>0){
+                return true;
+            }
+            return false;
+        }
+
+    }
 
     class User {
         public string $firstname = "";
@@ -286,7 +313,7 @@
         public string $salutation = "";
         public string $birthday = "";
         public string $insurance = "";
-        public string $patientID = "";
+        public $patientID = "";
 
         public function __construct($firstname, $lastname, $salutation, $birthday, $insurance, $patientID)
         {

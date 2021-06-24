@@ -18,9 +18,9 @@ body {
 #nav {
     position: fixed;
     top: 0;
-    width: calc(100% - 20px);
-    margin-left: 10px;
-    margin-right: 10px;
+    width: 100%;
+    /*margin-left: 10px;
+    margin-right: 10px;*/
 }
 
 #footer {

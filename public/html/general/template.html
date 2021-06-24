@@ -7,9 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>{{ title }}</title>
     {% styles %}
     {% script %}
+
 </head>
 <body>
     <div class="main-wrapper">
@@ -17,5 +19,6 @@
         <div id='content'>{# create main #}</div>
         <div id='footer'>{+ general/footer +}</div>
     </div>
+    {% js/generel/formValidation %}
 </body>
 </html>
