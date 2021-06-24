@@ -226,7 +226,18 @@
                 $treatment = DB::query("SELECT DISTINCT * FROM treatment");
                 echo $res->view("admin/generalPlaning", array(), array(), ['treatment'=>$treatment]);
             } else {
-                
+                $day = $req->getBody()['weekday'];
+                $start = $req->getBody()['startTime'];
+                $end = $req->getBody()['endTime'];
+                $treatment = $req->getBody()['treatment'];
+                $results = DB::query("SELECT * FROM appointment_typical JOIN treatment t on t.id = appointment_typical.treatment AND t.name = :treatment;", [':treatment' => $treatment]);
+                foreach ($results as $result) {
+                    if ($result["day"] = $day) {
+                        if (strtotime($result["startTime"]) <= strtotime("24:00") && strtotime($result["startTime"]) >= strtotime("00:00")) {
+                            echo "1";
+                        }
+                    }
+                }
             }
         }
 

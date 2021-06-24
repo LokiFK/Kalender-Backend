@@ -6,7 +6,7 @@
     <h3 id="title">Hallo {{ username }}, bitte ändere hier Deine Daten</h3>
     <form action="/auth/account/dataReset" method="POST">
         <label for="salutation">Geschlecht</label><br>
-            <select onchange="handler2(this)" name="salutation" value="{{ salutation }}">
+            <select onchange="handler2(this)" name="salutation" id="salutation" value="{{ salutation }}">
                 <option selected hidden>{{ salutation }}</option>
                 <option>Frau</option>
                 <option>Herr</option>

@@ -62,9 +62,9 @@
                     //todo
                 } else if($value == "date"){
                     //todo
-                } else if($value == "birhday"){
+                } else if($value == "birthday"){
                     //todo
-                } else if($value == "incurance"){
+                } else if($value == "insurance"){
                     if (! ($formData[$key]=="gesetzlich" || $formData[$key]=="privat")) {
                         return self::errorDataType('Bad request', $die);
                     } 
