@@ -52,9 +52,13 @@
                             return null;
                         }
                     } 
-                } else if ($formData[$key] == null || $formData[$key] == "") {
-                    ErrorUI::error(400, 'Bad request');
-                    exit;
+                } else if (!isset($formData[$key]) || $formData[$key] == null || $formData[$key] == "") {
+                    if($die){
+                        ErrorUI::error(400, 'Bad request');
+                        exit;
+                    } else {
+                        return null;
+                    }
                 } else if($value == "int"){
                     if (!is_numeric($formData[$key])) {
                         if($die){

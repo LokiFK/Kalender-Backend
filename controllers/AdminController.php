@@ -207,6 +207,19 @@
                 exit;
             }
         }
+        public function createUser(Request $req, Response $res){
+            if ($req->getMethod() == "GET") {
+                echo $res->view("admin/search/userCreate");
+            } else {
+                $data = $req->getBody();
+                Form::validateDataType($data, ['salutation','firstname','lastname','birthday','insurance']);
+                    if(Form::validateDataType($data, ["patientID"], false)==null){
+                         $data['patientID']=null;
+                    }
+                $userID = Auth::registerUser(new User($data['firstname'], $data['lastname'], $data['salutation'], $data['birthday'], $data['insurance'], $data['patientID']));
+                Path::redirect(Path::ROOT . 'admin/search/user?id='.$userID);
+            }
+        }
     }
 
 ?>

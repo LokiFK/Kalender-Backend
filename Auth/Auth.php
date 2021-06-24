@@ -313,7 +313,7 @@
         public string $salutation = "";
         public string $birthday = "";
         public string $insurance = "";
-        public string $patientID = "";
+        public $patientID = "";
 
         public function __construct($firstname, $lastname, $salutation, $birthday, $insurance, $patientID)
         {
