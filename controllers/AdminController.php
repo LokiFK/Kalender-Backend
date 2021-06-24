@@ -67,8 +67,8 @@
                 $rooms = DB::query("SELECT * FROM room ORDER BY number");
                 echo $res->view("admin/newAppointment", [], [], ["treatments"=>$treatments, "rooms"=>$rooms]);
             } else if ($req->getMethod() == "POST") {
-                $data = Form::validate($req->getBody(), ['start'=>"datetime", 'end'=>"datetime", 'room'=>"existingRoomID", 'treatment'=>"existingTreatmentID"]);
-                DB::query("INSERT INTO appointment(treatmentID, roomID, start, end) VALUES (:treatment, :room, :start, :end)", [":treatment"=>$data["treatment"], ":room"=>$data["room"], ":start"=>$data["start"], ":end"=>$data["end"]]);
+                $data = Form::validate($req->getBody(), ["day"=>"day", 'start'=>"time", 'end'=>"time", 'room'=>"existingRoomID", 'treatment'=>"existingTreatmentID"]);
+                DB::query("INSERT INTO appointment(treatmentID, roomID, start, end, day) VALUES (:treatment, :room, :start, :end, :day)", [":treatment"=>$data["treatment"], ":room"=>$data["room"], ":start"=>$data["start"], ":end"=>$data["end"], ":day"=>$data["day"]]);
                 Path::redirect(Path::ROOT."admin/appointment/new");
             } 
         }
@@ -76,7 +76,7 @@
         public function pending(Request $req, Response $res)
         {
             if ($req->getMethod() == "GET") {
-                $appointments = DB::query("SELECT a.id, a.start, a.end, b.firstname, b.lastname, b.insurance FROM `appointment` a, `users` b WHERE `status` = 'warten' AND a.userID = b.id");
+                $appointments = DB::query("SELECT a.id, a.day, a.start, a.end, b.firstname, b.lastname, b.insurance FROM `appointment` a, `users` b WHERE `status` = 'warten' AND a.userID = b.id");
                 echo $res->view('admin/pending', [], [], ['appointments' => $appointments]);
             } else {
                 $data = Form::validateDataType($req->getBody(), ['id'=>"int", 'action']);

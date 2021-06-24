@@ -1,6 +1,8 @@
 {[ title=>neuer Termin, navContentLink=>admin/nav ]}
 {# extend general/template@main #}
 <form action="/admin/appointment/new" method="POST">
+    <label for="day">Tag:</label>
+    <input type="date" name="day"><br>
     <label for="start">Startzeit:</label>
     <input type="text" name="start"><br>
     <label for="end">Endzeit:</label>
