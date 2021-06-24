@@ -27,17 +27,19 @@
                         <div class="row-item">
                             <div class="row">
                                 <div class="row-item btn-form-confirm green">
-                                    <form action="/admin/pending" method="post">
-                                        <input type="hidden" name="id" value="{{ appointments.id }}">
-                                        <input type="hidden" name="action" value="approve">
-                                        <input type="submit" value="Akzeptieren">
-                                    </form>
+                                    {?php
+                                        return Form::create('/admin/pending', 'POST',
+                                            new FormField('id', '{{ appointments.id }}', 'hidden'),
+                                            new FormField('action', 'approve', 'hidden'),
+                                            new FormField('submit', 'Akzeptieren', 'submit')
+                                        );
+                                     ?}
                                 </div>
                                 <div class="row-item btn-form-confirm red">
                                     {?php
                                         return Form::create('/admin/pending', 'POST',
                                             new FormField('id', '{{ appointments.id }}', 'hidden'),
-                                            new FormField('action', '{{ decline }}', 'hidden'),
+                                            new FormField('action', 'decline', 'hidden'),
                                             new FormField('submit', 'Ablehnen', 'submit')
                                         );
                                      ?}
