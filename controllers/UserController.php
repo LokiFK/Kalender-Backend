@@ -50,7 +50,7 @@
                 ErrorUI::error(400, 'Treatment not found.');
             }
             
-            $allAppointments = DB::query("SELECT a.id, a.start, a.end, b.name FROM appointment a, treatment b WHERE a.`userID` IS NULL AND a.`end` > :end AND a.treatmentID = b.id AND b.name = :name", [':end' => date(DB::DATE_FORMAT), ':name' => $treatment]);
+            $allAppointments = DB::query("SELECT a.id, a.day, a.start, a.end, b.name FROM appointment a, treatment b WHERE a.`userID` IS NULL AND a.`end` > :end AND a.treatmentID = b.id AND b.name = :name", [':end' => date(DB::DATE_FORMAT), ':name' => $treatment]);
 
             $view = $res->view('user/new2', [ "treatment"=>$treatment ], array(), [ "appointments"=>$allAppointments ]);
             echo $view;

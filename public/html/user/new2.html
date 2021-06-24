@@ -9,6 +9,7 @@
             <div class="appointments-list-item">
                 <div class="row">
                     <div class="row-item"><h4 class="name">Name</h4></div>
+                    <div class="row-item"><h4 class="day">Tag</h4></div>
                     <div class="row-item"><h4 class="start">Start</h4></div>
                     <div class="row-item"><h4 class="end">Ende</h4></div>
                 </div>
@@ -19,6 +20,7 @@
                     <div class="appointments-list-item" onclick="confirm('Willst du wirklich diesen Termin buchen?') && document.getElementById('form-{{ appointments.id }}').submit();">
                         <div class="row">
                             <div class="row-item"><p class="name">{{ appointments.name }}</p></div>
+                            <div class="row-item"><p class="day">{{ appointments.day }}</p></div>
                             <div class="row-item"><p class="start">{{ appointments.start }}</p></div>
                             <div class="row-item"><p class="end">{{ appointments.end }}</p></div>
                         </div>

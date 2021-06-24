@@ -1,4 +1,12 @@
-window.onload=function() {
+window.onload=function(){
+
+    var dates = {{ dates }};
+
+
+
+
+
+
     var appointments = {{ appointments }};
 
     var table = document.getElementById('appointmentsTable');
@@ -34,7 +42,7 @@ window.onload=function() {
     var minutes=start;
     for(var i = 0; i<appointments.length; i++){
         var a=appointments[i];
-        var aDate = a.day;
+        var aDate = a.start.substring(0,10);
         if(date==null || date!=aDate){
             if(date!=null){
                 while(minutes<end){
@@ -53,8 +61,8 @@ window.onload=function() {
             dateTd.innerHTML=date;
             eDate.appendChild(dateTd);
         }
-        var aStart = a.start;
-        var aEnd = a.end;
+        var aStart = a.start.substring(11);
+        var aEnd = a.end.substring(11);
         aStart = parseInt(aStart.substring(0,2))*60+parseInt(aStart.substring(3).substring(0,2));
         aEnd = parseInt(aEnd.substring(0,2))*60+parseInt(aEnd.substring(3).substring(0,2));
         //alert("m: "+minutes+" s: "+aStart);
@@ -64,16 +72,15 @@ window.onload=function() {
             eDate.appendChild(termin);
             minutes++;
         }
-        var termin = document.createElement("td");
+        var termin = document.createElement("td"); 
         termin.colSpan = (aEnd-aStart);
-        termin.className = "termin"
         termin.innerHTML="Raum: "+a.number+"<br>Patient: "+a.lastname+"<br>Behandlung: "+a.name;
         eDate.appendChild(termin);
         minutes=aEnd;
     }
     //alert("minutes: "+minutes+" end: "+end);
     while(minutes<end){
-        var termin = document.createElement("td");
+        var termin = document.createElement("td"); 
         termin.classList.add("shortTd");
         eDate.appendChild(termin);
         minutes++;

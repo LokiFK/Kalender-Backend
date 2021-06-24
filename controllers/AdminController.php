@@ -67,8 +67,8 @@
                 $rooms = DB::query("SELECT * FROM room ORDER BY number");
                 echo $res->view("admin/newAppointment", [], [], ["treatments"=>$treatments, "rooms"=>$rooms]);
             } else if ($req->getMethod() == "POST") {
-                $data = Form::validate($req->getBody(), ['start'=>"datetime", 'end'=>"datetime", 'room'=>"existingRoomID", 'treatment'=>"existingTreatmentID"]);
-                DB::query("INSERT INTO appointment(treatmentID, roomID, start, end) VALUES (:treatment, :room, :start, :end)", [":treatment"=>$data["treatment"], ":room"=>$data["room"], ":start"=>$data["start"], ":end"=>$data["end"]]);
+                $data = Form::validate($req->getBody(), ["day"=>"day", 'start'=>"time", 'end'=>"time", 'room'=>"existingRoomID", 'treatment'=>"existingTreatmentID"]);
+                DB::query("INSERT INTO appointment(treatmentID, roomID, start, end, day) VALUES (:treatment, :room, :start, :end, :day)", [":treatment"=>$data["treatment"], ":room"=>$data["room"], ":start"=>$data["start"], ":end"=>$data["end"], ":day"=>$data["day"]]);
                 Path::redirect(Path::ROOT."admin/appointment/new");
             } 
         }
@@ -76,7 +76,7 @@
         public function pending(Request $req, Response $res)
         {
             if ($req->getMethod() == "GET") {
-                $appointments = DB::query("SELECT a.id, a.start, a.end, b.firstname, b.lastname, b.insurance FROM `appointment` a, `users` b WHERE `status` = 'warten' AND a.userID = b.id");
+                $appointments = DB::query("SELECT a.id, a.day, a.start, a.end, b.firstname, b.lastname, b.insurance FROM `appointment` a, `users` b WHERE `status` = 'warten' AND a.userID = b.id");
                 echo $res->view('admin/pending', [], [], ['appointments' => $appointments]);
             } else {
                 $data = Form::validateDataType($req->getBody(), ['id'=>"int", 'action']);
@@ -220,13 +220,21 @@
                 Path::redirect(Path::ROOT . 'admin/search/user?id='.$userID);
             }
         }
-        public function personalAppointments(Request $req, Response $res){
-            Middleware::statusBiggerOrEqualTo(Auth::NURSE);
 
-            $appointments = DB::query("SELECT a.start,a.end,number,name,lastname,status FROM appointment a, appointment_admin b, room r, users u, treatment t WHERE a.id = b.appointmentID and a.roomID=r.id and a.userID=u.id and a.treatmentID=t.id AND adminID=:userID AND start>:datetime ORDER BY start;", [":userID"=>Auth::getUser()['id'], ":datetime"=>date(DB::DATE_FORMAT)]);
+        public function personalAppointments(Request $req, Response $res){
+            Middleware::statusBiggerOrEqualTo(4);
+
+            $appointments = DB::query("SELECT a.day,a.start,a.end,number,name,lastname,status FROM appointment a, appointment_admin b, room r, users u, treatment t WHERE a.id = b.appointmentID and a.roomID=r.id and a.userID=u.id and a.treatmentID=t.id AND adminID=:userID AND start>:datetime ORDER BY start;", [":userID"=>Auth::getUser()['id'], ":datetime"=>date(DB::DATE_FORMAT)]);
             $json = json_encode($appointments);
             echo $res->vieW("admin/personalAppointments", ["appointments"=>$json]);
         }
+        public static function generalPlaning(Request $req, Response $res) {
+            if ($req->getMethod()=="GET") {
+                $treatment = DB::query("SELECT DISTINCT * FROM treatment");
+                echo $res->view("admin/generalPlaning", array(), array(), ['treatment'=>$treatment]);
+            }
+        }
+
     }
 
 ?>
