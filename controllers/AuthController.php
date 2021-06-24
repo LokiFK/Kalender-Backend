@@ -95,12 +95,15 @@
         public function login(Request $req, Response $res)
         {
             if ($req->getMethod() == "GET") {
+                echo "1";
                 echo $res->view('auth/login');
             } else if ($req->getMethod() == "POST") {
+                echo "2";
                 $validatedData = Form::validate($req->getBody(), ['username', 'password']);
                 $remember = isset($req->getBody()['remember']) && $req->getBody()['remember'] == 'on';
-
+                echo "3";
                 $token = Auth::login($validatedData['username'], $validatedData['password'], $remember);
+                echo "4";
                 if ($token != null) {
                     setcookie('token', $token, time() + 60 * 60 * 24 * 30, '/');
 
@@ -111,7 +114,7 @@
                         Path::redirect(Path::ROOT . "auth/account/notApproved");
                     }
                 } else {
-                    ErrorUI::popRedirect("Falscher Nutzername oder Passwort", Path::ROOT . "auth/login");
+                    ErrorUI::error(401, "Falscher Nutzername oder Passwort");
                 }
             }
         }
