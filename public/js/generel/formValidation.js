@@ -21,6 +21,7 @@ function checkInputField(inputField) {
         document.getElementById('select-'+inputField.name).children[document.getElementById('select-'+inputField.name).children.length-1].value = inputField.value;
     }
 
+    console.log(inputField.name);
     $.ajax({
         type: 'get', 
         url: '../../../form/validate', 
@@ -32,6 +33,7 @@ function checkInputField(inputField) {
         dataType: 'json',
         contentType : 'application/json',
         success: function (data) {
+            console.log(data);
             document.getElementById('feedback-' + inputField.name).style.color = data.color;
             document.getElementById('feedback-' + inputField.name).innerHTML = data.feedback;
         }
