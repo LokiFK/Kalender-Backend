@@ -220,6 +220,14 @@
                 Path::redirect(Path::ROOT . 'admin/search/user?id='.$userID);
             }
         }
+
+        public function personalAppointments(Request $req, Response $res){
+            Middleware::statusBiggerOrEqualTo(4);
+
+            $appointments = DB::query("SELECT a.day,a.start,a.end,number,name,lastname,status FROM appointment a, appointment_admin b, room r, users u, treatment t WHERE a.id = b.appointmentID and a.roomID=r.id and a.userID=u.id and a.treatmentID=t.id AND adminID=:userID AND start>:datetime ORDER BY start;", [":userID"=>Auth::getUser()['id'], ":datetime"=>date(DB::DATE_FORMAT)]);
+            $json = json_encode($appointments);
+            echo $res->vieW("admin/personalAppointments", ["appointments"=>$json]);
+        }
     }
 
 ?>

@@ -34,7 +34,7 @@ window.onload=function(){
     var minutes=start;
     for(var i = 0; i<appointments.length; i++){
         var a=appointments[i];
-        var aDate = a.start.substring(0,10);
+        var aDate = a.day;
         if(date==null || date!=aDate){
             if(date!=null){
                 while(minutes<end){
@@ -53,8 +53,8 @@ window.onload=function(){
             dateTd.innerHTML=date;
             eDate.appendChild(dateTd);
         }
-        var aStart = a.start.substring(11);
-        var aEnd = a.end.substring(11);
+        var aStart = a.start;
+        var aEnd = a.end;
         aStart = parseInt(aStart.substring(0,2))*60+parseInt(aStart.substring(3).substring(0,2));
         aEnd = parseInt(aEnd.substring(0,2))*60+parseInt(aEnd.substring(3).substring(0,2));
         //alert("m: "+minutes+" s: "+aStart);
