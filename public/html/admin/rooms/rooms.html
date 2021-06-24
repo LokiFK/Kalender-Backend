@@ -1,11 +1,49 @@
 {[ title=>Räume, navContentLink=>admin/nav ]}
 {# extend general/template@main #}
-<ul>
-{! rooms:
-    <li>{{ rooms.number }} <br> 
-        <a href="room/change?number={{ rooms.number }}&type=changeRequest">Nummer ändern</a> <br>
-        <a href="room/change?number={{ rooms.number }}&type=delete">löschen</a>
-    </li>
- !}
-</ul>
-<a href="room/change?type=newRequest">Raum hinzufügen</a>
+
+
+<div class="table">
+    <h2 class="heading">Alle Termine</h2>
+    <div class="table-list">
+        <div class="table-list-item">
+            <div class="row">
+                <div class="row-item"><h4>Raum Nummer</h4></div>
+                <div class="row-item"><h4></h4></div>
+                <div class="row-item"><h4></h4></div>
+            </div>
+        </div>
+
+        {! rooms: 
+            <div class="table-list-item">
+                <div class="row">
+                    <div class="row-item">{{ rooms.number }}</div>
+                    <div class="row-item btn btn-primary">
+                        {?php
+                            return Form::create('/room/change', 'GET',
+                                new FormField('number', '{{ rooms.number }}', 'hidden'),
+                                new FormField('type', 'changeRequest', 'hidden'),
+                                new FormField('submit', 'Nummer ändern', 'submit')
+                            );
+                         ?}
+                    </div>
+                    <div class="row-item btn btn-delete">
+                        {?php
+                            return Form::create('/room/change', 'GET',
+                                new FormField('number', '{{ rooms.number }}', 'hidden'),
+                                new FormField('type', 'delete', 'hidden'),
+                                new FormField('submit', 'Löschen', 'submit')
+                            );
+                         ?}
+                    </div>
+                </div>
+            </div>
+         !}
+    </div>
+    
+    {?php
+        return Form::create('/room/change', 'GET',
+            new FormField('type', 'newRequest', 'hidden'),
+            new FormField('submit', 'Nummer ändern', 'submit')
+        );
+     ?}
+</div>

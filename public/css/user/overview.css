@@ -1,16 +1,3 @@
-.overview-wrapper {
-    margin-top: 30px;
-}
-
-.row {
-    display: flex;
-    flex-direction: row;
-}
-
-.row-item {
-    flex-basis: 0;
-    flex-grow: 1;
-}
 
 .appointments {
     width: 100%;

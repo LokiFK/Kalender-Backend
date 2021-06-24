@@ -239,12 +239,12 @@
                 $returnVal .= "
                         <option value='sonstiges' id='sonstiges'>Sonstiges</option>
                     </select>
-                    <input class='form-input' id='sonstigesFeld-$this->name' name='sonstigesFeld-$this->name' style='display: none;' type='text'></input> <br>
+                    <input class='form-input' id='sonstigesFeld-$this->name' name='sonstigesFeld-$this->name' style='display: none;' type='text'></input>
                 ";
             } else {
                 if ($this->inputType == "hidden") {
                     $returnVal .= "
-                        <input type='hidden' name='$this->name' value='$this->label'><br>
+                        <input type='hidden' name='$this->name' value='$this->label'>
                     ";
                 } else if ($this->inputType == "submit") {
                     $returnVal .= "

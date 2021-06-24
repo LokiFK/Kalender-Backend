@@ -1,6 +1,5 @@
 {[ title=>Profil, navContentLink=>user/nav ]}
 {# extend general/template@main #}
-{% css/auth/form %}
 
 <div class="form-wrapper">
     <h3 id="title">Hallo {{ username }}</h3>
@@ -38,7 +37,7 @@
 
     {?php
         return Form::create('/auth/account/resetUserdata', 'GET',
-            new FormField('submit', 'Weiter', 'submit')
+            new FormField('submit', 'Daten ändern', 'submit')
         );
     ?}
 </div>

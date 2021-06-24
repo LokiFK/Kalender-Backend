@@ -31,26 +31,22 @@
             );
         }
 
-        public function new(Request $req, Response $res){
+        public function new(Request $req, Response $res) {
             $treatments = DB::table("treatment")->get();
-            //$allAppointmentTypes = ['Sprechstunde', 'Operation'];
-            
-            //$allAppointmentTypes = ['b1', 'b2'];
-            // $treatments = [ ["name"=>"b1"], ["name"=>"b2"], ["name"=>"b3"] ];
             $view = $res->view('user/new', array(), array(), [
                 'appointmentTypes' => $treatments
             ]);
             echo $view;
         }
 
-        public function new2(Request $req, Response $res){
+        public function new2(Request $req, Response $res) {
             $data = Form::validateDataType($req->getBody(), ['treatment'=>"existingTreatment"]);
             $treatment = $data['treatment'];
             if (DB::query("SELECT count(*) as Anzahl from treatment where name=:treatment;", [ ":treatment"=>$treatment ])[0]['Anzahl'] != 1) {
                 ErrorUI::error(400, 'Treatment not found.');
             }
             
-            $allAppointments = DB::query("SELECT a.id, a.day, a.start, a.end, b.name FROM appointment a, treatment b WHERE a.`userID` IS NULL AND a.`end` > :end AND a.treatmentID = b.id AND b.name = :name", [':end' => date(DB::DATE_FORMAT), ':name' => $treatment]);
+            $allAppointments = DB::query("SELECT a.id, a.day, a.start, a.end, b.name FROM appointment a, treatment b WHERE a.`userID` IS NULL AND ((a.`end` > :end AND a.`day` >= :day) OR (a.`end` <= :end AND a.`day` > :day)) AND a.treatmentID = b.id AND b.name = :name", [':end' => date(DB::TIME), ':day' => date(DB::DATE), ':name' => $treatment]);
 
             $view = $res->view('user/new2', [ "treatment"=>$treatment ], array(), [ "appointments"=>$allAppointments ]);
             echo $view;

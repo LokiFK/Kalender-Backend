@@ -14,6 +14,7 @@
             $data = DB::query("SELECT * from room;");
             echo $res->view('admin/rooms/rooms', array(), array(), ['rooms'=>$data ]);
         }
+
         public function roomChange(Request $req, Response $res) {
             $data = Form::validateDataType($req->getBody(), ['type']);
             if($data['type']=="delete"){
@@ -34,11 +35,13 @@
                 DB::query("INSERT INTO room(number) VALUES (:number)", [":number"=>$data['number']]);
                 Path::redirect(Path::ROOT."admin/rooms");
             }
-        }    
+        }
+
         public function treatments(Request $req, Response $res) {
             $data = DB::query("SELECT * from treatment;");
             echo $res->view('admin/treatments/treatments',  [], [], ['treatments'=>$data]);
         }
+        
         public function treatmentChange(Request $req, Response $res) {
             $data = Form::validateDataType($req->getBody(), ['type']);
             if($data['type']=="delete"){
@@ -60,14 +63,15 @@
                 DB::query("INSERT INTO treatment(name, duration, nrDoctors, nrNurses) VALUES (:name, :duration, :nrDoctors, :nrNurses)", [":name"=>$data['name'], ':duration'=>$data['duration'], ':nrDoctors'=>$data['nrDoctors'], 'nrNurses'=>$data['nrNurses']]);
                 Path::redirect(Path::ROOT."admin/treatments");
             }
-        } 
+        }
+
         public function newAppointment(Request $req, Response $res){
             if ($req->getMethod() == "GET") {
                 $treatments = DB::query("SELECT * FROM treatment ORDER BY name");
                 $rooms = DB::query("SELECT * FROM room ORDER BY number");
                 echo $res->view("admin/newAppointment", [], [], ["treatments"=>$treatments, "rooms"=>$rooms]);
             } else if ($req->getMethod() == "POST") {
-                $data = Form::validate($req->getBody(), ["day"=>"day", 'start'=>"time", 'end'=>"time", 'room'=>"existingRoomID", 'treatment'=>"existingTreatmentID"]);
+                $data = Form::validate($req->getBody(), ["day", 'start', 'end', 'room', 'treatment']);
                 DB::query("INSERT INTO appointment(treatmentID, roomID, start, end, day) VALUES (:treatment, :room, :start, :end, :day)", [":treatment"=>$data["treatment"], ":room"=>$data["room"], ":start"=>$data["start"], ":end"=>$data["end"], ":day"=>$data["day"]]);
                 Path::redirect(Path::ROOT."admin/appointment/new");
             } 
