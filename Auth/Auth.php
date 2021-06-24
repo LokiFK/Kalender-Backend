@@ -285,8 +285,20 @@
             );
             return $code;
         }
-    }
 
+        public static function usernameExists($username, $userID=null){
+            if(is_numeric($userID)){
+                $res = DB::query("SELECT count(*) as Anzahl from account WHERE username=:username AND userID!=:userID", [":username"=>$username, ":userID"=>$userID]);
+            } else {
+                $res = DB::query("SELECT count(*) as Anzahl from account WHERE username=:username", [":username"=>$username]);
+            }
+            if($res[0]['Anzahl']>0){
+                return true;
+            }
+            return false;
+        }
+
+    }
 
     class User {
         public string $firstname = "";
