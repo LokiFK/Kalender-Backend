@@ -2,7 +2,7 @@
 {# extend general/template@main #}
 <form action="/auth/account/notApproved" method="POST">
     <label for="email">E-mail ändern:</label>
-    <input type="text" name="email"><br>
+    <input type="text" name="email" value={{ email }}><br>
     
     <input type="submit" value="Email ändern und neue Bestätigungsmail">
 </form>
