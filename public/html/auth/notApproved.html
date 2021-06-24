@@ -1,12 +1,15 @@
 {[ title=>Account bestätigt, navContentLink=>user/nav ]}
 {# extend general/template@main #}
-<form action="/auth/account/notApproved" method="POST">
-    <label for="email">E-mail ändern:</label>
-    <input type="text" name="email" value={{ email }}><br>
-    
-    <input type="submit" value="Email ändern und neue Bestätigungsmail">
-</form>
+
+{?php
+    return Form::create('/auth/account/notApproved', 'POST',
+        new FormField('email', 'E-Mail ändern:', 'text', '{{ email }}'),
+        new FormField('submit', 'Email ändern und neue Bestätigungsmail', 'submit')
+    );
+ ?}
 <br>
-<form action="/auth/account/notApproved" method="POST">    
-    <input type="submit" value="Neue Bestätigungsmail">
-</form>
+{?php
+    return Form::create('/auth/account/notApproved', 'POST',
+        new FormField('submit', 'Neue Bestätigungsmail', 'submit')
+    );
+ ?}

@@ -1,4 +1,4 @@
-window.onload=function(){
+window.onload=function() {
     var appointments = {{ appointments }};
 
     var table = document.getElementById('appointmentsTable');
@@ -64,15 +64,16 @@ window.onload=function(){
             eDate.appendChild(termin);
             minutes++;
         }
-        var termin = document.createElement("td"); 
+        var termin = document.createElement("td");
         termin.colSpan = (aEnd-aStart);
+        termin.className = "termin"
         termin.innerHTML="Raum: "+a.number+"<br>Patient: "+a.lastname+"<br>Behandlung: "+a.name;
         eDate.appendChild(termin);
         minutes=aEnd;
     }
     //alert("minutes: "+minutes+" end: "+end);
     while(minutes<end){
-        var termin = document.createElement("td"); 
+        var termin = document.createElement("td");
         termin.classList.add("shortTd");
         eDate.appendChild(termin);
         minutes++;

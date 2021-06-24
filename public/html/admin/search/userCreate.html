@@ -2,35 +2,16 @@
 {# extend general/template@main #}
 {% js/auth/dataReset %}
 
-<form action="/admin/search/createUser" method="POST">
-    User: <br>
-        <label for="salutation">Geschlecht</label><br>
-        <select onchange="handler2(this)" name="salutation" value="keine Angabe">
-            <option selected hidden>keine Angabe</option>
-            <option>Frau</option>
-            <option>Herr</option>
-            <option>keine Angabe</option>
-            <option value="sonstiges" id="sonstiges">sonstiges</option>
-        </select>
-        <input id="sonstigesFeld" style="display: none;" type="text" onchange="handler(this)"></input> 
-        <br>
-        <label for="firstname">Vorname</label><br>
-        <input type="text" name="firstname" value=""></input>
-        <br>
-        <label for="lastname">Nachname</label><br>
-        <input type="text" name="lastname" value=""></input>
-        <br>
-        <label for="birthday">Geburtsdatum</label><br>
-        <input type="date" name="birthday" value=""></input>
-        <br>
-        <label for="insurance">Verischerung</label><br>
-        <select name="insurance" value="">
-            <option>gesetzlich</option>
-            <option>privat</option>
-        </select>
-        <br>
-        <label for="patientID">PatientenID</label><br>
-        <input type="text" name="patientenID" value=""></input>
+User: <br>
+{?php
+    return Form::create('/admin/search/createUser', 'POST',
+        new FormField('salutation', 'Anrede', 'select', '', [], ['Frau', 'Mann', 'keine Angabe']),
+        new FormField('firstname', 'Vorname', 'text'),
+        new FormField('lastname', 'Nachname', 'text'),
+        new FormField('birthday', 'Geburtstag', 'date'),
+        new FormField('insurance', 'Versicherung', 'select', '', [], ['Gesetzlich', 'Privat']),
+        new FormField('patientID', 'PatientenID', 'text'),
 
-<input type="submit" value="erstellen">
-</form>
+        new FormField('submit', 'Erstellen', 'submit')
+    );
+ ?}

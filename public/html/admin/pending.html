@@ -32,11 +32,13 @@
                                     </form>
                                 </div>
                                 <div class="row-item btn-form-confirm red">
-                                    <form action="/admin/pending" method="post">
-                                        <input type="hidden" name="id" value="{{ appointments.id }}">
-                                        <input type="hidden" name="action" value="decline">
-                                        <input type="submit" value="Ablehnen">
-                                    </form>
+                                    {?php
+                                        return Form::create('/admin/pending', 'POST',
+                                            new FormField('id', '{{ appointments.id }}', 'hidden'),
+                                            new FormField('action', '{{ decline }}', 'hidden'),
+                                            new FormField('submit', 'Ablehnen', 'submit')
+                                        );
+                                     ?}
                                 </div>
                             </div>
                         </div>

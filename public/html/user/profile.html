@@ -3,40 +3,42 @@
 {% css/auth/form %}
 
 <div class="form-wrapper">
-<h3 id="title">Hallo {{ username }}</h3>
-<form id="form">
-    <label for="salutation">Geschlecht</label><br>
-    <div id="textbox">
-        <label name="salutation">{{ salutation }}</label>
-    </div>
-    <br>
-    <label for="firstName">Vorname</label><br>
-    <div id="textbox">
-    <label name="firstName">{{ firstname }}</label>
-    </div>
-    <br>
-    <label for="lastName">Nachname</label><br>
-    <div id="textbox">
-    <label>{{ lastname }}</label>
-    </div>
-    <br>
-    <label for="birthday">Geburtsdatum</label><br>
-    <div id="textbox">
-    <label >{{ birthday }}</label>
-    </div>
-    <br>
-    <label for="firstName">Versicherung</label><br>
-    <div id="textbox">
-    <label>{{ insurance }}</label>
-    </div>
-    <br>
-    <label for="firstName">Email</label><br>
-    <div id="textbox">
-        <label >{{ email }}</label>
-    </div>
-</form>
+    <h3 id="title">Hallo {{ username }}</h3>
+    <form id="form">
+        <label for="salutation">Geschlecht</label><br>
+        <div id="textbox">
+            <label name="salutation">{{ salutation }}</label>
+        </div>
+        <br>
+        <label for="firstName">Vorname</label><br>
+        <div id="textbox">
+            <label name="firstName">{{ firstname }}</label>
+        </div>
+        <br>
+        <label for="lastName">Nachname</label><br>
+        <div id="textbox">
+            <label>{{ lastname }}</label>
+        </div>
+        <br>
+        <label for="birthday">Geburtsdatum</label><br>
+        <div id="textbox">
+            <label >{{ birthday }}</label>
+        </div>
+        <br>
+        <label for="firstName">Versicherung</label><br>
+        <div id="textbox">
+            <label>{{ insurance }}</label>
+        </div>
+        <br>
+        <label for="firstName">Email</label><br>
+        <div id="textbox">
+            <label >{{ email }}</label>
+        </div>
+    </form>
 
-<form action="/auth/account/resetUserdata" method="GET">
-    <input type="submit" value="Daten ändern">
-</form>
+    {?php
+        return Form::create('/auth/account/resetUserdata', 'GET',
+            new FormField('submit', 'Weiter', 'submit')
+        );
+    ?}
 </div>

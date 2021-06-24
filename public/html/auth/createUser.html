@@ -2,12 +2,11 @@
 {# extend general/template@main #}
 {% css/auth/form %}
 {% js/auth/dataReset %}
+
 <div class="form-wrapper">
-    
     {?php
-        
         return Form::create('/auth/user/create', 'POST',
-            new FormField('salutation', 'Geschlecht', 'select', '', [], ['Frau', 'Mann', 'Divers', 'keine Angabe']),
+            new FormField('salutation', 'Anrede', 'select', '', [], ['Frau', 'Mann', 'keine Angabe']),
             new FormField('firstname', 'Vorname', 'text'),
             new FormField('lastname', 'Nachname', 'text'),
             new FormField('insurance', 'Versicherung', 'select', '', [], ['Gesetzlich', 'Privat']),
@@ -22,45 +21,4 @@
             new FormField('submit', 'Weiter', 'submit')
         );
      ?}
-    
-    <!--<form action="/auth/user/create" method="POST">
-        <label for="salutation">Geschlecht</label><br>
-            <select onchange="handler2(this)" name="salutation" value="">
-                <option selected>weiblich</option>
-                <option>männlich</option>
-                <option>divers</option>
-                <option>keine Angabe</option>
-                <option value="sonstiges" id="sonstiges">sonstiges</option>
-            </select>
-            <input id="sonstigesFeld" style="display: none;" type="text" onchange="handler(this)"></input> <br>
-        <label for="firstname">Vorname</label>
-        <input type="text" name="firstname"><br>
-        
-        <label for="lastname">Nachname</label>
-        <input type="text" name="lastname"><br>
-        
-        <label for="insurance">Verischerung</label><br>
-        <select name="insurance" value={{ insurance }}>
-            <option>gesetzlich</option>
-            <option>privat</option>
-        </select>
-        <br>
-        
-        <label for="birthday">Geburtstag</label>
-        <input type="date" name="birthday"><br>
-        
-        <input type="hidden" name="code" value="{{ code }}">
-
-        <label for="username">Benutzername</label>
-        <input type="text" name="username"><br>
-        
-        <label for="email">E-Mail</label>
-        <input type="email" name="email"><br>
-        
-        <label for="password">Passwort</label>
-        <input type="password" name="password"><br>
-        <input type="checkbox" name="agb"><label for="agb"> Ich akzeptiere die <a href="/privacy">Datenschutzbedingungen</a> und <a href="/termsOfUse">Nutzungsbedingungen</a></label>
-
-        <input type="submit" value="Weiter">
-    </form>-->
 </div>

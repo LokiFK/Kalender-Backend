@@ -194,7 +194,7 @@
         private $selectOptions;
         private $options;
 
-        public function __construct($name, $label, $inputType, $defaultValue="", array $validation=array(), array $selectOptions=array(), ...$options)
+        public function __construct($name, $label, $inputType, $defaultValue="", array $validation=array(), array $selectOptions=array(), $options=array())
         {
             $this->name = $name;
             $this->inputType = $inputType;
@@ -246,10 +246,13 @@
                     $returnVal .= "
                         <input type='hidden' name='$this->name' value='$this->label'><br>
                     ";
-
-                } else if ($this->inputType == "") {
+                } else if ($this->inputType == "submit") {
                     $returnVal .= "
                         <input type='submit' name='$this->name' value='$this->label'>
+                    ";
+                } else if ($this->inputType == "text" && !empty($this->defaultValue)) {
+                    $returnVal .= "
+                        <input type='text' name='$this->name' value='$this->defaultValue'>
                     ";
                 } else {
                     $returnVal .= "

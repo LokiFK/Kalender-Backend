@@ -3,41 +3,40 @@
 {% js/auth/dataReset %}
 
 <form action="/admin/search/userChange?id={{ userID }}&type=dataChange" method="POST">
-
-<ul>
-    <li>
-        User: <br>
-            <label for="salutation">Geschlecht</label><br>
-                <select onchange="handler2(this)" name="salutation" value="{{ user.salutation }}">
-                    <option selected hidden>{{ user.salutation }}</option>
-                    <option>Frau</option>
-                    <option>Herr</option>
-                    <option>keine Angabe</option>
-                    <option value="sonstiges" id="sonstiges">sonstiges</option>
+    <ul>
+        <li>
+            User: <br>
+                <label for="salutation">Geschlecht</label><br>
+                    <select onchange="handler2(this)" name="salutation" value="{{ user.salutation }}">
+                        <option selected hidden>{{ user.salutation }}</option>
+                        <option>Frau</option>
+                        <option>Herr</option>
+                        <option>keine Angabe</option>
+                        <option value="sonstiges" id="sonstiges">sonstiges</option>
+                    </select>
+                    <input id="sonstigesFeld" style="display: none;" type="text" onchange="handler(this)"></input> 
+                <br>
+                <label for="firstname">Vorname</label><br>
+                <input type="text" name="firstname" value={{ user.firstname }}></input>
+                <br>
+                <label for="lastname">Nachname</label><br>
+                <input type="text" name="lastname" value={{ user.lastname }}></input>
+                <br>
+                <label for="birthday">Geburtsdatum</label><br>
+                <input type="date" name="birthday" value={{ user.birthday }}></input>
+                <br>
+                <label for="insurance">Verischerung</label><br>
+                <select name="insurance" value={{ user.insurance }}>
+                    <option>gesetzlich</option>
+                    <option>privat</option>
                 </select>
-                <input id="sonstigesFeld" style="display: none;" type="text" onchange="handler(this)"></input> 
-            <br>
-            <label for="firstname">Vorname</label><br>
-            <input type="text" name="firstname" value={{ user.firstname }}></input>
-            <br>
-            <label for="lastname">Nachname</label><br>
-            <input type="text" name="lastname" value={{ user.lastname }}></input>
-            <br>
-            <label for="birthday">Geburtsdatum</label><br>
-            <input type="date" name="birthday" value={{ user.birthday }}></input>
-            <br>
-            <label for="insurance">Verischerung</label><br>
-            <select name="insurance" value={{ user.insurance }}>
-                <option>gesetzlich</option>
-                <option>privat</option>
-            </select>
-            <br>
-            <label for="patientID">PatientenID</label><br>
-            <input type="text" name="patientenID" value={{ user.patientID }}></input>
-    </li>
-    {{ account }}
-    {{ admin }}
-</ul>
+                <br>
+                <label for="patientID">PatientenID</label><br>
+                <input type="text" name="patientenID" value={{ user.patientID }}></input>
+        </li>
+        {{ account }}
+        {{ admin }}
+    </ul>
 
-<input type="submit" value="Daten ändern">
+    <input type="submit" value="Daten ändern">
 </form>

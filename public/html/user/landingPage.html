@@ -25,10 +25,12 @@
             <div class="appointment-types">
                 {! appointmentTypes: 
                     <div class="appointment-types-item">
-                        <form action="/user/appointments/new2" method="GET">
-                            <input type="hidden" name="treatment" value="{{ appointmentTypes }}">
-                            <input type="submit" value="{{ appointmentTypes }}">
-                        </form>
+                        {?php
+                            return Form::create('/user/appointments/new2', 'GET',
+                                new FormField('treatment', '{{ appointmentTypes }}', 'hidden'),
+                                new FormField('submit', '{{ appointmentTypes }}', 'submit')
+                            );
+                         ?}
                     </div>
                  !}
             </div>

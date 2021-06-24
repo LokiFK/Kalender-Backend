@@ -3,14 +3,17 @@
 <form action="/admin/appointment/new" method="POST">
     <label for="start">Startzeit:</label>
     <input type="text" name="start"><br>
+    
     <label for="end">Endzeit:</label>
     <input type="text" name="end"><br>
+    
     <label for="treatment">Behandlung:</label>
     <select name="treatment" id="treatment">
         {! treatments:
             <option value="{{ treatments.id }}">{{ treatments.name }}</option>
          !}
     </select>
+    
     <label for="room">Raum:</label>
     <select name="room" id="room">
         {! rooms:

@@ -16,7 +16,7 @@
             {! appointments: 
                 <form action="/user/appointments/new3" method="GET" id="form-{{ appointments.id }}">
                     <input type="hidden" name="id" value="{{ appointments.id }}">
-                    <div class="appointments-list-item" onclick="document.getElementById('form-{{ appointments.id }}').submit();">
+                    <div class="appointments-list-item" onclick="confirm('Willst du wirklich diesen Termin buchen?') && document.getElementById('form-{{ appointments.id }}').submit();">
                         <div class="row">
                             <div class="row-item"><p class="name">{{ appointments.name }}</p></div>
                             <div class="row-item"><p class="start">{{ appointments.start }}</p></div>

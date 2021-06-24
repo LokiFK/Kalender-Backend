@@ -1,14 +1,12 @@
 {[ title=>neuer Raum, navContentLink=>admin/nav ]}
 {# extend general/template@main #}
-<form action="/admin/treatment/change?type=new" method="POST">
-    <label for="name">Name:</label>
-    <input type="text" name="name"><br>
-    <label for="duration">Dauer:</label>
-    <input type="number" name="duration"><br>
-    <label for="nrDoctors">benötigte Anzahl Doktors:</label>
-    <input type="number" name="nrDoctors"><br>
-    <label for="nrNurses">benötigte Anzahl Arzthelfer:</label>
-    <input type="number" name="nrNurses"><br>
 
-    <input type="submit" value="hinzufügen">
-</form>
+{?php
+    return Form::create('/admin/treatment/change?type=new', 'POST',
+        new FormField('name', 'Name:', 'text'),
+        new FormField('duration', 'Dauer:', 'number'),
+        new FormField('nrDoctors', 'benötigte Anzahl Doktors:', 'number'),
+        new FormField('nrNurses', 'benötigte Anzahl Arzthelfer:', 'number'),
+        new FormField('submit', 'Hinzufügen', 'submit')
+    );
+ ?}

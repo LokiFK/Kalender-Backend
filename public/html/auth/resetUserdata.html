@@ -3,11 +3,12 @@
 {% css/auth/form %}
 <div class="form-wrapper">
 <h2>Zur Datenänderung bitte Email und Passwort bestätigen</h2>
-<form action="/auth/account/resetUserdata" method="POST">
-    <label for="email">Email:</label>
-    <input type="email" name="email"><br>
-    <label for="password">Passwort:</label>
-    <input type="password" name="password">
-    <input type="submit" value="Weiter">
-</form>
+{?php
+    return Form::create('/auth/account/resetUserdata', 'POST',
+        new FormField('email', 'Email:', 'email'),
+        new FormField('password', 'Passwort:', 'password'),
+
+        new FormField('submit', 'Weiter', 'submit')
+    );
+ ?}
 </div>

@@ -4,34 +4,15 @@
 {% script %}
 <div class="form-wrapper">
     <h3 id="title">Hallo {{ username }}, bitte ändere hier Deine Daten</h3>
-    <form action="/auth/account/dataReset" method="POST">
-        <label for="salutation">Geschlecht</label><br>
-            <select onchange="handler2(this)" name="salutation" value="{{ salutation }}">
-                <option selected hidden>{{ salutation }}</option>
-                <option>Frau</option>
-                <option>Herr</option>
-                <option>keine Angabe</option>
-                <option value="sonstiges" id="sonstiges">sonstiges</option>
-            </select>
-            <input id="sonstigesFeld" style="display: none;" type="text" onchange="handler(this)"></input> 
-        <br>
-        <label for="firstName">Vorname</label><br>
-        <input type="text" name="firstName" value={{ firstname }}></input>
-        <br>
-        <label for="lastName">Nachname</label><br>
-        <input type="text" name="lastName" value={{ lastname }}></input>
-        <br>
-        <label for="birthday">Geburtsdatum</label><br>
-        <input type="date" name="birthday" value={{ birthday }}></input>
-        <br>
-        <label for="insurance">Verischerung</label><br>
-        <select name="insurance" value={{ insurance }}>
-            <option>gesetzlich</option>
-            <option>privat</option>
-        </select>
-        <br>
-        <label for="email">Email</label><br>
-        <input type="text" name="email" value={{ email }}></input>
-        <input type="submit" value="Daten ändern">
-    </form>
+    {?php
+        return Form::create('/auth/account/dataReset', 'POST',
+        new FormField('salutation', 'Geschlecht', 'select', '', [], ['Frau', 'Herr', 'keine Angabe']),
+            new FormField('firstName', 'Vorname', 'text', '{{ firstname }}'),
+            new FormField('lastName', 'Nachname', 'text', '{{ lastname }}'),
+            new FormField('birthday', 'Geburtsdatum', 'date', '{{ birthday }}'),
+            new FormField('insurance', 'Versicherung', 'select', '', [], ['Gesetzlich', 'Privat']),
+            new FormField('email', 'Email', 'text', '{{ email }}'),
+            new FormField('submit', 'Daten ändern', 'submit')
+        );
+     ?}
 </div>

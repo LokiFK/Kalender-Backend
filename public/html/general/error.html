@@ -12,9 +12,11 @@
         <h5>Error Code: {{ errorCode }}</h5>
         <p>{{ msg }}</p>
         
-        <form action="../../.." method="GET">
-            <input type="submit" value="Zurück zur Startseite">
-        </form>
+        {?php
+            return Form::create('../../..', 'GET',
+                new FormField('submit', 'Zurück zur Startseite', 'submit')
+            );
+         ?}
     </div>
 </body>
 </html>
