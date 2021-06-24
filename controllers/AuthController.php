@@ -215,9 +215,9 @@
                     }
                 }
                 if($req->getBody()['email'] != Auth::getAccount()['email']){
-                    echo "1";
+                    //echo "1";
                     DB::query("UPDATE account SET `email`=:data, `createdAt`=null WHERE userID=:userId", [':data'=>$req->getBody()['email'], ':userId'=>$userId]);
-                    echo "hi";
+                    //echo "hi";
                     $code = Auth::createNewCode($userId);
                     $link =  $_SERVER['HTTP_HOST'].'/auth/account/approve?code='.$code;
                     echo "mail: <a href=\"$link\">".$link."</a><br>";

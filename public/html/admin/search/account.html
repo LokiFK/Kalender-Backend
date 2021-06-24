@@ -1,0 +1,6 @@
+<ul>
+    <li>Username: {{ account.username }}</li>
+    <li>Email: {{ account.email }} {?php if($replaceData->stuff->account['emailApproved']==false){ return "<a href=\"/admin/search/userChange?id={{ userID }}&type=approveMail\">Account löschen</a>"; } ?}</li>
+    <li>Erstellungsdatum: {{ account.createdAt }}</li>
+</ul>
+<a href="/admin/search/userChange?id={{ userID }}&type=deleteAccount">Account löschen</a>

@@ -212,12 +212,27 @@
             return false;    
         }
 
+        private static function replace($key, $value, $component){
+            if(is_array($value)){
+                foreach($value as $key2 => $value2){
+                    $component = TemplateHTML::replace($key.".".$key2, $value2, $component);
+                }
+                return $component;
+            } else {
+                if($value==null){
+                    return str_replace("{{ " . $key . " }}", "", $component);
+                } else {
+                    return str_replace("{{ " . $key . " }}", $value, $component);
+                }
+            }
+        }
+
         private static function processTags(string $component, string $componentName, ReplaceData $replaceData)
         {
             // safeData must be inserted first in order to not run into unwanted user input injections
             foreach ($replaceData->safeData as $key => $value) {
-                $component = str_replace("{{ " . $key . " }}", $value, $component);
-            }  
+                $component = TemplateHTML::replace($key,$value, $component);
+            } 
 
             $replaceData->safeData['origin'] = $componentName;
 
@@ -310,8 +325,8 @@
 
             // At the very end, user related data can be inserted
             foreach ($replaceData->data as $key => $value) {
-                $component = str_replace("{{ " . $key . " }}", $value, $component);
-            }  
+                $component = TemplateHTML::replace($key,$value, $component);
+            } 
 
             return $component;
         }

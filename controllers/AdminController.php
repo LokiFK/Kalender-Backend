@@ -103,6 +103,96 @@
             }
             echo $res->view('admin/search/search', ["search"=>$search],[], ["patients"=>$patients]);
         }
+        public function user(Request $req, Response $res){
+            if ($req->getMethod() == "GET") {
+                $userID = Form::validate($req->getBody(),["id"])["id"];
+                $userInfo = new UserInfo($userID);
+                if($userInfo->user != null){
+                    if($userInfo->account ==null){
+                        $account = $res->view("admin/search/noAccount");
+                    } else {
+                        $account = $res->view("admin/search/account", ["account"=>$userInfo->account], [], [], $userInfo);
+                    }
+                    if($userInfo->admin ==null){
+                        $admin = $res->view("admin/search/noAdmin");
+                    } else {
+                        $admin = $res->view("admin/search/admin", ["admin"=>$userInfo->admin], [], [], $userInfo);
+                    }
+                    echo $res->view("admin/search/user",["user"=>$userInfo->user, "account"=>$account, "admin"=>$admin, "userID"=>$userID], [], [], $userInfo);
+                } else {
+                    ErrorUI::error(400, 'Bad request');
+                    exit;
+                }
+            } else {
+
+            }
+        }
+        public function userChange(Request $req, Response $res){
+            $data = $req->getBody();
+            Form::validate($data,["id", "type"]);
+            $userID = $data["id"];
+            if($data["type"] == "dataChange"){
+                if ($req->getMethod() == "GET") {
+                    $userInfo = new UserInfo($userID);
+                    if($userInfo->user != null){
+                        if($userInfo->account ==null){
+                            $account = "";
+                        } else {
+                            $account = $res->view("admin/search/accountChange", ["account"=>$userInfo->account]);
+                        }
+                        if($userInfo->admin ==null){
+                            $admin = "";
+                        } else {
+                            $admin = $res->view("admin/search/adminChange", ["admin"=>$userInfo->admin]);
+                        }
+                        echo $res->view("admin/search/userChange",["user"=>$userInfo->user, "account"=>$account, "admin"=>$admin, "userID"=>$userID]);
+                    } else {
+                        ErrorUI::error(400, 'Bad request');
+                        exit;
+                    }
+                } else {
+                    $userInfo = new UserInfo($userID);
+                    if($userInfo->user != null){
+                        Form::validate($data, ['salutation','firstname','lastname','birthday','insurance']);
+                            if(!isset($data['patientID'])){
+                                ErrorUI::error(400, 'Bad request');
+                                exit;
+                            } else if($data['patientID']==""){
+                                $data['patientID']=null;
+                            }
+                        DB::query("UPDATE users SET salutation=:salutation, firstname=:firstname, lastname=:lastname, birthday=:birthday, insurance=:insurance, patientID=:patientID WHERE id=:id", [":id"=>$userID, ":salutation"=>$data['salutation'], ":firstname"=>$data['firstname'], ":lastname"=>$data["lastname"], ":birthday"=>$data["birthday"], ":insurance"=>$data["insurance"], "patientID"=>$data["patientID"]]);
+                        if($userInfo->account !=null){
+                            Form::validate($data, ['username','email']);
+                            DB::query("UPDATE admin SET role=:role WHERE userID=:userID", [":userID"=>$userID, ":username"=>$data['username'], ":email"=>$data["email"]]);
+                            if(isset($data['password']) && $data['password']!=null && $data['password']!=""){
+                                Auth::specialResetPassword($userID, $data['password']);
+                            }
+                        }
+                        if($userInfo->admin !=null){
+                            Form::validate($data, ['role']);
+                            DB::query("UPDATE admin SET role=:role WHERE userID=:userID", [":userID"=>$userID, ":role"=>$data['role']]);
+                        }
+                        Path::redirect(Path::ROOT . 'admin/search/user?id='.$userID);
+                    } else {
+                        ErrorUI::error(400, 'Bad request');
+                        exit;
+                    }
+                }
+            } else if($data["type"] == "createAccount"){
+
+            } else if($data["type"] == "createAdmin"){
+
+            } else if($data["type"] == "approveMail"){
+                Auth::specialApproveAccount($userID);
+                Path::redirect(Path::ROOT . 'admin/search/user?id='.$userID);
+            } else if($data["type"] == "delete"){
+                //todo
+                echo "todo";
+            } else {
+                ErrorUI::error(400, 'Bad request');
+                exit;
+            }
+        }
     }
 
 ?>
