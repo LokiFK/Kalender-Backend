@@ -42,7 +42,7 @@
         }
 
         public function new2(Request $req, Response $res){
-            $data = Form::validate($req->getBody(), ['treatment']);
+            $data = Form::validateDataType($req->getBody(), ['treatment'=>"existingTreatment"]);
             $treatment = $data['treatment'];
             if (DB::query("SELECT count(*) as Anzahl from treatment where name=:treatment;", [ ":treatment"=>$treatment ])[0]['Anzahl'] != 1) {
                 ErrorUI::error(400, 'Treatment not found.');
@@ -56,16 +56,18 @@
 
         public function new3(Request $req, Response $res)
         {
+            Middleware::statusBiggerOrEqualTo(2);                           //todo hier muss eine Anmelde möglichkeit geboten werden, die möglichst wieder flüssig zurückführt
+            
             $data = Form::validate($req->getBody(), ['id']);
             
-            DB::query("UPDATE `appointment` SET `userID` = " . Auth::getUserID() . " WHERE `id` = :id", [':id' => $data['id']]);
+            DB::query("UPDATE `appointment` SET `userID` = :userID WHERE `id` = :id", [':id' => $data['id'], ":userID"=>Auth::getUserID()]);
 
             Path::redirect(Path::ROOT . "user/appointments/overview");
         }
 
         public function overview(Request $req, Response $res)
         {
-            Middleware::statusBiggerOrEqualTo(2);
+            Middleware::statusBiggerOrEqualTo(2);                    
 
             if($req->getMethod() == "GET"){
                 $data = DB::query("SELECT * from appointment, treatment WHERE appointment.treatmentID=treatment.id and appointment.userID=:userID", [":userID"=>Auth::getUser()['id']]);
