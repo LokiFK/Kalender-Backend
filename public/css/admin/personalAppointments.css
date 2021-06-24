@@ -1,0 +1,13 @@
+#table{
+    border:1px solid black;
+    border-collapse:collapse;
+}
+.date{
+    width:4em;
+}
+.shortTd {
+    width:0.3em;
+}
+.td {
+    width:3em;
+}

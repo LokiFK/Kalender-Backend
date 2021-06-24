@@ -223,8 +223,9 @@
         public function personalAppointments(Request $req, Response $res){
             Middleware::statusBiggerOrEqualTo(4);
 
-            $appointments = DB::query("SELECT * FROM appointments a, appointment_admin b WHERE a.id = b.appointmentID AND adminID=:userID AND start<:datetime;", [":userID"=>Auth::getUser()['id'], ":datetime"=>date(DB::DATE_FORMAT)]);
-
+            $appointments = DB::query("SELECT a.start,a.end,number,name,lastname,status FROM appointment a, appointment_admin b, room r, users u, treatment t WHERE a.id = b.appointmentID and a.roomID=r.id and a.userID=u.id and a.treatmentID=t.id AND adminID=:userID AND start>:datetime ORDER BY start;", [":userID"=>Auth::getUser()['id'], ":datetime"=>date(DB::DATE_FORMAT)]);
+            $json = json_encode($appointments);
+            echo $res->vieW("admin/personalAppointments", ["appointments"=>$json]);
         }
     }
 
