@@ -228,6 +228,13 @@
             $json = json_encode($appointments);
             echo $res->vieW("admin/personalAppointments", ["appointments"=>$json]);
         }
+        public static function generalPlaning(Request $req, Response $res) {
+            if ($req->getMethod()=="GET") {
+                $treatment = DB::query("SELECT DISTINCT * FROM treatment");
+                echo $res->view("admin/generalPlaning", array(), array(), ['treatment'=>$treatment]);
+            }
+        }
+
     }
 
 ?>
