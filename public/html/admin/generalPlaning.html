@@ -3,6 +3,13 @@
 {% css/auth/form %}
 <div class="form-wrapper">
   <form action="/admin/generalPlaning" method="POST">
+    <label for="tr">Behandlungsart:</label><br>
+    <select>
+      <option selected hidden>Auswählen</option>
+      {! treatment:
+      <option>{{ treatment.name }}</option>
+      !}
+    </select><br>
     <label for="weekday">Wochentag:</label><br>
     <label>
       <select name="weekday">
@@ -14,11 +21,16 @@
         <option>Samstag</option>
         <option>Sonntag</option>
       </select>
-    </label><br>
-    <label for="tr">Behandlungsart:</label><br>
-    {! treatments
-    <label>aDdD</label>
-<!--    <input id="treatment"/>-->
-    !}
+    </label>
+    <br>
+    <label>Startzeit</label>
+    <label>
+      <input type="time" name="startTime"/>
+    </label>
+    <label>Endzeit</label>
+    <label>
+      <input type="time" name="endTime"/>
+    </label>
+    <input type="submit" value="Speichern">
   </form>
 </div>
