@@ -220,6 +220,14 @@
                 Path::redirect(Path::ROOT . 'admin/search/user?id='.$userID);
             }
         }
-    }
 
+        public function generalPlaning(Request $req, Response $res) {
+            $treatments = [];
+            if ($req->getMethod() == "GET") {
+                $treatments = DB::query("SELECT DISTINCT name FROM treatment WHERE ID = 1");
+                echo $res->view("admin/generalPlaning", ['treatment' => $treatments]);
+            }
+        }
+
+    }
 ?>

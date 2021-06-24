@@ -1,0 +1,24 @@
+{[ title=>Generelle Planung, navContentLink=>admin/nav ]}
+{# extend general/template@main #}
+{% css/auth/form %}
+<div class="form-wrapper">
+  <form action="/admin/generalPlaning" method="POST">
+    <label for="weekday">Wochentag:</label><br>
+    <label>
+      <select name="weekday">
+        <option selected hidden>Montag</option>
+        <option>Dienstag</option>
+        <option>Mittwoch</option>
+        <option>Donnerstag</option>
+        <option>Freitag</option>
+        <option>Samstag</option>
+        <option>Sonntag</option>
+      </select>
+    </label><br>
+    <label for="tr">Behandlungsart:</label><br>
+    {! treatments
+    <label>aDdD</label>
+<!--    <input id="treatment"/>-->
+    !}
+  </form>
+</div>

@@ -183,12 +183,11 @@
             } else {
                 $path = "./public/html/" . $componentName . ".html";
             }
-
             if (is_file($path)) {
                 $component = file_get_contents($path);
                 $content = TemplateHTML::processTags($component, $componentName, $replaceData);
 
-                if ($content !== null) { 
+                if ($content !== null) {
                     /*if(substr($componentName, 0, 5) == "@nav:"){
                         TemplateHTML::interpreteNavTemplate($content);
                     }*/
