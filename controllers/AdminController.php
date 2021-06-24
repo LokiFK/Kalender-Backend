@@ -241,6 +241,46 @@
         public static function overview(Request $req, Response $res){
             echo "todo";
         }
+        public static function workhours(Request $req, Response $res){
+            Middleware::statusBiggerOrEqualTo(4);
+
+            $workhours = DB::query("SELECT * FROM workhours WHERE patientID=:userID ORDER BY day, start", [":userID"=>Auth::getUser()['id']]);
+            $blocks = DB::query("SELECT * FROM workhoursblock WHERE patientID=:userID ORDER BY day, start", [":userID"=>Auth::getUser()['id']]);
+
+            echo $res->view("admin/workhours/workhours", [],[],["workhours"=>$workhours, "blocks"=>$blocks]);
+        }    
+        public static function workhoursAdd(Request $req, Response $res){
+            Middleware::statusBiggerOrEqualTo(4);
+            $data = $req->getBody();
+            Form::validateDataType($data, ['type']);
+            if ($req->getMethod() == "GET") {
+                if($data['type']=="workhours"){
+                    echo $res->view("/admin/workhours/workhoursAdd");
+                } else if($data['type']=="block"){
+                    echo $res->view("/admin/workhours/workhoursAddBlock");
+                }
+            } else {
+                if($data['type']=="workhours"){
+                    Form::validateDataType($data, ['day'=>"weekday", "start"=>"time", "end"=>"time"]);
+                    DB::query("INSERT INTO workhours(patientID, day, start, end) VALUES (:userID, :day, :start, :end)", [":day"=>$data['day'], ":start"=>$data['start'], ":end"=>$data["end"], ":userID"=>Auth::getUser()['id']]);
+                } else if($data['type']=="block"){
+                    Form::validateDataType($data, ['day'=>"date", "start"=>"time", "end"=>"time"]);
+                    DB::query("INSERT INTO workhoursblock(patientID, day, start, end) VALUES (:userID, :day, :start, :end)", [":day"=>$data['day'], ":start"=>$data['start'], ":end"=>$data["end"], ":userID"=>Auth::getUser()['id']]);
+                }
+                Path::redirect(Path::ROOT . 'admin/workhours/workhours');
+            }
+        }  
+        public static function workhoursDelete(Request $req, Response $res){
+            Middleware::statusBiggerOrEqualTo(4);
+            $data = $req->getBody();
+            Form::validateDataType($data, ['type', 'id']);
+            if($data['type']=="workhours"){
+                DB::query("DELETE FROM workhours WHERE id=:id AND patientID=:userID", [":id"=>$data['id'], ":userID"=>Auth::getUser()['id']]);
+            } else if($data['type']=="block"){
+                DB::query("DELETE FROM workhoursblock WHERE id=:id AND patientID=:userID", [":id"=>$data['id'], ":userID"=>Auth::getUser()['id']]);
+            }
+            Path::redirect(Path::ROOT . 'admin/workhours/workhours');
+        }    
     }
 
 ?>

@@ -77,6 +77,9 @@
     $routes->both('/admin/personalAppointments', 'AdminController@personalAppointments');
     $routes->both('/admin/generalPlaning', 'AdminController@generalPlaning');
     $routes->both('/admin/overview', 'AdminController@overview');
+    $routes->both('/admin/workhours/workhours', 'AdminController@workhours');
+    $routes->both('/admin/workhours/workhoursAdd', 'AdminController@workhoursAdd');
+    $routes->both('/admin/workhours/workhoursDelete', 'AdminController@workhoursDelete');
 
 
 

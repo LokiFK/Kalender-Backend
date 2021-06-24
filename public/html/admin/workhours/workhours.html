@@ -1,0 +1,19 @@
+{[ title=>Arbeitszeiten, navContentLink=>admin/nav ]}
+{# extend general/template@main #}
+{% styles %}
+
+übliche Arbeitszeiten: <br>
+{! workhours: 
+    am {{ workhours.day }}<br>
+    von {{ workhours.start }} bis {{ workhours.end }}<br>
+    <a href="/admin/workhours/workhoursDelete?type=workhours&id={{ workhours.id }}">löschen</a><br>
+ !}
+<a href="/admin/workhours/workhoursAdd?type=workhours">neu</a><br>
+<br><br>
+nicht an den Daten: <br>
+{! blocks: 
+    am {{ blocks.day }}<br>
+    von {{ blocks.start }} bis {{ blocks.end }}
+    <a href="/admin/workhours/workhoursDelete?type=block&id={{ blocks.id }}">löschen</a><br>
+ !}
+<a href="/admin/workhours/workhoursAdd?type=block">neu</a><br>
