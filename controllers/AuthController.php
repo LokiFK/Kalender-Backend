@@ -7,7 +7,7 @@
             if ($req->getMethod() == "GET") {
                 echo $res->view('auth/createUser');
             } else if ($req->getMethod() == "POST") {
-                $validatedData = Form::validateDataType($req->getBody(), ['firstname', 'lastname', 'salutation', 'insurance', 'birthday', 'username', 'email'=>"newEmail", 'password', 'agb']);
+                $validatedData = Form::validateDataType($req->getBody(), ['firstname', 'lastname', 'salutation', 'insurance', 'birthday', 'username'=>'newUsername', 'email'=>"newEmail", 'password', 'agb']);
                 $id = Auth::registerUser(
                     new User(
                         $validatedData['firstname'],
