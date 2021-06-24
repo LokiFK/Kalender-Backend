@@ -52,6 +52,30 @@
     box-sizing: border-box;
 }
 
+.form-wrapper select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 0;
+    outline: 0;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-wrapper input[type=time] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border: 0;
+    outline: 0;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
 .form-wrapper input[type=submit] {
     width: 100%;
     background-color:green;
@@ -73,6 +97,7 @@
     margin-top: 20px;
     border-radius: 5px;
     padding: 20px;
+
 }
 
 #textbox {
