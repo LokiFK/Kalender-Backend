@@ -237,6 +237,18 @@
         public static function overview(Request $req, Response $res){
             echo "todo";
         }
+        public static function workhours(Request $req, Response $res){
+            Middleware::statusBiggerOrEqualTo(4);
+
+            $workhours = DB::query("SELECT * FROM workhours WHERE patientID=:userID", [":userID"=>Auth::getUser()['id']]);
+            $blocks = DB::query("SELECT * FROM workhoursblock WHERE patientID=:userID", [":userID"=>Auth::getUser()['id']]);
+
+            echo $res->view("admin/workhours/workhours", [],[],["workhours"=>$workhours, "blocks"=>$blocks]);
+        }    
+        public static function workhoursAdd(Request $req, Response $res){
+            Middleware::statusBiggerOrEqualTo(4);
+
+        }    
     }
 
 ?>
