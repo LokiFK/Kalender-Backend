@@ -38,15 +38,14 @@
             return $data;
         }
 
-        public static function validateDataType($formData, array $columns, bool $die=true){
+        public static function validateDataType($formData, array $columns, bool $die=true) {
             foreach($columns as $key=>$value){
                 if (is_int($key)) {
                     $key = $value;
                 }
-                print_r($formData);
                 if ($value == "canNull") {
                     if (!isset($formData[$key])) {
-                        self::errorDataType('Bad request', $die);
+                        return self::errorDataType('Bad request', $die);
                     } 
                 } else if (!isset($formData[$key]) || $formData[$key] == null || $formData[$key] == "") {
                     if($die){
@@ -57,7 +56,7 @@
                     }
                 } else if($value == "int"){
                     if (!is_numeric($formData[$key])) {
-                        self::errorDataType('Bad request', $die);
+                        return self::errorDataType('Bad request', $die);
                     } 
                 } else if($value == "datetime"){
                     //todo
@@ -67,79 +66,79 @@
                     //todo
                 } else if($value == "incurance"){
                     if (! ($formData[$key]=="gesetzlich" || $formData[$key]=="privat")) {
-                        self::errorDataType('Bad request', $die);
+                        return self::errorDataType('Bad request', $die);
                     } 
                 } else if($value == "role"){
                     if (! ($formData[$key]=="Sekretär" || $formData[$key]=="Arzt" || $formData[$key]=="Arzthelfer")) {
-                        self::errorDataType('Bad request', $die);
+                        return self::errorDataType('Bad request', $die);
                     } 
                 } else if($value == "email"){
                     if (!strstr($formData[$key], '@')) {
-                        self::errorDataType('Die Email kann nicht richtig sein.', $die);
+                        return self::errorDataType('Die Email kann nicht richtig sein.', $die);
                     } 
                 } else if($value == "newEmail"){
                     $res = DB::query("SELECT count(*) AS Anzahl FROM account WHERE email=:email", [":email"=>$formData[$key]]);
                     if ($res[0]['Anzahl']>0) {
-                        self::errorDataType('Diese Email wurde bereits registriert.', $die);
+                        return self::errorDataType('Diese Email wurde bereits registriert.', $die);
                     }
                     if (!strstr($formData[$key], '@')) {
-                        self::errorDataType('Die Email kann nicht richtig sein.', $die);
+                        return self::errorDataType('Die Email kann nicht richtig sein.', $die);
                     } 
                 } else if($value == "existingEmail"){
                     $res = DB::query("SELECT count(*) AS Anzahl FROM account WHERE email=:email", [":email"=>$formData[$key]]);
                     if ($res[0]['Anzahl']==0) {
-                        self::errorDataType('Bad request', $die);
+                        return self::errorDataType('Bad request', $die);
                     }
                 } else if($value == "newUsername"){
                     if (Auth::usernameExists($formData[$key])) {
-                        self::errorDataType('Username schon vergeben.', $die);
+                        return self::errorDataType('Username schon vergeben.', $die);
                     } 
                 } else if($value == "existingUsername"){
                     if (!Auth::usernameExists($formData[$key])) {
-                        self::errorDataType('Username schon vergeben.', $die);
+                        return self::errorDataType('Username schon vergeben.', $die);
                     } 
                 } else if(substr($value, 0, 9) == "username:"){
                     if (Auth::usernameExists($formData[$key], substr($value,9))) {
-                        self::errorDataType('Username schon vergeben.', $die);
+                        return self::errorDataType('Username schon vergeben.', $die);
                     } 
                 } else if($value == "existingRoom"){
                     $res = DB::query("SELECT count(*) AS Anzahl FROM room WHERE number=:number", [":number"=>$formData[$key]]);
                     if ($res[0]['Anzahl']==0) {
-                        self::errorDataType('Bad request', $die);
+                        return self::errorDataType('Bad request', $die);
                     } 
                 } else if($value == "existingRoomID"){
                     $res = DB::query("SELECT count(*) AS Anzahl FROM room WHERE id=:id", [":id"=>$formData[$key]]);
                     if ($res[0]['Anzahl']==0) {
-                        self::errorDataType('Bad request', $die);
+                        return self::errorDataType('Bad request', $die);
                     } 
                 } else if($value == "newRoom"){
                     $res = DB::query("SELECT count(*) AS Anzahl FROM room WHERE number=:number", [":number"=>$formData[$key]]);
                     if ($res[0]['Anzahl']>0) {
-                        self::errorDataType('Nummer schon vergeben.', $die);
+                        return self::errorDataType('Nummer schon vergeben.', $die);
                     } 
                 } else if($value == "existingTreatment"){
                     $res = DB::query("SELECT count(*) AS Anzahl FROM treatment WHERE name=:name", [":name"=>$formData[$key]]);
                     if ($res[0]['Anzahl']==0) {
-                        self::errorDataType('Bad request', $die);
+                        return self::errorDataType('Bad request', $die);
                     } 
                 } else if($value == "existingTreatmentID"){
                     $res = DB::query("SELECT count(*) AS Anzahl FROM treatment WHERE id=:id", [":id"=>$formData[$key]]);
                     if ($res[0]['Anzahl']==0) {
-                        self::errorDataType('Bad request', $die);
+                        return self::errorDataType('Bad request', $die);
                     } 
                 } else if($value == "newTreatment"){
                     $res = DB::query("SELECT count(*) AS Anzahl FROM treatment WHERE name=:name", [":name"=>$formData[$key]]);
                     if ($res[0]['Anzahl']>0) {
-                        self::errorDataType('Name schon vergeben', $die);
+                        return self::errorDataType('Name schon vergeben', $die);
                     } 
                 } else if($value == "agb"){
                     if ($formData[$key] != 'on') {
-                        self::errorDataType('Bitte Datenschutz- und Nutzungsbedingungen akzeptieren.', $die);
+                        return self::errorDataType('Bitte Datenschutz- und Nutzungsbedingungen akzeptieren.', $die);
                     } 
                 } else if($value == "resetCode"){
                     $res = DB::query("SELECT count(*) AS Anzahl FROM passwordreset WHERE code=:code and isUsed=false", [":code"=>$formData[$key]]);
                     if ($res[0]['Anzahl']==0) {
-                        self::errorDataType('Bad request', $die);
+                        return self::errorDataType('Bad request', $die);
                     } 
                 }
             }
@@ -192,9 +191,10 @@
         private $placeholder;
         private $validation;
         private $label;
+        private $selectOptions;
         private $options;
 
-        public function __construct($name, $label, $inputType, $defaultValue="", array $validation=array(), array $options=array())
+        public function __construct($name, $label, $inputType, $defaultValue="", array $validation=array(), array $selectOptions=array(), ...$options)
         {
             $this->name = $name;
             $this->inputType = $inputType;
@@ -202,8 +202,9 @@
             $this->validation = $validation;
             $this->label = $label;
             if ($inputType == "select") {
-                $this->options = $options;
+                $this->selectOptions = $selectOptions;
             }
+            $this->options = $options;
         }
 
         public function getHTML(): string
@@ -217,22 +218,18 @@
                 }
             }
 
-            $returnVal .= "
-                <input type='hidden' name='$this->name' id='validation-$this->name' value=$validationString><br>
-            ";
-
             if ($this->inputType == "select") {
                 $returnVal .= "
                     <label for='select-$this->name'>$this->label</label>
                     <select class='form-input' id='select-$this->name' name='$this->name'>
                 ";
 
-                for ($i = 0; $i < count($this->options); $i++) {
+                for ($i = 0; $i < count($this->selectOptions); $i++) {
                     if ($i == 0) {
-                        $returnVal .= "<option value='" . $this->options[$i] . "'>" . $this->options[$i] . "</option>";
+                        $returnVal .= "<option value='" . $this->selectOptions[$i] . "'>" . $this->selectOptions[$i] . "</option>";
                         continue;
                     }
-                    $returnVal .= "<option value='" . $this->options[$i] . "'>" . $this->options[$i] . "</option>";
+                    $returnVal .= "<option value='" . $this->selectOptions[$i] . "'>" . $this->selectOptions[$i] . "</option>";
                 }
                 
                 $returnVal .= "
