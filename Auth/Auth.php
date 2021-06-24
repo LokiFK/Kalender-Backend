@@ -121,7 +121,7 @@
         }
         public static function specialApproveAccount($userID){
             return DB::query(
-                "UPDATE `account` SET `createdAt` = :date WHERE `userID` = :userID AND createdAt IS NOT null;",
+                "UPDATE `account` SET `createdAt` = :date WHERE `userID` = :userID AND createdAt IS null;",
                 [':userID' => $userID, ":date" => date(DB::DATE_FORMAT)]
             );
         }

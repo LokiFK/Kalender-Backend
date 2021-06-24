@@ -7,7 +7,7 @@
             if ($req->getMethod() == "GET") {
                 echo $res->view('auth/createUser');
             } else if ($req->getMethod() == "POST") {
-                $validatedData = Form::validateDataType($req->getBody(), ['firstname', 'lastname', 'salutation', 'insurance', 'birthday', 'username', 'email'=>"newEmail", 'password', 'agb']);
+                $validatedData = Form::validateDataType($req->getBody(), ['firstname', 'lastname', 'salutation', 'insurance', 'birthday', 'username'=>'newUsername', 'email'=>"newEmail", 'password', 'agb']);
                 $id = Auth::registerUser(
                     new User(
                         $validatedData['firstname'],
@@ -67,12 +67,12 @@
             Middleware::statusEqualTo(1);
 
             if ($req->getMethod() == "GET") {
-                echo $res->view("auth/notApproved");
+                echo $res->view("auth/notApproved", ["email"=>Auth::getAccount()['email']]);
             } else if ($req->getMethod() == "POST") {
                 if ( Form::validateDataType($req->getBody(), ['email'=>"newEmail"], false) != null ) {
                     DB::query("UPDATE account SET email = :email WHERE userID = :userID", [ ':email'=>$req->getBody()['email'], ':userID'=>Auth::getUser()['id'] ]);
                 }
-                $code = Auth::createNewCode(Auth::getUser()['email']);
+                $code = Auth::createNewCode(Auth::getUser()['id']);
 
                 $link =  $_SERVER['HTTP_HOST'].'/auth/account/approve?code='.$code;
                 echo "mail: <a href=\"$link\">".$link."</a><br>";
