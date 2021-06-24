@@ -1,3 +1,10 @@
 {[ title=>Startseite Mitarbeiterbereich ]}
 {# extend general/template@main #}
-landingPage...
+
+<br><br><br><br><br><br>
+
+{?php 
+    return Form::create('/', 'GET',
+        new FormField('username', 'Benutzername', 'text', '', ['unique(account)'])
+    );
+ ?}

@@ -9,6 +9,7 @@
     require './controllers/AuthController.php';
     require './controllers/UserController.php';
     require './controllers/AdminController.php';
+    require './controllers/FormController.php';
 
     $routes = new Routes();
 
@@ -69,6 +70,11 @@
     $routes->both('/admin/treatment/change', 'AdminController@treatmentChange');
     $routes->both('/admin/appointment/new', 'AdminController@newAppointment');
     $routes->both('/admin/pending', 'AdminController@pending');
+
+
+
+    // --- FORM --- \\
+    $routes->get('/form/validate', 'FormController@validate');
 
     $routes->listen();
 

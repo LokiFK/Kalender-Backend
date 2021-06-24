@@ -167,19 +167,18 @@
             } else {
                 $userID = Auth::getUserID();
                 $data = Form::validate($req->getBody(), ['email', 'password']);
-                if (count($data)>0) {
-                    $accounts = DB::table('account')->where('email = :email', [':email' => $data['email']])->get();
-                    if (count($accounts) == 1) {
-                        $account = $accounts[0];
-                        if (password_verify($data['password'], $account['password'])) {
-                            $token = Auth::specialLogin($userID, false);
-                            setcookie('token', $token, time() + 60 * 60 * 24 * 30, '/');
-                            Path::redirect(Path::ROOT . 'auth/account/dataReset');
-                        }
-                    } else {
-                        ErrorUI::popRedirect("Bitte Angaben überprüfen", Path::ROOT . 'auth/account/resetUserdata');
+                $accounts = DB::table('account')->where('email = :email', [':email' => $data['email']])->get();
+                if (count($accounts) == 1) {
+                    $account = $accounts[0];
+                    if (password_verify($data['password'], $account['password'])) {
+                        $token = Auth::specialLogin($userID, false);
+                        setcookie('token', $token, time() + 60 * 60 * 24 * 30, '/');
+                        Path::redirect(Path::ROOT . 'auth/account/dataReset');
                     }
-                } 
+                } else {
+                    ErrorUI::popRedirect("Bitte Angaben überprüfen", Path::ROOT . 'auth/account/resetUserdata');
+                }
+            
             }
         }
 

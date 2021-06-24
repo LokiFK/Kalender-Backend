@@ -33,8 +33,8 @@
 
         public function new(Request $req, Response $res){
             $treatments = DB::table("treatment")->get();
-            $allAppointmentTypes = ['b1', 'b2'];
-            // $treatments = [ ["name"=>"b1"], ["name"=>"b2"], ["name"=>"b3"] ];
+            $allAppointmentTypes = ['Sprechstunde', 'Operation'];
+            
             $view = $res->view('user/new', array(), array(), [
                 'appointmentTypes' => $allAppointmentTypes
             ]);

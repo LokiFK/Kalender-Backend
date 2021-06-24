@@ -95,6 +95,10 @@ INSERT INTO `appointment` (`id`, `userID`, `treatmentID`, `roomID`, `start`, `en
 (2, 1, 1, 1, '2020-12-28 16:00:00', '2020-12-28 16:30:00', 'completed'),
 (3, 3, 2, 2, '2021-06-21 12:00:00', '2021-06-21 12:15:00', 'completed'),
 (4, 5, 3, 3, '2021-06-21 12:00:00', '2021-06-21 13:00:00', 'completed');
+(1, 21, 1, NULL, '2021-06-20 19:51:14', '2021-06-20 19:51:14', 'in Work');
+INSERT INTO `appointment` (`id`, `userID`, `treatmentID`, `roomID`, `start`, `end`, `status`) VALUES(1, null, 1, NULL, '2021-06-20 12:00:00', '2021-06-20 12:15:00', 'warten');
+INSERT INTO `appointment` (`id`, `userID`, `treatmentID`, `roomID`, `start`, `end`, `status`) VALUES(1, null, 2, NULL, '2021-06-20 12:15:00', '2021-06-20 12:30:00', 'warten');
+INSERT INTO `appointment` (`id`, `userID`, `treatmentID`, `roomID`, `start`, `end`, `status`) VALUES(1, null, 1, NULL, '2021-06-20 12:30:00', '2021-06-20 12:45:00', 'warten');
 
 -- --------------------------------------------------------
 

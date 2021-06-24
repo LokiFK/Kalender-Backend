@@ -23,7 +23,7 @@
         }
 
         public static function generalError() {
-            error(0000, "Unknown Error");
+            self::error(0000, "Unknown Error");
         }
 
         public static function errorFiveHundred($errCode)
