@@ -1,5 +1,6 @@
 @link[Start(/admin/landingPage), status>=3]
 
+@link[Overview(/admin/overview), status>=3]
 @link[neuerTermin(/admin/appointment/new), status>=3]
 @link[Räume(/admin/rooms), status>=3]
 @link[Behandlungen(/admin/treatments), status>=3]

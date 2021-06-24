@@ -234,7 +234,9 @@
                 echo $res->view("admin/generalPlaning", array(), array(), ['treatment'=>$treatment]);
             }
         }
-
+        public static function overview(Request $req, Response $res){
+            echo "todo";
+        }
     }
 
 ?>
