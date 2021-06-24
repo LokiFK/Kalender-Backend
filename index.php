@@ -76,6 +76,7 @@
     $routes->both('/admin/search/createUser', 'AdminController@createUser');
     $routes->both('/admin/personalAppointments', 'AdminController@personalAppointments');
     $routes->both('/admin/generalPlaning', 'AdminController@generalPlaning');
+    $routes->both('/admin/overview', 'AdminController@overview');
 
 
 
