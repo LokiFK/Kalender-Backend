@@ -419,10 +419,16 @@
                 $iteration = TemplateHTML::processTags($parts[1], "noName", $replaceData);
                 $iteration = str_replace("{{ ".$parts[0].".iterationNr }}", $iterationNr, $iteration);
                 $iteration = str_replace("{{ ".$parts[0].".key }}", $key, $iteration);
+                if($data==null){
+                    $data="";
+                }
                 if (is_string($data)) {
                     $iteration = str_replace("{{ " . $parts[0] . " }}", $data, $iteration);
                 } else if (is_array($data)) {
                     foreach ($data as $dataKey => $value) {  
+                        if($value==null){
+                            $value="";
+                        }
                         if (is_string($dataKey) && is_string($value)) {
                             $iteration = str_replace("{{ " . $dataKey . " }}", $value, $iteration);
                             // version where you can access dict like in generalcontroller@landingPage
