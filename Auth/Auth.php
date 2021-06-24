@@ -9,6 +9,8 @@
         const NOTAPPROVED = 1;
         const USER = 2;
         const ADMIN = 3;
+        const NURSE = 3;
+        const DOCTOR = 3;
         
         private static $status;
         private static $token;
@@ -58,6 +60,11 @@
                 if (self::$account['emailApproved'] == true) {
                     if(self::$admin != null) {
                         self::$status = self::ADMIN;
+                        if(self::$admin['role']=="Arzthelfer"){
+                            self::$status = self::NURSE;
+                        } else if(self::$admin['role']=="Arzt"){
+                            self::$status = self::DOCTOR;
+                        }
                     } else {
                         self::$status = self::USER;
                     }
