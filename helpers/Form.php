@@ -218,6 +218,10 @@
                 }
             }
 
+            $returnVal .= "
+                <input type='hidden' name='validation-$this->name' value='$validationString'>
+            ";
+
             if ($this->inputType == "select") {
                 $returnVal .= "
                     <label for='select-$this->name'>$this->label</label>
