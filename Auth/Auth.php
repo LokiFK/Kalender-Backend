@@ -95,6 +95,14 @@
                 }
             }
         }
+        public static function registerAdmin(Admin $admin){
+            if (Auth::userExists($admin->userID)) {
+                DB::query(
+                    "INSERT INTO admin(userID, role) VALUES (:userID, :role);",
+                    [':userID' => $admin->userID, ':role'=>$admin->role]
+                );
+            }
+        }
 
         public static function approveAccount($code) {
             $res = DB::table("notapproved")->where("`code` = :code", [":code"=>$code])->get([], ['userID']);

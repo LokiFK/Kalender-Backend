@@ -2,7 +2,7 @@
 {# extend general/template@main #}
 {% js/auth/dataReset %}
 
-<form action="/auth/account/dataReset" method="POST">
+<form action="/admin/search/userChange?id={{ userID }}&type=dataChange" method="POST">
 
 <ul>
     <li>
@@ -18,11 +18,11 @@
                 </select>
                 <input id="sonstigesFeld" style="display: none;" type="text" onchange="handler(this)"></input> 
             <br>
-            <label for="firstName">Vorname</label><br>
-            <input type="text" name="firstName" value={{ user.firstname }}></input>
+            <label for="firstname">Vorname</label><br>
+            <input type="text" name="firstname" value={{ user.firstname }}></input>
             <br>
-            <label for="lastName">Nachname</label><br>
-            <input type="text" name="lastName" value={{ user.lastname }}></input>
+            <label for="lastname">Nachname</label><br>
+            <input type="text" name="lastname" value={{ user.lastname }}></input>
             <br>
             <label for="birthday">Geburtsdatum</label><br>
             <input type="date" name="birthday" value={{ user.birthday }}></input>

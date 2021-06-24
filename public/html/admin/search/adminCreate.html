@@ -4,7 +4,12 @@
 Adminstatus: <br>
     <form action="/admin/search/userChange?id={{ userID }}&type=createAdmin" method="POST">
         <label for="role">Rolle</label><br>
-        <input type="text" name="role" value={{ admin.role }}></input>
+        <select name="role" value="Sekretär">
+            <option selected hidden>Sekretär</option>
+            <option>Sekretär</option>
+            <option>Arzt</option>
+            <option>Arzthelfer</option>
+        </select><br>
             
         <input type="submit" value="erstellen">
     </form>

@@ -154,16 +154,13 @@
                     $userInfo = new UserInfo($userID);
                     if($userInfo->user != null){
                         Form::validate($data, ['salutation','firstname','lastname','birthday','insurance']);
-                            if(!isset($data['patientID'])){
-                                ErrorUI::error(400, 'Bad request');
-                                exit;
-                            } else if($data['patientID']==""){
+                            if(!isset($data['patientID']) || $data['patientID']=="" || $data['patientID']==null){
                                 $data['patientID']=null;
                             }
                         DB::query("UPDATE users SET salutation=:salutation, firstname=:firstname, lastname=:lastname, birthday=:birthday, insurance=:insurance, patientID=:patientID WHERE id=:id", [":id"=>$userID, ":salutation"=>$data['salutation'], ":firstname"=>$data['firstname'], ":lastname"=>$data["lastname"], ":birthday"=>$data["birthday"], ":insurance"=>$data["insurance"], "patientID"=>$data["patientID"]]);
                         if($userInfo->account !=null){
                             Form::validate($data, ['username','email']);
-                            DB::query("UPDATE admin SET role=:role WHERE userID=:userID", [":userID"=>$userID, ":username"=>$data['username'], ":email"=>$data["email"]]);
+                            DB::query("UPDATE account SET username=:username, email=:email WHERE userID=:userID", [":userID"=>$userID, ":username"=>$data['username'], ":email"=>$data["email"]]);
                             if(isset($data['password']) && $data['password']!=null && $data['password']!=""){
                                 Auth::specialResetPassword($userID, $data['password']);
                             }
@@ -179,15 +176,32 @@
                     }
                 }
             } else if($data["type"] == "createAccount"){
-
+                if ($req->getMethod() == "GET") {
+                    echo $res->view("admin/search/accountCreate", ["userID"=>$userID]);
+                } else {
+                    Form::validate($data, ["email","username","password"]);
+                    Auth::registerAccount(new Account($userID, $data['username'], $data['email'], $data['password'], false), false);
+                    Path::redirect(Path::ROOT . 'admin/search/user?id='.$userID);
+                }
             } else if($data["type"] == "createAdmin"){
-
+                if ($req->getMethod() == "GET") {
+                    echo $res->view("admin/search/adminCreate", ["userID"=>$userID]);
+                } else {
+                    Form::validate($data, ["role"]);
+                    Auth::registerAdmin(new Admin($userID, $data['role']));
+                    Path::redirect(Path::ROOT . 'admin/search/user?id='.$userID);
+                }
             } else if($data["type"] == "approveMail"){
                 Auth::specialApproveAccount($userID);
                 Path::redirect(Path::ROOT . 'admin/search/user?id='.$userID);
-            } else if($data["type"] == "delete"){
-                //todo
-                echo "todo";
+            } else if($data["type"] == "deleteAdmin"){
+                DB::query("DELETE FROM admin WHERE userID=:userID", [":userID"=>$userID]);
+                Path::redirect(Path::ROOT . 'admin/search/user?id='.$userID);
+            } else if($data["type"] == "deleteAccount"){
+                DB::query("DELETE FROM account WHERE userID=:userID", [":userID"=>$userID]);
+                Path::redirect(Path::ROOT . 'admin/search/user?id='.$userID);
+            } else if($data["type"] == "deleteUser"){
+                echo "todo";                                                                        //todo
             } else {
                 ErrorUI::error(400, 'Bad request');
                 exit;
