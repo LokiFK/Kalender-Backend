@@ -1,17 +1,13 @@
 <?php
 
     class AuthController {
-        public function test(Request $req, Response $res)
-        {
-            echo $res->view('auth/login');
-        }
 
         public function createUser(Request $req, Response $res)
         {
             if ($req->getMethod() == "GET") {
                 echo $res->view('auth/createUser');
             } else if ($req->getMethod() == "POST") {
-                $validatedData = Form::validate($req->getBody(), ['firstname', 'lastname', 'salutation', 'insurance', 'birthday', 'username', 'email', 'password', 'agb']);
+                $validatedData = Form::validateDataType($req->getBody(), ['firstname', 'lastname', 'salutation', 'insurance', 'birthday', 'username', 'email', 'password', 'agb']);
                 $id = Auth::registerUser(
                     new User(
                         $validatedData['firstname'],
@@ -73,7 +69,7 @@
             if ($req->getMethod() == "GET") {
                 echo $res->view("auth/notApproved");
             } else if ($req->getMethod() == "POST") {
-                if (isset($req->getBody()['email'])) {
+                if ( Form::validateDataType($req->getBody(), ['email'], false) != null ) {
                     DB::query("UPDATE account SET email = :email WHERE userID = :userID", [ ':email'=>$req->getBody()['email'], ':userID'=>Auth::getUser()['id'] ]);
                 }
                 $code = Auth::createNewCode(Auth::getUser()['email']);
@@ -95,15 +91,15 @@
         public function login(Request $req, Response $res)
         {
             if ($req->getMethod() == "GET") {
-                echo "1";
+                //echo "1";
                 echo $res->view('auth/login');
             } else if ($req->getMethod() == "POST") {
-                echo "2";
-                $validatedData = Form::validate($req->getBody(), ['username', 'password']);
+                //echo "2";
+                $validatedData = Form::validateDataType($req->getBody(), ['username'=>"", 'password']);
                 $remember = isset($req->getBody()['remember']) && $req->getBody()['remember'] == 'on';
-                echo "3";
+                //echo "3";
                 $token = Auth::login($validatedData['username'], $validatedData['password'], $remember);
-                echo "4";
+                //echo "4";
                 if ($token != null) {
                     setcookie('token', $token, time() + 60 * 60 * 24 * 30, '/');
 
@@ -130,28 +126,32 @@
             if ($req->getMethod() == "GET") {
                 echo $res->view('auth/resetLink');
             } else if ($req->getMethod() == "POST") {
-                $validatedData = Form::validate($req->getBody(), ['email']);
+                $validatedData = Form::validateDataType($req->getBody(), ['email']);
                 $code = Auth::createNewResetCode($validatedData['email']);
-                
-                $link =  $_SERVER['HTTP_HOST'].'/auth/account/resetPassword?code='.$code;
-                echo "mail: <a href=\"$link\">".$link."</a><br>";
-                echo "<a href=>automatische Rückleitung</a>";
                     
-                /*$from = "FROM Terminplanung @noreply";
-                $subject = "Account bestätigen";
-                $msg = "BlaBlaBla Hier ihr anmelde Link: '.$link;
-                mail($account->email, $subject, $msg, $from);
-                    
-                Path::redirect('');
-                */
+                if($code!=null){
+                    $link =  $_SERVER['HTTP_HOST'].'/auth/account/resetPassword?code='.$code;
+                    echo "mail: <a href=\"$link\">".$link."</a><br>";
+                    echo "<a href=>automatische Rückleitung</a>";
+                        
+                    /*$from = "FROM Terminplanung @noreply";
+                    $subject = "Account bestätigen";
+                    $msg = "BlaBlaBla Hier ihr anmelde Link: '.$link;
+                    mail($account->email, $subject, $msg, $from);
+                        
+                    Path::redirect('');
+                    */
+                } else {
+                    Path::redirect('');
+                }
             }    
         }
         public function resetPassword(Request $req, Response $res){
             if ($req->getMethod() == "GET") {
-                $data = Form::validate($req->getBody(), ['code']);
+                $data = Form::validate($req->getBody(), ['code'=>"resetCode"]);
                 echo $res->view('auth/resetPassword', ["code"=>$data['code']]);
             } else if ($req->getMethod() == "POST") {
-                $data = Form::validate($req->getBody(), ['password', 'code']); 
+                $data = Form::validateDataType($req->getBody(), ['password', 'code'=>"resetCode"]); 
                 $userID = Auth::resetPassword($data['code'], $data['password']);
                 if($userID!=null){
                     $token = Auth::specialLogin($userID, false);
@@ -169,7 +169,7 @@
                 echo $res->view('auth/resetUserdata');
             } else {
                 $userID = Auth::getUserID();
-                $data = Form::validate($req->getBody(), ['email', 'password']);
+                $data = Form::validateDataType($req->getBody(), ['email', 'password']);
                 if (count($data)>0) {
                     $accounts = DB::table('account')->where('email = :email', [':email' => $data['email']])->get();
                     if (count($accounts) == 1) {

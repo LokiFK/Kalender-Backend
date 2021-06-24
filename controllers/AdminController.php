@@ -15,22 +15,22 @@
             echo $res->view('admin/rooms/rooms', array(), array(), ['rooms'=>$data ]);
         }
         public function roomChange(Request $req, Response $res) {
-            $data = Form::validate($req->getBody(), ['type']);
+            $data = Form::validateDataType($req->getBody(), ['type']);
             if($data['type']=="delete"){
-                $data = Form::validate($req->getBody(), ['number']);
+                $data = Form::validateDataType($req->getBody(), ['number'=>"existingRoom"]);
                 DB::query("DELETE FROM room WHERE number = :number", [":number"=>$data['number']]);
                 Path::redirect(Path::ROOT."admin/rooms");
             } else if($data['type']=="changeRequest"){
-                $data = Form::validate($req->getBody(), ['number']);
+                $data = Form::validateDataType($req->getBody(), ['number'=>"existingRoom"]);
                 echo $res->view("admin/rooms/changeRoom", ['number'=>$data['number']]);
             } else if($data['type']=="change"){
-                $data = Form::validate($req->getBody(), ['number', 'newNumber']);
+                $data = Form::validateDataType($req->getBody(), ['number'=>"existingRoom", 'newNumber'=>"newRoom"]);
                 DB::query("UPDATE room SET number=:newNumber WHERE number = :number", [":number"=>$data['number'], ":newNumber"=>$data['newNumber']]);
                 Path::redirect(Path::ROOT."admin/rooms");
             } else if($data['type']=="newRequest"){
                 echo $res->view("admin/rooms/newRoom");
             } else if($data['type']=="new"){
-                $data = Form::validate($req->getBody(), ['number']);
+                $data = Form::validateDataType($req->getBody(), ['number'=>"newRoom"]);
                 DB::query("INSERT INTO room(number) VALUES (:number)", [":number"=>$data['number']]);
                 Path::redirect(Path::ROOT."admin/rooms");
             }
@@ -40,23 +40,23 @@
             echo $res->view('admin/treatments/treatments',  [], [], ['treatments'=>$data]);
         }
         public function treatmentChange(Request $req, Response $res) {
-            $data = Form::validate($req->getBody(), ['type']);
+            $data = Form::validateDataType($req->getBody(), ['type']);
             if($data['type']=="delete"){
-                $data = Form::validate($req->getBody(), ['name']);
+                $data = Form::validateDataType($req->getBody(), ['name'=>"existingTreatment"]);
                 DB::query("DELETE FROM treatment WHERE name = :name", [":name"=>$data['name']]);
                 Path::redirect(Path::ROOT."admin/treatments");
             } else if($data['type']=="changeRequest"){
-                $data = Form::validate($req->getBody(), ['name']);
+                $data = Form::validateDataTYpe($req->getBody(), ['name'=>"existingTreatment"]);
                 $dbData = DB::query("SELECT * FROM treatment WHERE name=:name", [':name'=>$data['name']])[0];
                 echo $res->view("admin/treatments/changeTreatment", $dbData);
             } else if($data['type']=="change"){
-                $data = Form::validate($req->getBody(), ['name', 'newName', 'duration', 'nrDoctors', 'nrNurses']);
+                $data = Form::validateDataTYpe($req->getBody(), ['name'=>"existingTreatment", 'newName'=>"newTreatment", 'duration'=>"int", 'nrDoctors'=>"int", 'nrNurses'=>"int"]);
                 DB::query("UPDATE treatment SET name=:newName, duration=:duration, nrDoctors=:nrDoctors, nrNurses=:nrNurses WHERE name = :name", [":name"=>$data['name'], ":newName"=>$data['newName'], ':duration'=>$data['duration'], ':nrDoctors'=>$data['nrDoctors'], 'nrNurses'=>$data['nrNurses']]);
                 Path::redirect(Path::ROOT."admin/treatments");
             } else if($data['type']=="newRequest"){
                 echo $res->view("admin/treatments/newTreatment");
             } else if($data['type']=="new"){
-                $data = Form::validate($req->getBody(), ['name', 'duration', 'nrDoctors', 'nrNurses']);
+                $data = Form::validateDataTYpe($req->getBody(), ['name'=>"newTreatment", 'duration'=>"int", 'nrDoctors'=>"int", 'nrNurses'=>"int"]);
                 DB::query("INSERT INTO treatment(name, duration, nrDoctors, nrNurses) VALUES (:name, :duration, :nrDoctors, :nrNurses)", [":name"=>$data['name'], ':duration'=>$data['duration'], ':nrDoctors'=>$data['nrDoctors'], 'nrNurses'=>$data['nrNurses']]);
                 Path::redirect(Path::ROOT."admin/treatments");
             }
@@ -67,7 +67,7 @@
                 $rooms = DB::query("SELECT * FROM room ORDER BY number");
                 echo $res->view("admin/newAppointment", [], [], ["treatments"=>$treatments, "rooms"=>$rooms]);
             } else if ($req->getMethod() == "POST") {
-                $data = Form::validate($req->getBody(), ['start', 'end', 'room', 'treatment']);
+                $data = Form::validate($req->getBody(), ['start'=>"datetime", 'end'=>"datetime", 'room'=>"existingRoomID", 'treatment'=>"existingTreatmentID"]);
                 DB::query("INSERT INTO appointment(treatmentID, roomID, start, end) VALUES (:treatment, :room, :start, :end)", [":treatment"=>$data["treatment"], ":room"=>$data["room"], ":start"=>$data["start"], ":end"=>$data["end"]]);
                 Path::redirect(Path::ROOT."admin/appointment/new");
             } 
@@ -79,7 +79,7 @@
                 $appointments = DB::query("SELECT a.id, a.start, a.end, b.firstname, b.lastname, b.insurance FROM `appointment` a, `users` b WHERE `status` = 'warten' AND a.userID = b.id");
                 echo $res->view('admin/pending', [], [], ['appointments' => $appointments]);
             } else {
-                $data = Form::validate($req->getBody(), ['id', 'action']);
+                $data = Form::validateDataType($req->getBody(), ['id'=>"int", 'action']);
 
                 // statusse = bestätigt, abgelehnt, warten, wahrgenommen
 
@@ -95,7 +95,7 @@
         public function search(Request $req, Response $res){                        //für Echtzeit suche vllt spätewr ajax Lösung
             $search = "";
             $patients = [];
-            if(isset($req->getBody()['search'])){
+            if(isset($req->getBody()['search']) && $req->getBody()['search']!=null){
                 $search = $req->getBody()['search'];
                 $patients = DB::query("SELECT * FROM users WHERE lastname LIKE :name", [":name"=>$search . "%"]);  
             } else {
@@ -154,14 +154,14 @@
                     $userInfo = new UserInfo($userID);
                     if($userInfo->user != null){
                         Form::validateDataType($data, ['salutation','firstname','lastname','birthday','insurance']);
-                            if(!isset($data['patientID']) || $data['patientID']=="" || $data['patientID']==null){
+                            if(Form::validateDataType($data, ["patientID"], false)==null){
                                 $data['patientID']=null;
                             }
                         DB::query("UPDATE users SET salutation=:salutation, firstname=:firstname, lastname=:lastname, birthday=:birthday, insurance=:insurance, patientID=:patientID WHERE id=:id", [":id"=>$userID, ":salutation"=>$data['salutation'], ":firstname"=>$data['firstname'], ":lastname"=>$data["lastname"], ":birthday"=>$data["birthday"], ":insurance"=>$data["insurance"], "patientID"=>$data["patientID"]]);
                         if($userInfo->account !=null){
                             Form::validateDataType($data, ['username'=>"username:".$userID,'email']);
                             DB::query("UPDATE account SET username=:username, email=:email WHERE userID=:userID", [":userID"=>$userID, ":username"=>$data['username'], ":email"=>$data["email"]]);
-                            if(isset($data['password']) && $data['password']!=null && $data['password']!=""){
+                            if(Form::validateDataType($data, ["password"], false)!=null){
                                 Auth::specialResetPassword($userID, $data['password']);
                             }
                         }
