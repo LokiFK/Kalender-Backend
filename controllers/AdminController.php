@@ -225,6 +225,8 @@
             if ($req->getMethod()=="GET") {
                 $treatment = DB::query("SELECT DISTINCT * FROM treatment");
                 echo $res->view("admin/generalPlaning", array(), array(), ['treatment'=>$treatment]);
+            } else {
+                
             }
         }
 
