@@ -220,6 +220,9 @@
                 Path::redirect(Path::ROOT . 'admin/search/user?id='.$userID);
             }
         }
+        public function personalAppointments(Request $req, Response $res){
+            
+        }
     }
 
 ?>
