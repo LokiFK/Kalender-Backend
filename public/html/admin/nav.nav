@@ -4,6 +4,7 @@
 @link[Räume(/admin/rooms), status>=3]
 @link[Behandlungen(/admin/treatments), status>=3]
 @link[Ausstehend(/admin/pending), status>=3]
+@link[Patienten(/admin/search/search), status>=3]
 
 @flipside[]
 

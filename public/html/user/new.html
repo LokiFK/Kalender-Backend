@@ -8,8 +8,8 @@
         {! appointmentTypes: 
             <div class="appointment-types-item">
                 <form action="/user/appointments/new2" method="GET">
-                    <input type="hidden" name="treatment" value="{{ appointmentTypes }}">
-                    <input type="submit" value="{{ appointmentTypes }}">
+                    <input type="hidden" name="treatment" value="{{ appointmentTypes.name }}">
+                    <input type="submit" value="{{ appointmentTypes.name }}">
                 </form>
             </div>
          !}

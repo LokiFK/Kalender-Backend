@@ -1,0 +1,42 @@
+{[ title=>Patienten, navContentLink=>admin/nav ]}
+{# extend general/template@main #}
+{% styles %}
+
+<div class="overview-wrapper">
+    <form action="/admin/search/search" method="POST">
+        <label for="search">Nachname:</label>
+        <input type="text" name="search" value="{{ search }}""><br>
+    
+        <input type="submit" value="suchen">
+    </form>
+
+    <div class="patients">
+        <div class="patients-list">
+            <div class="patients-list-item">
+                <div class="row">
+                    <div class="row-item"><h4 class="lastname">Nachname</h4></div>
+                    <div class="row-item"><h4 class="firstname">Vorname</h4></div>
+                    <div class="row-item"><h4 class="salutation">Anrede</h4></div>
+                    <div class="row-item"><h4 class="insurance">Versicherung</h4></div>
+                    <div class="row-item"><h4 class="birthday">Geburtstag</h4></div>
+                    <div class="row-item"><h4 class="patientID">Patienten-ID</h4></div>
+                </div>
+            </div>
+            {! patients: 
+                <form action="/admin/search/user" method="GET" id="form-{{ patients.id }}">
+                    <input type="hidden" name="id" value="{{ patients.id }}">
+                    <div class="patients-list-item" onclick="document.getElementById('form-{{ patients.id }}').submit();">
+                        <div class="row">
+                            <div class="row-item"><p class="lastname">{{ patients.lastname }}</p></div>
+                            <div class="row-item"><p class="firstname">{{ patients.firstname }}</p></div>
+                            <div class="row-item"><p class="salutation">{{ patients.salutation }}</p></div>
+                            <div class="row-item"><p class="insurance">{{ patients.insurance }}</p></div>
+                            <div class="row-item"><p class="birthday">{{ patients.birthday }}</p></div>
+                            <div class="row-item"><p class="patientID">{{ patients.patientID }}</p></div>
+                        </div>
+                    </div>
+                </form>
+             !}
+        </div>
+    </div>
+</div>

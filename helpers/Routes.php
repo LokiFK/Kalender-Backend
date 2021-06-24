@@ -48,7 +48,8 @@
                     }
                 }
             }
-            ErrorUI::error(404, 'Page not found');
+            ErrorUI::tetrisError();
+            //ErrorUI::error(404, 'Page not found');
         }
     }
 

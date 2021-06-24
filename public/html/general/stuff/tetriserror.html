@@ -1,0 +1,674 @@
+<html>
+ <head>
+  <meta name="viewport" content="width=device-width,initial scale=0.1, user-scalable=no">
+  <title>Tetris</title>
+  <style>
+  body{
+    background-color:grey;
+  }  
+  #all{
+     position:fixed;
+     left:0;
+     top:0;
+     bottom:0;
+     right:0;
+  }  
+  #to{
+     position:fixed;
+     left:0;
+     top:4em;
+     bottom:0;
+     right:0;
+  }  
+  #anzeigea{
+    background-color:rgb(93%,93%,93%);
+    height:4em;
+    position:absolute;
+    left:0;
+    right:0;
+    top:0;
+  }  
+  #startseite{
+    position:absolute;
+    left:0.5em;
+    top:0.5em;
+  } 
+  #letzteSeite{
+    position:absolute;
+    left:0.5em;
+    top:1.9em;
+  } 
+  #anzeigeb{
+    position:absolute;
+    left:6.9em;
+    top:1em;
+  } 
+  #vorschau{
+    height:3em;
+    width:6em;
+    margin:0.5em auto;
+  }  
+  .vor{
+    box-sizing:border-box;
+    background-color:rgb(93%,93%,93%);
+    background-size: 100% 100%;
+    float:left;
+    width:25%;
+    height:0;
+    padding-bottom:25%;
+    margin:0;
+  }  
+  #pause{
+    position:absolute;
+    top:1em;
+    right:8.2em;
+    height:3.6em;
+    width:3.6em;
+  }
+  #neu{
+    position:absolute;
+    top:1em;
+    right:0.2em;
+    height:3.6em;
+    width:3.6em;
+  }  
+   #rahmen{
+    width:90%;
+    margin:0 auto;
+    margin-top:0.6em;
+   }
+   .feld{
+    box-sizing:border-box;
+    background-color:black;
+    background-size: 100% 100%;
+    float:left;
+    width:10%;
+    height:0;
+    padding-bottom:10%;
+    margin:0;
+   }
+   #finish,#paus, #error{
+     position:absolute;
+     left:0;right:0;
+     top:0;bottom:0;
+     display:none;
+     color:white;
+   }  
+   #error{
+       display:block;
+   }
+   #startseite2, #letzteSeite2{
+       padding-left: 0.5em;
+       padding-right: 0.5em;
+   }
+   #finisha,#pausa, #errora{
+     text-align:center;
+     margin:8em auto;
+     background-color:darkgrey;
+     padding:1em;
+   }  
+   
+   
+   #stufff{
+     position:fixed;
+     top:0;
+     bottom:0;
+     left:0;
+     right:0;
+     display:none;
+   }  
+   #stuffa{
+     font-size:110%;
+     background-color:lightgrey;
+     position:fixed;
+     left:0;
+     bottom:0;
+     padding:0.2em;
+     display:none;
+   }          
+   #stuffb{
+     display:block;
+     width:3.5em;
+     height:3.5em;
+     margin:0.2em auto;
+   }               
+   #stuffc{
+     text-align:center;
+     margin:0.5em 0.2em;
+   }                    
+   #stuffd,#stuffe{
+     margin:0em 0.5em;
+     padding:0.2em;
+   }
+  </style>
+  <script>
+  window.onload=function(){
+   if(document.getElementById("rahmen").clientWidth/3>document.body.clientHeight/5.8){
+        document.getElementById("rahmen").style.width=document.body.clientHeight/5.8*3-1;
+    }
+    document.addEventListener("scroll", function (e) { e.preventDefault(); }, false);
+    
+    let st=[[[[1,0],[2,0],[1,1],[2,1]],[[1,0],[1,1],[2,0],[2,1]],[[1,0],[1,1],[2,0],[2,1]],[[1,0],[1,1],[2,0],[2,1]]],   //Quadrat
+            [[[1,0],[0,1],[1,1],[2,1]],[[1,0],[1,1],[2,1],[1,2]],[[0,1],[1,1],[2,1],[1,2]],[[1,0],[0,1],[1,1],[1,2]]],   // T Zacken
+            [[[0,1],[1,1],[2,1],[0,2]],[[0,0],[1,0],[1,1],[1,2]],[[2,0],[0,1],[1,1],[2,1]],[[1,0],[1,1],[1,2],[2,2]]],   // L rechts
+            [[[0,1],[1,1],[2,1],[2,2]],[[1,0],[1,1],[0,2],[1,2]],[[0,0],[0,1],[1,1],[2,1]],[[1,0],[2,0],[1,1],[1,2]]],   // L links
+            [[[0,2],[1,2],[2,2],[3,2]],[[2,0],[2,1],[2,2],[2,3]],[[1,2],[2,2],[3,2],[4,2]],[[2,1],[2,2],[2,3],[2,4]]],   // strich
+            [[[0,1],[1,1],[1,2],[2,2]],[[1,0],[0,1],[1,1],[0,2]],[[0,0],[1,0],[1,1],[2,1]],[[2,0],[1,1],[2,1],[1,2]]],   // zacken
+            [[[1,1],[2,1],[0,2],[1,2]],[[0,0],[0,1],[1,1],[1,2]],[[1,0],[2,0],[0,1],[1,1]],[[1,0],[1,1],[2,1],[2,2]]]];  // Zacken
+    let farbe=["lightblue","yellow","darkblue","#800080","blue","red","green"];
+    let h=[[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],
+           [0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],
+           [0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],
+           [0,0,0,0,0,0,0,0,0,0]];
+    let modus=0;
+    let s=0;
+    let punkte=0;
+    let geschwindigkeit=500;
+    
+    let spieler=[3,-3,0,Math.floor((Math.random() * 7))];
+    let next=Math.floor((Math.random() * 7));
+    
+    function vors(){
+      for(let i=0;i<4;i++){
+        for(let j=0;j<2;j++){
+          document.getElementById("v"+i+j).style.backgroundColor="rgb(93%,93%,93%)";
+        }  
+      }  
+      if(next<2){
+        for(let i=0;i<st[next][0].length;i++){
+          document.getElementById("v"+st[next][0][i][0]+""+st[next][0][i][1]).style.backgroundColor=farbe[next]
+        }
+      } else {
+        for(let i=0;i<st[next][0].length;i++){
+          document.getElementById("v"+st[next][0][i][0]+""+(st[next][0][i][1]-1)).style.backgroundColor=farbe[next]
+        }
+      }            
+    }  
+    
+    vors();
+    
+    //zug=setInterval(zugf,500);
+    function zugf(){
+      if(kontrolle(spieler[0],spieler[1]+1,spieler[2],spieler[3])==true){
+        for(let i=0;i<st[spieler[3]][spieler[2]].length;i++){
+          if((st[spieler[3]][spieler[2]][i][1]+spieler[1])>-1){
+            document.getElementById("f"+(st[spieler[3]][spieler[2]][i][0]+spieler[0])+""+(st[spieler[3]][spieler[2]][i][1]+spieler[1])).style.backgroundColor="black";
+          }
+        }
+        spieler[1]++;
+        for(let i=0;i<st[spieler[3]][spieler[2]].length;i++){
+          if((st[spieler[3]][spieler[2]][i][1]+spieler[1])>-1){
+            document.getElementById("f"+(st[spieler[3]][spieler[2]][i][0]+spieler[0])+""+(st[spieler[3]][spieler[2]][i][1]+spieler[1])).style.backgroundColor=farbe[spieler[3]];
+          }
+        }                                                                                                    
+      } else {
+        if(s==1){
+          s=0;
+          clearInterval(zug);
+          zug=setInterval(zugf,geschwindigkeit);
+        }  
+        for(let i=0;i<st[spieler[3]][spieler[2]].length;i++){
+          if(st[spieler[3]][spieler[2]][i][1]+spieler[1]>-1){
+            h[st[spieler[3]][spieler[2]][i][1]+spieler[1]][st[spieler[3]][spieler[2]][i][0]+spieler[0]]=spieler[3]+1;     //Warnung +1, damit form:0 nicht nichts
+            punkte++;
+          } else {
+            document.getElementById("finish").style.display="block";
+            document.getElementById("finishi").innerHTML=punkte+" Punkte";
+            clearInterval(zug);
+            modus=1;
+          }              
+        }
+        kontrollereihe();
+        document.getElementById("anzeigeb").innerHTML="Punkte: "+punkte;
+        spieler=[3,-3,0,next];
+        next=Math.floor((Math.random() * 7));
+        vors();
+      }          
+    }  
+    
+    function drehen(){
+     if(spieler[1]>-3 && modus==0){
+      let j=spieler[2];
+      if(j!=3){
+        j++;
+      } else {
+        j=0;
+      }    
+        
+      if(kontrolle(spieler[0],spieler[1],j,spieler[3])==true){
+        for(let i=0;i<st[spieler[3]][spieler[2]].length;i++){
+          if((st[spieler[3]][spieler[2]][i][1]+spieler[1])>-1){
+            document.getElementById("f"+(st[spieler[3]][spieler[2]][i][0]+spieler[0])+""+(st[spieler[3]][spieler[2]][i][1]+spieler[1])).style.backgroundColor="black";
+          }
+        }
+        spieler[2]=j;
+        for(let i=0;i<st[spieler[3]][spieler[2]].length;i++){
+          if((st[spieler[3]][spieler[2]][i][1]+spieler[1])>-1){
+            document.getElementById("f"+(st[spieler[3]][spieler[2]][i][0]+spieler[0])+""+(st[spieler[3]][spieler[2]][i][1]+spieler[1])).style.backgroundColor=farbe[spieler[3]];
+          }
+        }
+      }  
+     } 
+    }  
+    
+    function schneller(){
+     if(modus==0){
+      s=1;
+      clearInterval(zug);
+      zug=setInterval(zugf,5);
+     } 
+    }
+    
+    function schieben(w){
+     if(spieler[1]>-3 && modus==0){
+      if(kontrolle(spieler[0]+w,spieler[1],spieler[2],spieler[3])==true){
+        for(let i=0;i<st[spieler[3]][spieler[2]].length;i++){
+          if((st[spieler[3]][spieler[2]][i][1]+spieler[1])>-1){
+            document.getElementById("f"+(st[spieler[3]][spieler[2]][i][0]+spieler[0])+""+(st[spieler[3]][spieler[2]][i][1]+spieler[1])).style.backgroundColor="black";
+          }
+        }
+        spieler[0]=spieler[0]+w;
+        for(let i=0;i<st[spieler[3]][spieler[2]].length;i++){
+          if((st[spieler[3]][spieler[2]][i][1]+spieler[1])>-1){
+            document.getElementById("f"+(st[spieler[3]][spieler[2]][i][0]+spieler[0])+""+(st[spieler[3]][spieler[2]][i][1]+spieler[1])).style.backgroundColor=farbe[spieler[3]];
+          }
+        }
+      }  
+     } 
+    }
+    
+    function kontrolle(x,y,d,f){        //x & y-Koordinate   d=Drehung f=Form
+      for(let i=0;i<st[f][d].length;i++){
+        if((st[f][d][i][1]+y)>15 || (st[f][d][i][0]+x)<0 || (st[f][d][i][0]+x)>9){
+          return false;
+        }   
+        if((st[f][d][i][1]+y)>-1){
+          if(h[(st[f][d][i][1]+y)][(st[f][d][i][0]+x)]!=0){
+            return false;
+          }  
+        }
+      }   
+      return true;
+    }    
+    function kontrollereihe(){
+      let zw=0;
+      for(let i=0;i<16;i++){
+        for(let j=0;j<10;j++){
+          if(h[i][j]!=0){
+            zw++;
+          }  
+        } 
+        if(zw==10){
+          punkte=punkte+10;
+          geschwindigkeit=geschwindigkeit-10;
+          clearInterval(zug);
+          zug=setInterval(zugf,geschwindigkeit);
+          for(let j=0;j<10;j++){
+            h[i][j]=0;
+            document.getElementById("f"+j+i).style.backgroundColor="black";
+          }  
+          for(let ii=i-1;ii>-1;ii--){
+            for(let j=0;j<10;j++){
+             if(h[ii][j]!=0){
+              h[ii+1][j]=h[ii][j];
+              h[ii][j]=0;
+              document.getElementById("f"+j+(ii+1)).style.backgroundColor=farbe[h[ii+1][j]-1];
+              document.getElementById("f"+j+ii).style.backgroundColor="black";
+             } 
+            }  
+          }  
+        }
+        zw=0;                 
+      }          
+    } 
+    
+    document.getElementById("pause").addEventListener("click",pause,false);
+    function pause(){
+      if(modus==0){
+        modus=2;
+        clearInterval(zug);
+        document.getElementById("pause").innerHTML="weiter";
+        document.getElementById("paus").style.display="block";
+      } else if(modus==2){
+        modus=0;
+        zug=setInterval(zugf,geschwindigkeit);
+        document.getElementById("pause").innerHTML="Pause";
+        document.getElementById("paus").style.display="none";
+      }         
+    }  
+    document.getElementById("paus").addEventListener("click",pause,false);
+    
+    document.getElementById("finish").addEventListener("click",weiter,false);
+    function weiter(){
+      if(modus==1){
+        document.getElementById("finish").style.display="none";
+        neustart();
+      }  
+    }              
+    document.getElementById("neu").addEventListener("click",neustart,false);
+    function neustart(){
+      h=[[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],
+         [0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],
+         [0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],
+         [0,0,0,0,0,0,0,0,0,0]];
+      modus=0;
+      s=0;
+      punkte=0;
+      document.getElementById("anzeigeb").innerHTML="Punkte: 0";
+      spieler=[3,-3,0,Math.floor((Math.random() * 7))];
+      next=Math.floor((Math.random() * 7));
+      vors();
+      zw=document.getElementsByClassName("feld");
+      for(let i=0;i<zw.length;i++){
+        zw[i].style.backgroundColor="black";
+      }  
+      geschwindigkeit=500;
+      clearInterval(zug);
+      zug=setInterval(zugf,500);
+    }                             
+    
+    if(window.addEventListener){
+        window.addEventListener("keydown", testt, false);
+      } else if(window.attachEvent){
+        window.attachEvent("onkeydown",testt);
+      }
+  
+      function testt(evt){
+       if(modus==0){
+        if(evt.key=="ArrowUp" || evt.key=="w"){
+          drehen();
+        } else if(evt.key=="ArrowRight" || evt.key=="d"){
+          schieben(1);
+        } else if(evt.key=="ArrowLeft" || evt.key=="a"){
+          schieben(-1);
+        } else if(evt.key=="ArrowDown" || evt.key=="s"){
+          schneller();
+        }  
+       }  
+       if((modus==0 || modus==2) &&evt.key==" "){
+          pause();
+        }         
+      }
+        let sx=0;
+        let sy=0;
+        let startt=0;
+        
+        document.getElementById("to").ontouchstart = function (e) {
+            sx=e.changedTouches[0].pageX;
+            sy=e.changedTouches[0].pageY;
+            startt=new Date().getTime();
+        }
+         
+        document.getElementById("to").ontouchend = function (e) {
+            var ex=e.changedTouches[0].pageX;
+            var ey=e.changedTouches[0].pageY;
+            var et=new Date().getTime();
+         
+            test(ex,ey,et);
+        }
+        
+        document.getElementById("to").ontouchmove = function(e){
+          e.preventDefault()
+        }
+         
+        function test(ex,ey,et) {
+          if(Math.abs(sy-ey)+Math.abs(sx-ex)>50 && et-startt>50){
+            let m=(sy-ey)/(sx-ex);     //Steigung
+            
+            if(m<0.8 && m>-0.8){
+              if(sx<ex){
+                schieben(1);
+              } else {
+                schieben(-1);
+              }                  
+            } else if(m>1.2 || m<-1.2){
+              if(sy<ey){
+                schneller();
+              } else {
+                drehen();
+              }
+            }            
+        
+          }
+        }
+        document.getElementById("letzteSeite").addEventListener("click",lastPage,false);
+        document.getElementById("letzteSeite2").addEventListener("click",lastPage,false);
+        function lastPage(){
+            window.history.go(-1);
+        }         
+        window.onclick = function(event) {
+            if(document.getElementById("error").style.display != "none"){
+                document.getElementById("error").style.display = "none";
+                zug=setInterval(zugf,geschwindigkeit);
+            } 
+        }         
+  }   
+  </script>
+ </head>
+ 
+ <body>
+ 
+ <div id=all> 
+  <div id=anzeigea class=anzeige>
+      <a id=startseite href="../../../">Startseite</a>
+      <a id=letzteSeite>letzte Seite</a>
+  <div id=anzeigeb class=anzeige>Punkte: 0</div>
+  <div id=vorschau>
+    <div class=vor id=v00></div>
+    <div class=vor id=v10></div>
+    <div class=vor id=v20></div>
+    <div class=vor id=v30></div>
+    
+    <div class=vor id=v01></div>
+    <div class=vor id=v11></div>
+    <div class=vor id=v21></div>
+    <div class=vor id=v31></div>
+  </div>
+  <div id=pause>Pause</div>
+  <div id=neu>Neustart</div>
+  </div>
+  <div id=to>
+  <div id=rahmen>
+   <div class=feld id=f00></div>
+   <div class=feld id=f10></div>
+   <div class=feld id=f20></div>    
+   <div class=feld id=f30></div>
+   <div class=feld id=f40></div>
+   <div class=feld id=f50></div> 
+   <div class=feld id=f60></div>
+   <div class=feld id=f70></div>
+   <div class=feld id=f80></div>
+   <div class=feld id=f90></div>
+   
+   <div class=feld id=f01></div>
+   <div class=feld id=f11></div>
+   <div class=feld id=f21></div>    
+   <div class=feld id=f31></div>
+   <div class=feld id=f41></div>
+   <div class=feld id=f51></div> 
+   <div class=feld id=f61></div>
+   <div class=feld id=f71></div>
+   <div class=feld id=f81></div>
+   <div class=feld id=f91></div>
+   
+   <div class=feld id=f02></div>
+   <div class=feld id=f12></div>
+   <div class=feld id=f22></div>    
+   <div class=feld id=f32></div>
+   <div class=feld id=f42></div>
+   <div class=feld id=f52></div> 
+   <div class=feld id=f62></div>
+   <div class=feld id=f72></div>
+   <div class=feld id=f82></div>
+   <div class=feld id=f92></div>
+   
+   <div class=feld id=f03></div>
+   <div class=feld id=f13></div>
+   <div class=feld id=f23></div>    
+   <div class=feld id=f33></div>
+   <div class=feld id=f43></div>
+   <div class=feld id=f53></div> 
+   <div class=feld id=f63></div>
+   <div class=feld id=f73></div>
+   <div class=feld id=f83></div>
+   <div class=feld id=f93></div>
+   
+   <div class=feld id=f04></div>
+   <div class=feld id=f14></div>
+   <div class=feld id=f24></div>    
+   <div class=feld id=f34></div>
+   <div class=feld id=f44></div>
+   <div class=feld id=f54></div> 
+   <div class=feld id=f64></div>
+   <div class=feld id=f74></div>
+   <div class=feld id=f84></div>
+   <div class=feld id=f94></div>
+   
+   <div class=feld id=f05></div>
+   <div class=feld id=f15></div>
+   <div class=feld id=f25></div>    
+   <div class=feld id=f35></div>
+   <div class=feld id=f45></div>
+   <div class=feld id=f55></div> 
+   <div class=feld id=f65></div>
+   <div class=feld id=f75></div>
+   <div class=feld id=f85></div>
+   <div class=feld id=f95></div>
+   
+   <div class=feld id=f06></div>
+   <div class=feld id=f16></div>
+   <div class=feld id=f26></div>    
+   <div class=feld id=f36></div>
+   <div class=feld id=f46></div>
+   <div class=feld id=f56></div> 
+   <div class=feld id=f66></div>
+   <div class=feld id=f76></div>
+   <div class=feld id=f86></div>
+   <div class=feld id=f96></div>
+   
+   <div class=feld id=f07></div>
+   <div class=feld id=f17></div>
+   <div class=feld id=f27></div>    
+   <div class=feld id=f37></div>
+   <div class=feld id=f47></div>
+   <div class=feld id=f57></div> 
+   <div class=feld id=f67></div>
+   <div class=feld id=f77></div>
+   <div class=feld id=f87></div>
+   <div class=feld id=f97></div>
+   
+   <div class=feld id=f08></div>
+   <div class=feld id=f18></div>
+   <div class=feld id=f28></div>    
+   <div class=feld id=f38></div>
+   <div class=feld id=f48></div>
+   <div class=feld id=f58></div> 
+   <div class=feld id=f68></div>
+   <div class=feld id=f78></div>
+   <div class=feld id=f88></div>
+   <div class=feld id=f98></div>
+   
+   <div class=feld id=f09></div>
+   <div class=feld id=f19></div>
+   <div class=feld id=f29></div>    
+   <div class=feld id=f39></div>
+   <div class=feld id=f49></div>
+   <div class=feld id=f59></div> 
+   <div class=feld id=f69></div>
+   <div class=feld id=f79></div>
+   <div class=feld id=f89></div>
+   <div class=feld id=f99></div>
+   
+   <div class=feld id=f010></div>
+   <div class=feld id=f110></div>
+   <div class=feld id=f210></div>    
+   <div class=feld id=f310></div>
+   <div class=feld id=f410></div>
+   <div class=feld id=f510></div> 
+   <div class=feld id=f610></div>
+   <div class=feld id=f710></div>
+   <div class=feld id=f810></div>
+   <div class=feld id=f910></div>
+   
+   <div class=feld id=f011></div>
+   <div class=feld id=f111></div>
+   <div class=feld id=f211></div>    
+   <div class=feld id=f311></div>
+   <div class=feld id=f411></div>
+   <div class=feld id=f511></div> 
+   <div class=feld id=f611></div>
+   <div class=feld id=f711></div>
+   <div class=feld id=f811></div>
+   <div class=feld id=f911></div>
+   
+   <div class=feld id=f012></div>
+   <div class=feld id=f112></div>
+   <div class=feld id=f212></div>    
+   <div class=feld id=f312></div>
+   <div class=feld id=f412></div>
+   <div class=feld id=f512></div> 
+   <div class=feld id=f612></div>
+   <div class=feld id=f712></div>
+   <div class=feld id=f812></div>
+   <div class=feld id=f912></div>
+   
+   <div class=feld id=f013></div>
+   <div class=feld id=f113></div>
+   <div class=feld id=f213></div>    
+   <div class=feld id=f313></div>
+   <div class=feld id=f413></div>
+   <div class=feld id=f513></div> 
+   <div class=feld id=f613></div>
+   <div class=feld id=f713></div>
+   <div class=feld id=f813></div>
+   <div class=feld id=f913></div>
+   
+   <div class=feld id=f014></div>
+   <div class=feld id=f114></div>
+   <div class=feld id=f214></div>    
+   <div class=feld id=f314></div>
+   <div class=feld id=f414></div>
+   <div class=feld id=f514></div> 
+   <div class=feld id=f614></div>
+   <div class=feld id=f714></div>
+   <div class=feld id=f814></div>
+   <div class=feld id=f914></div>
+   
+   <div class=feld id=f015></div>
+   <div class=feld id=f115></div>
+   <div class=feld id=f215></div>    
+   <div class=feld id=f315></div>
+   <div class=feld id=f415></div>
+   <div class=feld id=f515></div> 
+   <div class=feld id=f615></div>
+   <div class=feld id=f715></div>
+   <div class=feld id=f815></div>
+   <div class=feld id=f915></div>
+   </div>
+  </div>
+  </div>
+  
+  </div> 
+  
+  <div id=error>
+    <div id=errora>
+      <h1>404 - Page not found</h1>
+      <a id=startseite2 href="../../../">Startseite</a>
+      <a id=letzteSeite2>letzte Seite</a>
+    </div>  
+  </div>
+
+  <div id=finish>
+    <div id=finisha>
+      <h1>Game over!</h1>
+      <h3 id=finishi></h3>
+    </div>  
+  </div>
+  
+  <div id=paus>
+    <div id=pausa>
+      <h1>pausiert!</h1>
+    </div>  
+  </div>
+ </body>
+</html>

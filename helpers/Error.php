@@ -13,6 +13,8 @@
 
         public static function error($errCode, $msg)
         {
+            $message = strval($errCode) . " " . $msg;
+            //echo "<script>alert('$message'); window.history.go(-1);</script>";
             http_response_code($errCode);
             if(strpos($msg, "/api")) {
                 ErrorUI::errorMsg($errCode, $msg);
@@ -23,7 +25,7 @@
         }
 
         public static function generalError() {
-            self::error(0000, "Unknown Error");
+            ErrorUI::error(0000, "Unknown Error");
         }
 
         public static function errorFiveHundred($errCode)
@@ -33,5 +35,9 @@
 
         public static function popRedirect($message, $redirect) {
             echo "<script>alert('$message'); window.location.href='$redirect';</script>";
+        }
+
+        public static function tetrisError(){
+            echo Response::view("general/stuff/tetrisError");
         }
     }

@@ -43,10 +43,6 @@
 
         public static function start() {
             self::$token = self::getGivenToken();
-            if (self::$token == null && !self::isLoggedIn()) {
-                self::$status = self::GUEST;
-                return;
-            }
             $res = DB::query("SELECT `userID`, `end` FROM `session` WHERE `token` = :token  AND (`end` IS NULL OR `end` > :end);", [':token' => self::$token, ":end" => date(DB::DATE_FORMAT)]);
             if (count($res) == 1) {
                 if ($res[0]['end'] != null) {
@@ -55,12 +51,12 @@
                     $end = $date->format(DB::DATE_FORMAT);
                     DB::query("UPDATE `session` SET `end` = :end WHERE `token` = :token;", [':token' => self::$token, ':end' => $end]);
                 } 
-                self::$user = DB::query("SELECT * FROM users WHERE id = :id", [ ':id' => $res[0]['userID'] ])[0];
-                self::$account = DB::query("SELECT * FROM account WHERE userID = :userID", [ ':userID' => $res[0]['userID'] ])[0];
-                if (self::$account['createdAt'] != null) {
-                    $res2 = DB::query("SELECT * FROM `admin` WHERE userID = :userID", [ ':userID' => $res[0]['userID'] ]);
-                    if(count($res2) > 0) {
-                        self::$admin = $res2[0];
+                $userInfo = new UserInfo($res[0]['userID']);
+                self::$user = $userInfo->user;
+                self::$account = $userInfo->account;
+                self::$admin = $userInfo->admin;
+                if (self::$account['emailApproved'] == true) {
+                    if(self::$admin != null) {
                         self::$status = self::ADMIN;
                     } else {
                         self::$status = self::USER;
@@ -99,17 +95,28 @@
                 }
             }
         }
+        public static function registerAdmin(Admin $admin){
+            if (Auth::userExists($admin->userID)) {
+                DB::query(
+                    "INSERT INTO admin(userID, role) VALUES (:userID, :role);",
+                    [':userID' => $admin->userID, ':role'=>$admin->role]
+                );
+            }
+        }
 
         public static function approveAccount($code) {
             $res = DB::table("notapproved")->where("`code` = :code", [":code"=>$code])->get([], ['userID']);
             if (count($res) == 1) {
-                DB::query(
-                    "UPDATE `account` SET `createdAt` = :date WHERE `userID` = :userID;",
-                    [':userID' => $res[0]['userID'], ":date" => date(DB::DATE_FORMAT)]
-                );
+                Auth::specialApproveAccount($res[0]['userID']);
                 return $res[0]['userID'];
             }
             return null;
+        }
+        public static function specialApproveAccount($userID){
+            return DB::query(
+                "UPDATE `account` SET `createdAt` = :date WHERE `userID` = :userID AND createdAt IS NOT null;",
+                [':userID' => $userID, ":date" => date(DB::DATE_FORMAT)]
+            );
         }
 
         public static function createNewResetCode(string $email) {
@@ -125,17 +132,20 @@
             }
         }
 
-        public static function resetPassword($code, $password){
+        public static function resetPassword($code, $newPassword){
             $res = DB::table("passwordreset")->where("`code` = :code", [":code" => $code])->get([], ['userID']);
             if (count($res) == 1) {
                 DB::query("UPDATE `passwordreset` SET `isUsed` = false WHERE `code` = :code;", [':code' => $code]);
-                DB::query(
-                    "UPDATE `account` SET `password` = :password WHERE `userID` = :userID;",
-                    [':userID' => $res[0]['userID'], ":password" => password_hash($password, PASSWORD_DEFAULT)]
-                );
+                Auth::specialResetPassword($res[0]['userID'], $newPassword);
                 return $res[0]['userID'];
             }
             return null;
+        }
+        public static function specialResetPassword($userID, $newPassword){
+            DB::query(
+                "UPDATE `account` SET `password` = :password WHERE `userID` = :userID;",
+                [':userID' => $userID, ":password" => password_hash($newPassword, PASSWORD_DEFAULT)]
+            );
         }
 
         public static function login($username, $password, bool $remember)
@@ -159,8 +169,8 @@
                 $end = $date->format(DB::DATE_FORMAT);
             }
             DB::query(
-                "INSERT INTO `session` (`userid`, `token`, `start`, `end`) VALUES (:userID, :token, :start, :end);",
-                [':userID' => $userID, ':token' => $token, ':start' => $start, ':end' => $end]
+                "INSERT INTO `session` (`userid`, `token`, `start`, `end`, `ip`) VALUES (:userID, :token, :start, :end, :ip);",
+                [':userID' => $userID, ':token' => $token, ':start' => $start, ':end' => $end, ":ip"=>$_SERVER["REMOTE_ADDR"]]
             );
             return $token;
         }
@@ -275,8 +285,20 @@
             );
             return $code;
         }
-    }
 
+        public static function usernameExists($username, $userID=null){
+            if(is_numeric($userID)){
+                $res = DB::query("SELECT count(*) as Anzahl from account WHERE username=:username AND userID!=:userID", [":username"=>$username, ":userID"=>$userID]);
+            } else {
+                $res = DB::query("SELECT count(*) as Anzahl from account WHERE username=:username", [":username"=>$username]);
+            }
+            if($res[0]['Anzahl']>0){
+                return true;
+            }
+            return false;
+        }
+
+    }
 
     class User {
         public string $firstname = "";
@@ -311,6 +333,42 @@
             $this->email = $email;
             $this->password = $password;
             $this->approvalNeeded = $approvalNeeded;
+        }
+    }
+    class Admin{
+        public int $userID;
+        public string $role;
+
+        public function __construct($userID, $role)
+        {
+            $this->userID = $userID;
+            $this->role = $role;
+        }
+    }
+    class UserInfo{
+        public $user = null;
+        public $account = null;
+        public $admin = null;
+
+        public function __construct($userID)
+        {
+            $res = DB::query("SELECT * FROM users WHERE id = :id", [ ':id' => $userID ]);
+            if(count($res)==1){
+                $this->user = $res[0];
+                $res2 = DB::query("SELECT * FROM account WHERE userID = :userID", [ ':userID' => $userID ]);
+                if(count($res2)==1){
+                    $this->account = $res2[0];
+                    if ($this->account['createdAt'] != null) {
+                        $this->account['emailApproved'] = true;
+                    } else {
+                        $this->account['emailApproved'] = false;
+                    }
+                }
+                $res3 = DB::query("SELECT * FROM `admin` WHERE userID = :userID", [ ':userID' => $userID ]);
+                if(count($res3)==1){
+                    $this->admin = $res3[0];
+                }
+            }
         }
     }
 
