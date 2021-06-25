@@ -494,7 +494,9 @@
                     <label for='select-$this->name'>$this->label</label>
                     <select class='form-input' id='select-$this->name' name='$this->name'>
                 ";
-
+                if($this->defaultValue!=""){
+                    $returnVal .= "<option selected hidden value='" . $this->defaultValue . "'>" . $this->defaultValue . "</option>";
+                }
                 foreach ($this->selectOptions as $key=>$value) {
                     $returnVal .= "<option value='" . $this->selectValueOptions[$key] . "'>" . $this->selectOptions[$key] . "</option>";
                 }

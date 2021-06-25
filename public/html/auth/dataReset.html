@@ -8,7 +8,7 @@
     <h3 id="title">Hallo {{ username }}, bitte ändere hier Deine Daten</h3><br>
     {?php
         return Form::create('/auth/account/dataReset', 'POST',
-            new FormField('salutation', 'Anrede', 'select', '', [], ['Frau', 'Herr', 'keine Angabe']),
+            new FormField('salutation', 'Anrede', 'select', '{{ salutation }}', [], ['Frau', 'Herr', 'keine Angabe']),
             new FormField('firstName', 'Vorname', 'text', '{{ firstname }}'),
             new FormField('lastName', 'Nachname', 'text', '{{ lastname }}'),
             new FormField('birthday', 'Geburtsdatum', 'date', '{{ birthday }}'),
