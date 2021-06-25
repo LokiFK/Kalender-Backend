@@ -38,6 +38,45 @@
             }
         }
 
+        public function hasTime($date, $start, $end){   //Date string("YYYY/MM/DD") TIME("HH:MM:SS")
+            $weekday = date("l",strtotime($date));
+            foreach(Mitarbeiter::WEEKDAYS as $key=>$aWeekday){
+                if($weekday == $aWeekday){
+                    $wochentag = Mitarbeiter::WOCHENTAGE[$key];
+                }
+            }
+            foreach($this->workhours as $day=>$workhours){
+                if($day==$wochentag){
+                    foreach($workhours as $workhour){
+                        if($start>$workhours['start'] && $end<$workhours['end']){
+                            return $this->isNotBlocked($date, $start, $end);
+                        }
+                    }
+                }
+            }
+            foreach($this->additionals as $aDate=>$additionals){
+                if($date==$aDate){
+                    foreach($additionals as $additional){
+                        if($start>$additional['start'] && $end<$additional['end']){
+                            return $this->isNotBlocked($date, $start, $end);
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        public function isNotBlocked($date, $start, $end){
+            foreach($this->blocks as $aDate=>$blocks){
+                if($date==$aDate){
+                    foreach($blocks as $block){
+                        if($end>$block['start'] && $start<$block['end']){
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
     }
 
 ?>
