@@ -1,10 +1,9 @@
-{[ title=>Startseite Mitarbeiterbereich ]}
+{[ title=>Startseite ]}
 {# extend general/template@main #}
-
+{% styles %}
 <br><br><br><br><br><br>
-
-{?php 
-    return Form::create('/', 'GET',
-        new FormField('username', 'Benutzername', 'text', '', ['unique(account)'])
-    );
- ?}
+<div class="content-wrapper">
+    <div style="text-align: center;">
+        <h1>Ihre Wunderbare Overview Seite 😃</h1>
+    </div>
+</div>
