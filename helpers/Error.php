@@ -13,7 +13,6 @@
 
         public static function error($errCode, $msg)
         {
-            debug_print_backtrace();
             $message = strval($errCode) . " " . $msg;
             echo "<script>alert('$message'); window.history.go(-1);</script>";
             /*http_response_code($errCode);

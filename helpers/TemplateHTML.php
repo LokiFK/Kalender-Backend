@@ -510,15 +510,17 @@
             } else {
                 if ($this->inputType == "hidden") {
                     $returnVal .= "
+                        <label for='select-$this->name'>$this->label</label>
                         <input type='hidden' name='$this->name' value='$this->label'>
                     ";
                 } else if ($this->inputType == "submit") {
                     $returnVal .= "
                         <input type='submit' name='$this->name' value='$this->label'>
                     ";
-                } else if ($this->inputType == "text" && !empty($this->defaultValue)) {
+                } else if (($this->inputType == "text" || $this->inputType == "date") && !empty($this->defaultValue)) {
                     $returnVal .= "
-                        <input type='text' name='$this->name' value='$this->defaultValue'>
+                        <label for='select-$this->name'>$this->label</label>
+                        <input type='$this->inputType' name='$this->name' value='$this->defaultValue'>
                     ";
                 } else {
                     $returnVal .= "

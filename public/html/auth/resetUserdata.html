@@ -1,14 +1,15 @@
 {[ title=>Account bestätigt, navContentLink=>user/nav ]}
 {# extend general/template@main #}
 {% css/auth/form %}
-<div class="form-wrapper">
-<h2>Zur Datenänderung bitte Email und Passwort bestätigen</h2>
-{?php
-    return Form::create('/auth/account/resetUserdata', 'POST',
-        new FormField('email', 'Email:', 'email'),
-        new FormField('password', 'Passwort:', 'password'),
 
-        new FormField('submit', 'Weiter', 'submit')
-    );
- ?}
+<div class="form-wrapper">
+    <h3>Zur Datenänderung bitte Email und Passwort bestätigen</h3><br>
+    {?php
+        return Form::create('/auth/account/resetUserdata', 'POST',
+            new FormField('email', 'Email:', 'email'),
+            new FormField('password', 'Passwort:', 'password'),
+
+            new FormField('submit', 'Weiter', 'submit')
+        );
+    ?}
 </div>

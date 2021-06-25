@@ -178,6 +178,8 @@
                             $token = Auth::specialLogin($userID, false);
                             setcookie('token', $token, time() + 60 * 60 * 24 * 30, '/');
                             Path::redirect(Path::ROOT . 'auth/account/dataReset');
+                        } else {
+                            $res->errorVisual(401, "Bitte das Passwort überprüfen");
                         }
                     } else {
                         ErrorUI::error(401, "Bitte Angaben überprüfen");
