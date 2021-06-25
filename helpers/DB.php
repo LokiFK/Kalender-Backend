@@ -3,7 +3,7 @@
     class DB {
 
         public const DATE_FORMAT = "Y/m/d H:i:s";
-        public const DATE = "Y-m-d";
+        public const DATE = "Y/m/d";
         public const TIME = "H:i:s";
         public const ASC = 0;
         public const DESC = 1;

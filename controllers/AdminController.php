@@ -435,7 +435,26 @@
             }
         }
         public static function overview(Request $req, Response $res){
-            echo "todo";
+            $data = $req->getBody();
+            $tDate = date(DB::DATE);
+            if(Form::validateDataType($data, ["date"], false)!=null){
+                $date = $data["date"];
+            } else {
+                $date = $tDate;
+            }
+            $dates=array();
+            for($i=0; $i<15; $i++){
+                $aDate = date(DB::DATE, strtotime($tDate . ' +'.$i.' day'));
+                if($aDate!=$date){
+                    $dates[$i] = ["date"=>$aDate, "class"=>""];
+                } else {
+                    $dates[$i] = ["date"=>$aDate, "class"=>"class=theOneDate"];
+                }
+            }
+
+            $rooms = DB::query("SELECT * FROM room");
+
+            echo $res->view("admin/overview", [],[],["dates"=>$dates, "rooms"=>$rooms]);
         }
         public static function workhours(Request $req, Response $res){
             Middleware::statusBiggerOrEqualTo(4);
