@@ -31,31 +31,34 @@ Components are HTML files, that can be manipulated in terms of placing data from
     - This parameter can be used to pass data to php-tags in the HTML. 
 
 #### HTML Part
-There are tags that manipulate, load or insert data directly in HTML (Warning: every space is important, we work with indexes of different characters):
+There are tags that manipulate, load or insert data directly in HTML (Warning: every space is important, we work with indexes of different characters). It is important to understand the order of the interpretation. First the safeData is set in. That means it can trigger other tags. So there should never be userdata in safeData becouse it could kill the whoole server. Next all the tags are interpreted cronological. If a tag loads other HTML files, it is interpreted first and then the `cursor` jumps to the end of the inserted section. At the end data is interpreted, it could be triggered by userdata from other tags but it cant do harm to server. 
 - `{{ variable_name }}`
-    - This tag creates a place, where your variable, inserted in `array $data = array()`, can be inserted.
+    - This tag creates a place, where your variable, inserted in `array $data = array()` or in safeData, can be inserted.
     - It is also possible to get an variable in from an more-dimensional array using `.` between the keys of the dimensions.
 - `{! array_name: *Iteration template* !}`
-    - This tag allows you to loop over arrays.
+    - This tag allows you to loop over an array given under the same key (array_name) in the loopData. It can also be more-dimensionsl, keys split by a point
     - `*Iteration template*` is the element, that you want to create with every iteration.
     - Inside `*Iteration template*`, you can call the current iteration by using:
         - `{{ array_name(.*) }}` gives you the data behind the current iteration. Using the `.*` syntax, you can walk through json data.
         - `{{ array_name.iterationNr }}` gives you the current iteration index (= i)
+    - Also a new key with the additive `/inner` is added to loopData to allow nested for-loops. To avoid problems points to use more-dimensional arrays are replaced with `/`.
 - `{% ressource_type %}`
     - This tag inserts styles or scripts that live in `./public/[ressource_type]/[component_path]`.
     - `{% ressource_type/path_to_ressource %}`
-        - If you want to load custom ressources, you can use this syntax. The `path_to_ressource` follows the naming of components.
+        - If you want to load custom ressources, you can use this syntax. The `path_to_ressource` follows the naming of components. This time ressource_type means `css` or `js`.
 - `{+ snippet_path +}`
     - This tag inserts HTML snippets. The path format follows the component naming.
 - `{[ variable_name=>variable_value ]}`
-    - This tag manipulates `array $data = array()` by inserting another value. This is used to create different page titles for different pages
+    - This tag manipulates `array $data = array()` and `array $safeData = array()` by inserting another value. This is used to create different page titles for different pages or manage the navigationsbar.
 - `{# create container_name #}`
     - This tag creates a container, which you can later extend using `{# extend path_to_container_file@container_name #}`
+    - The file with the extend will be loadded in to the create tag of the other file. This is used for the template with general navigationbar and footer.
+    - If more than one extend-tag is used. The whole content with the last container is set into the next.
 - `<?php ?>`
-    - This tag allows you to write plain php inside of HTML. It shouldn't be used if it's not neccessacy since it's not that secure.
+    - This tag allows you to write plain php inside of HTML. It shouldn't be used for a lot of logic. It has acess to the data, safeData, loopData and stuff as attributs of an object called replaceData. At the end data that is returned by the php-code is inserted into the place the php-tag has been.
 
 ### Auth
-Using APIs, Authentification is not as easy as usual. Since a session is not available, you have to store the logged in users somewhere else and create a new connection. The approach in this API uses the concept of Tokens, which are a 64 characters long, random string. When logged in, the token gets stored together with the user id and a timestamp. If you save the token on the local machine of the frontend-computer, you can always access your user id which has a connection to all of your data.
+The approach in this API uses the concept of sessions with Tokens, which are a 64 characters long, random string. When logged in, the token gets stored together with the user id, ip and a timestamp. If you save the token on the local machine of the frontend-computer, you can always access your user id which has a connection to all of your data. Normally tokens expire 30 min after the last request but they can also be set to an endless lifespan.
 
 Auth is a very powerful class that allows you to manage the authentification system of your application with ease.
 - `Auth::registerUser(User $user)`
@@ -72,6 +75,14 @@ Auth is a very powerful class that allows you to manage the authentification sys
     - This method checks the given token and returns it if it's correct and not yet expired.
 - `Auth::logout()`
     - This method deletes the token from the database which logs the user out.
+ 
+Adjustments for our specific programm is a variable status. At the beginning of an request the token is written of the session, get or post parameters and the associated user with information about his account and admin status is loaded. There are 6 diffrent status-values:
+- 0: a guest with no session
+- 1: a user that has not approved his mail yet
+- 2: a normal user
+- 3: a admin
+- 4: a admin thats a nure
+- 5: a admin thats a doctor
 
 ### DB
 Using DB, you can query databases without having to connect every time. There are two different methods:
