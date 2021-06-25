@@ -5,6 +5,7 @@ Routes can be considered either physical or theoretical. Physical routes actuall
 A new Route is added by calling the get or post method of the Routes class in index.php ==> `$routes->get(string $route, $activator)` or `$routes->get(string $route, $activator)`. Depending on the use of the route, you can choose from the more secured post or get.
 - `$route` is the theoretical path that you want to create.
 - `$activator` is a concept that points to a method in a controller-class. In order to set it up properly, you have to provide a string looking like this: "ControllerClassName@MethodName". By convention you point towards a method in a controller class.
+If you want to trigger get and post on the same route, you can use `$routes->both(string $route, $activator)` and split the `$activator` method in GET / POST parts using the `$req->getMethod()` method
 
 After you finished listing all your routes, you have to call the `$routes->listen()` method in order to check for route hits.
 
@@ -69,6 +70,21 @@ Auth is a very powerful class that allows you to manage the authentification sys
 - `Auth::logout()`
     - This method deletes the token from the database which logs the user out.
 
+### DB
+Using DB, you can query databases without having to connect every time. There are two different methods:
+- `DB::query(string $query, array $params = array())`
+    - With this method, you can write all kinds of queries
+- `DB::table(string $tableName)->...->get()`
+    - This method is only for simple select queries. You can `orderBy(string $column, int $direction = 0)`, write conditions `where(string $query, array $params = array())` or simply `get(array $foreignData = array(), array $columns = array())`
+        - `get()`
+            - `$foreignData` is an array following this sequence: [new ForeignDataKey($key, $relationTable, $relationColumn)] where $key is the foreign key, $relationTable is the referencing table and $relationColumn is the referencing column. If your $key is "userID", the foreign Data is going to be stored in "user".
+            - `$columns` is an array of all columns that you want to get.
 
 ### Middleware
-Middleware is a set of restrictions that are checked, before the data is presented to the user. These restrictions can either be placed in the constructor of your controller to restrict all routes going through this controller or into individual methods which only restricts that specific route. You can use the `Middleware::auth()` method to restrict the access to this/these page/s to only be shown to registered users.
+Middleware is a set of restrictions that are checked, before the data is presented to the user. These restrictions can either be placed in the constructor of your controller to restrict all routes going through this controller or into individual methods which only restricts that specific route.
+- `auth()` ==> Only for logged in users
+- `statusBiggerThan(int $status)`
+- `statusSmallerThan(int $status)`
+- `statusEqualTo(int $status)`
+- `statusBiggerOrEqualTo(int $status)`
+- `statusSmallerOrEqualTo(int $status)`
