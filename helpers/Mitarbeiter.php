@@ -75,7 +75,7 @@
                     }
                 }
             }
-            $appointments = DB::query("SELECT count(*) as Anzahl FROM appointment a,appointment_admin b WHERE a.id=b.appointmentID and b.adminID=:userID and day=:day and start<:end and end>:start", [":userID"=>$userID, ":day"=>$date, ":start"=>$start, ":end"=>$end]);
+            $appointments = DB::query("SELECT count(*) as Anzahl FROM appointment a,appointment_admin b WHERE a.id=b.appointmentID and b.adminID=:userID and day=:day and start<:end and end>:start", [":userID"=>$this->userID, ":day"=>$date, ":start"=>$start, ":end"=>$end]);
             if($appointments[0]['Anzahl']>0){
                 return false;
             }
