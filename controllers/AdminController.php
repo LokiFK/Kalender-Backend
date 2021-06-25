@@ -104,23 +104,24 @@
             }
             array_unshift($patients, "");
             array_unshift($patientsID, "");
-            $doctors = DB::query("SELECT * FROM admin, users WHERE users.id=admin.userID AND role=:role ORDER BY lastname", [":role"=>"Arzt"]);
+            $res2 = DB::query("SELECT * FROM admin, users WHERE users.id=admin.userID AND role=:role ORDER BY lastname", [":role"=>"Arzt"]);
             $doctorsID = array();
-            foreach($doctors as $key=>$doctor){
+            $doctors = array();
+            foreach($res2 as $key=>$doctor){
+                //echo "name: ".$doctor['lastname']." <br>";
                 $mitarbeiter = new Mitarbeiter($doctor['userID']);
                 if(!$mitarbeiter->hasTime($date, $start, $end)){
-                    unset($doctors[$key]);
                 } else {
                     $doctors[$key]=$doctor['salutation']." ".$doctor['lastname'];
                     $doctorsID[$key]=$doctor['id'];
                 }
             }
-            $nurses = DB::query("SELECT * FROM admin, users Where users.id=admin.userID and role=:role ORDER BY lastname", [":role"=>"Arzthelfer"]);
+            $res3 = DB::query("SELECT * FROM admin, users Where users.id=admin.userID and role=:role ORDER BY lastname", [":role"=>"Arzthelfer"]);
             $nursesID = array();
-            foreach($nurses as $key=>$nurse){
-                $mitarbeiter = new Mitarbeiter($nurse['userID']);
+            $nurses = array();
+            foreach($res3 as $key=>$nurse){
+                $mitarbeiter = new Mitarbeiter($doctor['userID']);
                 if(!$mitarbeiter->hasTime($date, $start, $end)){
-                    unset($nurses[$key]);
                 } else {
                     $nurses[$key]=$nurse['salutation']." ".$nurse['lastname'];
                     $nursesID[$key]=$nurse['id'];
@@ -134,7 +135,7 @@
             for($i=0; $i<$treatment['nrNurses'];$i++){
                 $nursesInputs= $nursesInputs.'new FormField("nurse'.$i.'", "Arzthelfer'.$i.'", "select", "", [], $replaceData->loopData["nurses"], false, $replaceData->loopData["nursesID"]),';
             }
-            echo $res->view("admin/newAppointment2", ["start"=>$start, "end"=>$end, "date"=>$date, "treatment"=>$treatment], ["doctorsInputs"=>$doctorsInputs, "nursesInputs"=>$nursesInputs], ["rooms"=>$rooms, "patients"=>$patients, "patientsID"=>$patientsID, "doctors"=>$doctor, "doctorsID"=>$doctorsID, "nurses"=>$nurses, "nursesID"=>$nursesID]);
+            echo $res->view("admin/newAppointment2", ["start"=>$start, "end"=>$end, "date"=>$date, "treatment"=>$treatment], ["doctorsInputs"=>$doctorsInputs, "nursesInputs"=>$nursesInputs], ["rooms"=>$rooms, "patients"=>$patients, "patientsID"=>$patientsID, "doctors"=>$doctors, "doctorsID"=>$doctorsID, "nurses"=>$nurses, "nursesID"=>$nursesID]);
         }
         public function newAppointment3(Request $req, Response $res){
             $data = Form::validateDataType($req->getBody(), ["date"=>"date", 'start'=>"time", 'end'=>"time", 'treatment', 'room']);
