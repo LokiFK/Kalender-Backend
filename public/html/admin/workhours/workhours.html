@@ -3,17 +3,48 @@
 {% styles %}
 
 übliche Arbeitszeiten: <br>
+<table border=1>
 {! workhours: 
-    am {{ workhours.day }}<br>
-    von {{ workhours.start }} bis {{ workhours.end }}<br>
-    <a href="/admin/workhours/workhoursDelete?type=workhours&id={{ workhours.id }}">löschen</a><br>
+    <tr>
+    <td>am {{ workhours.key }}</td>
+    {! workhours/inner:
+        <td>
+            von {{ workhours/inner.start }} bis {{ workhours/inner.end }}<br>
+            <a href="/admin/workhours/workhoursDelete?type=workhours&id={{ workhours.id }}">löschen</a><br>
+        </td>
+     !}
+    </tr>
  !}
+</table>
 <a href="/admin/workhours/workhoursAdd?type=workhours">neu</a><br>
 <br><br>
-nicht an den Daten: <br>
-{! blocks: 
-    am {{ blocks.day }}<br>
-    von {{ blocks.start }} bis {{ blocks.end }}
-    <a href="/admin/workhours/workhoursDelete?type=block&id={{ blocks.id }}">löschen</a><br>
+zusätzliche Arbeitszeiten: <br><br>
+<table broder=1>
+{! additionals:
+    <tr>
+    <td>am {{ additionals.key }}</td>
+    {! additionals/inner:
+        <td>
+            von {{ additionals/inner.start }} bis {{ additionals/inner.end }}<br>
+            <a href="/admin/workhours/workhoursDelete?type=block&id={{ blocks.id }}">löschen</a><br>
+        </td>
+     !}
+    </tr>
  !}
-<a href="/admin/workhours/workhoursAdd?type=block">neu</a><br>
+</table>
+<br>
+ abzügliche Arbeitszeiten Arbeitstage: <br>
+<table border=1>
+{! blocks:
+    <tr>
+    <td>am {{ blocks.key }}</td>
+    {! blocks/inner:
+        <td>
+            von {{ blocks/inner.start }} bis {{ blocks/inner.end }}<br>
+            <a href="/admin/workhours/workhoursDelete?type=block&id={{ blocks.id }}">löschen</a><br>
+        </td>
+     !}
+ !}
+ </table>
+ <br>
+ <a href="/admin/workhours/workhoursAdd?type=block">neu</a><br>

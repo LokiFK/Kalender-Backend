@@ -6,9 +6,9 @@
 <div class="form-wrapper">
     {?php
         return Form::create('/admin/workhours/workhoursAdd?type=workhours', 'POST',
-            new FormField('day', 'Wochentag', 'text'),
-            new FormField('start', 'Startzeit', 'text'),
-            new FormField('end', 'Endzeit', 'text'),
+            new FormField('day', 'Wochentag', 'select', '', [], ['Montag', 'Dienstag', 'Mittwoch', 'Donerstag', 'Freitag', 'Samstag', 'Sonntag']),
+            new FormField('start', 'Startzeit', 'time'),
+            new FormField('end', 'Endzeit', 'time'),
 
             new FormField('submit', 'Erstellen', 'submit')
         );

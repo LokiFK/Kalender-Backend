@@ -310,10 +310,9 @@
         public static function workhours(Request $req, Response $res){
             Middleware::statusBiggerOrEqualTo(4);
 
-            $workhours = DB::query("SELECT * FROM workhours WHERE patientID=:userID ORDER BY day, start", [":userID"=>Auth::getUser()['id']]);
-            $blocks = DB::query("SELECT * FROM workhoursblock WHERE patientID=:userID ORDER BY day, start", [":userID"=>Auth::getUser()['id']]);
+            $mitarbeiter = new Mitarbeiter(Auth::getUser()['id']);
 
-            echo $res->view("admin/workhours/workhours", [],[],["workhours"=>$workhours, "blocks"=>$blocks]);
+            echo $res->view("admin/workhours/workhours", [],[],["workhours"=>$mitarbeiter->workhours, "additional"=>$mitarbeiter->additionals, "blocks"=>$mitarbeiter->blocks]);
         }    
         public static function workhoursAdd(Request $req, Response $res){
             Middleware::statusBiggerOrEqualTo(4);
@@ -326,12 +325,25 @@
                     echo $res->view("/admin/workhours/workhoursAddBlock");
                 }
             } else {
+                Form::validateDataType($data, ["start"=>"time", "end"=>"time"]);
+                $start = strtotime($req->getBody()['start']);
+                $start=date('H:i:s', $start);
+                $end = strtotime($req->getBody()['end']);
+                $end=date('H:i:s', $end);
                 if($data['type']=="workhours"){
-                    Form::validateDataType($data, ['day'=>"weekday", "start"=>"time", "end"=>"time"]);
+                    Form::validateDataType($data, ['day'=>"weekday"]);
                     DB::query("INSERT INTO workhours(patientID, day, start, end) VALUES (:userID, :day, :start, :end)", [":day"=>$data['day'], ":start"=>$data['start'], ":end"=>$data["end"], ":userID"=>Auth::getUser()['id']]);
                 } else if($data['type']=="block"){
-                    Form::validateDataType($data, ['day'=>"date", "start"=>"time", "end"=>"time"]);
-                    DB::query("INSERT INTO workhoursblock(patientID, day, start, end) VALUES (:userID, :day, :start, :end)", [":day"=>$data['day'], ":start"=>$data['start'], ":end"=>$data["end"], ":userID"=>Auth::getUser()['id']]);
+                    Form::validateDataType($data, ['isBlock','day'=>"date"]);
+                    if($data['isBlock'] == 0){
+                        $isBlock = false;
+                    } else if($data['isBlock'] == 0){
+                        $isBlock = true;
+                    } else {
+                        ErrorUI::error(400, 'Bad request');
+                        exit;
+                    }
+                    DB::query("INSERT INTO workhoursblock(patientID, day, start, end, isBlock) VALUES (:userID, :day, :start, :end, :isBlock)", [":isBlock"=>$isBlock,":day"=>$data['day'], ":start"=>$data['start'], ":end"=>$data["end"], ":userID"=>Auth::getUser()['id']]);
                 }
                 Path::redirect(Path::ROOT . 'admin/workhours/workhours');
             }

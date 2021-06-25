@@ -9,5 +9,6 @@
     require_once './helpers/UI.php';
     require_once './helpers/Form.php';
     require_once './helpers/TemplateHTML.php';
+    require_once './helpers/Mitarbeiter.php';
 
 ?>

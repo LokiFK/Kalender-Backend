@@ -6,9 +6,10 @@
 <div class="form-wrapper">
     {?php
         return Form::create('/admin/workhours/workhoursAdd?type=block', 'POST',
+            new FormField('isBlock', 'Art', 'select', '', [0,1], ['zusätzlich', 'abzüglich']),
             new FormField('day', 'Datum', 'date'),
-            new FormField('start', 'Startzeit', 'text'),
-            new FormField('end', 'Endzeit', 'text'),
+            new FormField('start', 'Startzeit', 'time'),
+            new FormField('end', 'Endzeit', 'time'),
 
             new FormField('submit', 'Erstellen', 'submit')
         );
