@@ -10,7 +10,9 @@
             new FormField('treatment', 'Behandlung', 'hidden', '{{ treatment }}'),
 
             new FormField('room', 'Raum', 'select', '', [], $replaceData->loopData["rooms"], false),
-            new FormField('patient', 'Patient (nicht erforderlich)', 'select', '', [], $replaceData->loopData["patients"], false),
+            new FormField('patient', 'Patient (nicht erforderlich)', 'select', '', $replaceData->loopData["patientsID"], $replaceData->loopData["patients"], false),
+            {{ doctorsInputs }}
+            {{ nursesInputs }}
 
             new FormField('submit', 'erstellen', 'submit')
         );
