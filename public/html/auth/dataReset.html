@@ -1,8 +1,10 @@
 {[ title=>Profil, navContentLink=>user/nav ]}
 {# extend general/template@main #}
 {% css/auth/form %}
+{% styles %}
 {% script %}
-<div class="form-wrapper">
+
+<div class="form-wrapper dataReset-form-wrapper">
     <h3 id="title">Hallo {{ username }}, bitte ändere hier Deine Daten</h3><br>
     {?php
         return Form::create('/auth/account/dataReset', 'POST',
