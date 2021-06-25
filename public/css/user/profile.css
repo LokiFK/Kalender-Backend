@@ -1,25 +1,15 @@
-#form {
-    color: black;
-    padding: 15px;
-    width: fit-content;
+.td-profile {
+    width: 50%;
 }
 
-#field {
-    width: fit-content;
-    min-width: 20%;
+.tr-profile, .table-profile {
+    width: 100%;
 }
 
-#title {
-    margin: 15px;
+.start {
+    text-align: start;
 }
 
-#content {
-    width: 500px;
-}
-
-#container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 500px;
+.end {
+    text-align: end;
 }

@@ -1,39 +1,35 @@
 {[ title=>Profil, navContentLink=>user/nav ]}
 {# extend general/template@main #}
+{% styles %}
 
 <div class="form-wrapper">
-    <h3 id="title">Hallo {{ username }}</h3>
-    <form id="form">
-        <label for="salutation">Geschlecht</label><br>
-        <div id="textbox">
-            <label name="salutation">{{ salutation }}</label>
-        </div>
-        <br>
-        <label for="firstName">Vorname</label><br>
-        <div id="textbox">
-            <label name="firstName">{{ firstname }}</label>
-        </div>
-        <br>
-        <label for="lastName">Nachname</label><br>
-        <div id="textbox">
-            <label>{{ lastname }}</label>
-        </div>
-        <br>
-        <label for="birthday">Geburtsdatum</label><br>
-        <div id="textbox">
-            <label >{{ birthday }}</label>
-        </div>
-        <br>
-        <label for="firstName">Versicherung</label><br>
-        <div id="textbox">
-            <label>{{ insurance }}</label>
-        </div>
-        <br>
-        <label for="firstName">Email</label><br>
-        <div id="textbox">
-            <label >{{ email }}</label>
-        </div>
-    </form>
+    <h2 class="heading">Hallo, {{ username }}</h3>
+    <table class="table-profile">
+        <tr class="tr-profile">
+            <td class="td-profile start">Anrede</td>
+            <td class="td-profile end">{{ salutation }}</td>
+        </tr>
+        <tr class="tr-profile">
+            <td class="td-profile start">Vorname</td>
+            <td class="td-profile end">{{ firstname }}</td>
+        </tr>
+        <tr class="tr-profile">
+            <td class="td-profile start">Nachname</td>
+            <td class="td-profile end">{{ lastname }}</td>
+        </tr>
+        <tr class="tr-profile">
+            <td class="td-profile start">Geburtsdatum</td>
+            <td class="td-profile end">{{ birthday }}</td>
+        </tr>
+        <tr class="tr-profile">
+            <td class="td-profile start">Versicherung</td>
+            <td class="td-profile end">{{ insurance }}</td>
+        </tr>
+        <tr class="tr-profile">
+            <td class="td-profile start">E-Mail</td>
+            <td class="td-profile end">{{ email }}</td>
+        </tr>
+    </table>
 
     {?php
         return Form::create('/auth/account/resetUserdata', 'GET',
