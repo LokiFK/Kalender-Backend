@@ -498,8 +498,12 @@
                     $returnVal .= "<option selected hidden value='" . $this->defaultValue . "'>" . $this->defaultValue . "</option>";
                 }
                 foreach ($this->selectOptions as $key=>$value) {
+                    if($this->defaultValue == $value) {
+                        $returnVal .= "<option selected hidden value='" . $this->defaultValue . "'>" . $this->defaultValue . "</option>";
+                    }
                     $returnVal .= "<option value='" . $this->selectValueOptions[$key] . "'>" . $this->selectOptions[$key] . "</option>";
                 }
+
                 if ($this->selectIncludeCustomText) {
                     $returnVal .= "
                             <option value='sonstiges' id='sonstiges'>Sonstiges</option>
