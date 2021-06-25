@@ -12,18 +12,42 @@ After you finished listing all your routes, you have to call the `$routes->liste
 Controllers are the place to put your logic into. It's the one and only place to fetch, manipulate or create data from. Controllers live in `./controllers/*`.
 Every method in a controller recieves two arguments being a `Request $req` and a `Response $res`. The Request contains a body `$req->getBody()`, which returns all post / get request parameters, and the request method `$req->getMethod()`. In order to serve content to the user, you have to use the `$res` parameter. There are three different options:
 - `$res->json(array $input)` sends a dictionary, in json format, to the user.
-- `$res->view(string $component, array $data)` renders an html component. `$component` is the relative path starting at `./public/html/`, which means, that a component living in `./public/html/auth/register.html` would be called `auth/register`. `$data` is a dictionary where key is the name of the variable and value is its value. Giving a title to each page is mandatory.
+- `$res->view(...)` renders an html component.
 Error management can be done using the `Response $res`. There are two different ways to send an error: a visual error page `$res->errorVisual($errCode, $msg)` or a json message `$res->errorJSON($errCode, $msg)`. The visual error refers to an error page living in `./public/html/general/error.html`.
 
-### Components
-Components are HTML files, that can be manipulated in terms of placing data from php into it. They can be served by a controller using the `$res->view(string $component, array $data)` function. There are five different tags that manipulate, load or insert data:
-- {{ variable_name }}
-    - This tag creates a space for a variable called variable_name, which was passed over by the controller in the $data parameter in the view method.
-- {% ressource_type %}
-    - This tag inserts styles or scripts that live in `./public/[ressource_type]/[component_path]`
-- {+ snippet_path +}
-    - This tag inserts html snippets. The path format follows the component naming.
-- <?php ?>
+### Template Engine
+#### Controller Part
+Components are HTML files, that can be manipulated in terms of placing data from php into it. They can be served by a controller using the `$res->view(string $component, array $data = array(), array $safeData = array(), array $loopData = array())` function.
+- `string $component`
+    - This parameter is the path to the html component starting at `./public/html/`. This means, that a component living in `./public/html/auth/register.html` would be called `auth/register`.
+- `array $data = array()`
+    - Using this parameter, you can push variables from php into an html file. All basic types are allowed, Arrays and Dictionaries are not. An example is the username, which is later displayed in a welcome message. The variables are inserted using a key / value pair where key is the name called in HTML and value is your variable value: ['Your_wonderful_var_name' => 'Your_wonderful_var_value'].
+- `array $safeData = array()`
+    - It's basically the same as above, but you aren't allowed to put dynamic data into it. Since this data is inserted before executing php in the html file, you could catch an injection attack if any user inserts PHP code as for example their username. A good example for using this parameter is to serve the current date and time or the title of the page.
+- `array $loopData = array()`
+    - This parameter is used to serve arrays in HTML. The type convension is array, basic data types are not allowed. You can insert your array as following: ['Your_wonderful_array_name' => ['Your_wonderful_array_values']].
+
+#### HTML Part
+There are tags that manipulate, load or insert data directly in HTML (Warning: every space is important, we work with indexes of different characters):
+- `{{ variable_name }}`
+    - This tag creates a place, where your variable, inserted in `array $data = array()`, can be inserted.
+- `{! array_name: *Iteration template* !}`
+    - This tag allows you to loop over arrays.
+    - `*Iteration template*` is the element, that you want to create with every iteration.
+    - Inside `*Iteration template*`, you can call the current iteration by using:
+        - `{{ array_name(.*) }}` gives you the data behind the current iteration. Using the `.*` syntax, you can walk through json data.
+        - `{{ array_name.iterationNr }}` gives you the current iteration index (= i)
+- `{% ressource_type %}`
+    - This tag inserts styles or scripts that live in `./public/[ressource_type]/[component_path]`.
+    - `{% ressource_type/path_to_ressource %}`
+        - If you want to load custom ressources, you can use this syntax. The `path_to_ressource` follows the naming of components.
+- `{+ snippet_path +}`
+    - This tag inserts HTML snippets. The path format follows the component naming.
+- `{[ variable_name=>variable_value ]}`
+    - This tag manipulates `array $data = array()` by inserting another value. This is used to create different page titles for different pages
+- `{# create container_name #}`
+    - This tag creates a container, which you can later extend using `{# extend path_to_container_file@container_name #}`
+- `<?php ?>`
     - This tag allows you to write plain php inside of HTML. It shouldn't be used if it's not neccessacy since it's not that secure.
 
 ### Auth
