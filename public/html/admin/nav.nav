@@ -1,14 +1,20 @@
 @link[Start(/admin/landingPage), status>=3]
 
 @link[Overview(/admin/overview), status>=3]
-@link[neuerTermin(/admin/appointment/new), status>=3]
 @link[Räume(/admin/rooms), status>=3]
 @link[Behandlungen(/admin/treatments), status>=3]
-@link[Ausstehend(/admin/pending), status>=3]
 @link[Patienten(/admin/search/search), status>=3]
-@link[eigeneTermine(/admin/personalAppointments), status>=4]
-@link[Planen(/admin/generalPlaning), status>=4]
 @link[Arbeitszeiten(/admin/workhours/workhours), status>=4]
+@dropdown[
+    title=Termine;
+    items="
+        Neuer(/admin/appointment/new),
+        Eigene(/admin/personalAppointments),
+        Ausstehend(/admin/pending),
+        Planen(/admin/generalPlaning)
+    ";
+    status>=3
+]
 
 @flipside[]
 
