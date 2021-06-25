@@ -4,12 +4,23 @@
 {% script %}
 
 <table id=datesTable border=1>
-    <tbody id=datesBody>
-        
+    <tbody id=datesTableBody>
+        <tr>
+            {! dates: 
+                <td {{ dates.class }}>
+                    <a href="/admin/overview?date={{ dates.date }}">{{ dates.date }}</a>
+                </td>
+             !}
+        </tr> 
     </tbody>
 </table>
+<br>
 <table id=table border=1>
     <tbody id=appointmentsTable>
-
+        {! rooms:
+            <tr>
+                <td>{{ rooms.number }}</td>
+            </tr>
+         !}
     </tbody>
 </table>
