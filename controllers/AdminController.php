@@ -136,7 +136,7 @@
             for($i=0; $i<$treatment['nrNurses'];$i++){
                 $nursesInputs= $nursesInputs.'new FormField("nurse'.$i.'", "Arzthelfer'.$i.'", "select", "", [], $replaceData->loopData["nurses"], false, $replaceData->loopData["nursesID"]),';
             }
-            echo $res->view("admin/newAppointment2", ["start"=>$start, "end"=>$end, "date"=>$date, "treatment"=>$treatment], ["doctorsInputs"=>$doctorsInputs, "nursesInputs"=>$nursesInputs], ["rooms"=>$rooms, "patients"=>$patients, "patientsID"=>$patientsID, "doctors"=>$doctors, "doctorsID"=>$doctorsID, "nurses"=>$nurses, "nursesID"=>$nursesID]);
+            echo $res->view("admin/newAppointment2", ["start"=>$start, "end"=>$end, "date"=>$date, "treatment"=>$treatment['name']], ["doctorsInputs"=>$doctorsInputs, "nursesInputs"=>$nursesInputs], ["rooms"=>$rooms, "patients"=>$patients, "patientsID"=>$patientsID, "doctors"=>$doctors, "doctorsID"=>$doctorsID, "nurses"=>$nurses, "nursesID"=>$nursesID]);
         }
 
         public function newAppointment3(Request $req, Response $res){
@@ -146,8 +146,6 @@
             $end = strtotime($req->getBody()['end']);
             $end=date('H:i:s', $end);
             $date = $data['date'];
-            echo $data['treatment'];
-            exit;
             $treatment = DB::query("SELECT * FROM treatment WHERE name=:name", [":name"=>$data["treatment"]]);
             if(count($treatment)==0){
                 ErrorUI::error(400, 'Bad request');
@@ -155,7 +153,7 @@
             } else {
                 $treatment = $treatment[0];
             }
-            $room = DB::query("SELECT * FROM room WHERE number=:number", [":number"=>$data['number']]);
+            $room = DB::query("SELECT * FROM room WHERE number=:number", [":number"=>$data['room']]);
             if(count($room)==0 || !Mitarbeiter::isRoomFree($room[0]['number'], $date, $start, $end)){
                 ErrorUI::error(400, 'Bad request');
                 exit;
@@ -203,12 +201,12 @@
                 }
                 array_push($nurses,$nurse);
             }
-            $appID = DB::query("INSERT INTO appointment(treatmentID, roomID, start, end, day) VALUES (:treatment, :room, :start, :end, :day)", [":treatment"=>$treatment['id'], ":room"=>$room[0]["id"], ":start"=>$data["start"], ":end"=>$data["end"], ":day"=>$data["day"]]);
+            $appID = DB::query("INSERT INTO appointment(treatmentID, roomID, start, end, day, status) VALUES (:treatment, :room, :start, :end, :day, :status)", [":treatment"=>$treatment['id'], ":room"=>$room[0]["id"], ":start"=>$data["start"], ":end"=>$data["end"], ":day"=>$data["date"], ':status' => 'warten']);
             foreach($doctors as $doctor){
-                DB::query("INSERT INTO appointments_admin(appointmentID, adminID) VALUES (:appID, :adID)", [":appID"=>$appID, ":adID"=>$doctor]);
+                DB::query("INSERT INTO appointment_admin(appointmentID, adminID) VALUES (:appID, :adID)", [":appID"=>$appID, ":adID"=>$doctor]);
             }
             foreach($nurses as $nurse){
-                DB::query("INSERT INTO appointments_admin(appointmentID, adminID) VALUES (:appID, :adID)", [":appID"=>$appID, ":adID"=>$nurse]);
+                DB::query("INSERT INTO appointment_admin(appointmentID, adminID) VALUES (:appID, :adID)", [":appID"=>$appID, ":adID"=>$nurse]);
             }
             Path::redirect(Path::ROOT."admin/appointment/new");
         }
