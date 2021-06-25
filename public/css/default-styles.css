@@ -85,6 +85,7 @@
     outline: 0;
     border-radius: 4px;
     box-sizing: border-box;
+    cursor: text;
 }
 
 .form-wrapper select {
@@ -97,6 +98,7 @@
     outline: 0;
     border-radius: 4px;
     box-sizing: border-box;
+    cursor: text;
 }
 
 .form-wrapper input[type=time] {
@@ -109,6 +111,7 @@
     outline: 0;
     border-radius: 4px;
     box-sizing: border-box;
+    cursor: text;
 }
 
 .form-wrapper input[type=submit] {
@@ -120,10 +123,11 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: 1s box-shadow;
 }
 
 .form-wrapper input[type=submit]:hover {
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
 }
 
 .form-wrapper {

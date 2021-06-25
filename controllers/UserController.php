@@ -144,18 +144,17 @@
 //                echo $results[0]['endTime']." ";
                 foreach ($results as $r) {
                     $startTime = strtotime($r["startTime"]);
-//                    echo date('H:s:i', strtotime($r['endTime']));
-                    if ($startTime <= strtotime("24:00") && $startTime >= strtotime("00:00")) {
-                        $sta = strtotime($r['endTime']);
-                        $en = strtotime($duration);
-                        $totaltime = ($en - $sta)  ;
-                        $hours = intval($totaltime / 3600);
-                        $seconds_remain = ($totaltime - ($hours * 3600));
-                        $minutes = intval($seconds_remain / 60);
+                    $endTime = strtotime($r['endTime']);
+    //                    echo date('H:s:i', strtotime($r['endTime']));
+                    $sta = $endTime;
+                    $en = strtotime($duration);
+                    $totaltime = ($en - $sta)  ;
+                    $hours = intval($totaltime / 3600);
+                    $seconds_remain = ($totaltime - ($hours * 3600));
+                    $minutes = intval($seconds_remain / 60);
 //                        echo $hours.':'.$minutes;
-                        if ((strtotime($end) < $startTime) || strtotime($start) > strtotime(abs($hours).":".abs($minutes))) {
-                            ErrorUI::error(404, "Bitte eine Uhrzeit im gültigen Zeitrahmen angeben.");
-                        }
+                    if ((strtotime($end) < $startTime) || strtotime($start) > strtotime(abs($hours).":".abs($minutes))) {
+                        ErrorUI::error(404, "Bitte eine Uhrzeit im gültigen Zeitrahmen angeben.");
                     }
                 }
                 if ($result==null) {
