@@ -8,22 +8,38 @@
   <form action="/admin/merge" method="POST">
     <h4>Termininfo:</h4><br>
     <label>Behandlung:</label><br>
-    <input class="textbox" name="treatment" value="{{ treatment }}" readonly/><br>
+    <label>
+      <input class="textbox" name="treatment" value="{{ treatment }}" readonly/>
+    </label><br>
     <label>Wochentag:</label><br>
-    <input class="textbox" name="day" value="{{ day }}" readonly/><br>
+    <label>
+      <input class="textbox" name="day" value="{{ day }}" readonly/>
+    </label><br>
     <label>Startuhrzeit:</label><br>
-    <input class="textbox" name="start" value="{{ start }}" readonly/><br>
+    <label>
+      <input class="textbox" name="start" value="{{ start }}" readonly/>
+    </label><br>
     <label>Enduhrzeit:</label><br>
-    <input class="textbox" name="end" value="{{ end }}" readonly/><br>
+    <label>
+      <input class="textbox" name="end" value="{{ end }}" readonly/>
+    </label><br>
     <h4>In Konflikt:</h4><br>
     <label>Behandlung:</label><br>
-    <input class="textbox" value="{{ treatment }}" readonly/><br>
+    <label>
+      <input class="textbox" value="{{ treatment }}" readonly/>
+    </label><br>
     <label>Wochentag:</label><br>
-    <input class="textbox" value="{{ day }}" readonly/><br>
+    <label>
+      <input class="textbox" value="{{ day }}" readonly/>
+    </label><br>
     <label>Startuhrzeit:</label><br>
-    <input class="textbox" name="rstart" value="{{ result.startTime }}" readonly/><br>
+    <label>
+      <input class="textbox" name="rstart" value="{{ result.startTime }}" readonly/>
+    </label><br>
     <label>Enduhrzeit:</label><br>
-    <input class="textbox" name="rend" value="{{ result.endTime }}" readonly/><br>
+    <label>
+      <input class="textbox" name="rend" value="{{ result.endTime }}" readonly/>
+    </label><br>
     <input type="submit" name="merge" value="Zusammenlegen">
     <input type="submit" name="overwrite" value="Überschreiben">
     <input type="submit" name="cancel" value="Abbrechen">
