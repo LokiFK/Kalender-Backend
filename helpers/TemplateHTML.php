@@ -391,6 +391,7 @@
         }
 
         private static function loadAndExecutePHP(string $innerData, ReplaceData $replaceData) {     //Warnung never user data
+            //echo ($innerData."<br>");
             $res = eval($innerData);
             if ($res === null) { return ""; }
             return $res;
@@ -455,7 +456,7 @@
         private $selectOptions;
         private $selectIncludeCustomText;
 
-        public function __construct($name, $label, $inputType, $defaultValue="", array $validation=array(), array $selectOptions=array(), bool $selectIncludeCustomText=true)
+        public function __construct($name, $label, $inputType, $defaultValue="", array $validation=array(), array $selectOptions=array(), bool $selectIncludeCustomText=true, array $selectValueOptions=null)
         {
             $this->name = $name;
             $this->inputType = $inputType;
@@ -466,6 +467,11 @@
                 $this->selectOptions = $selectOptions;
             }
             $this->selectIncludeCustomText = $selectIncludeCustomText;
+            if($selectValueOptions==null){
+                $this->selectValueOptions=$selectOptions;
+            } else {
+                $this->selectValueOptions = $selectValueOptions;
+            }
         }
 
         public function getHTML(): string
@@ -489,12 +495,8 @@
                     <select class='form-input' id='select-$this->name' name='$this->name'>
                 ";
 
-                for ($i = 0; $i < count($this->selectOptions); $i++) {
-                    if ($i == 0) {
-                        $returnVal .= "<option value='" . $this->selectOptions[$i] . "'>" . $this->selectOptions[$i] . "</option>";
-                        continue;
-                    }
-                    $returnVal .= "<option value='" . $this->selectOptions[$i] . "'>" . $this->selectOptions[$i] . "</option>";
+                foreach ($this->selectOptions as $key=>$value) {
+                    $returnVal .= "<option value='" . $this->selectValueOptions[$key] . "'>" . $this->selectOptions[$key] . "</option>";
                 }
                 if ($this->selectIncludeCustomText) {
                     $returnVal .= "
