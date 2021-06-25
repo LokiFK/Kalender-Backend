@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 25. Jun 2021 um 15:17
--- Server-Version: 10.4.19-MariaDB
--- PHP-Version: 8.0.7
+-- Generation Time: Jun 25, 2021 at 05:15 PM
+-- Server version: 10.4.19-MariaDB
+-- PHP Version: 8.0.7
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,25 +18,25 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Datenbank: `calendar`
+-- Database: `calendar`
 --
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `account`
+-- Table structure for table `account`
 --
 
 CREATE TABLE `account` (
-  `userID` int(11) NOT NULL,
-  `username` varchar(50) DEFAULT NULL,
-  `email` varchar(50) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL,
-  `createdAt` varchar(10) DEFAULT NULL
+                           `userID` int(11) NOT NULL,
+                           `username` varchar(50) DEFAULT NULL,
+                           `email` varchar(50) DEFAULT NULL,
+                           `password` varchar(255) DEFAULT NULL,
+                           `createdAt` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Daten für Tabelle `account`
+-- Dumping data for table `account`
 --
 
 INSERT INTO `account` (`userID`, `username`, `email`, `password`, `createdAt`) VALUES
@@ -55,16 +55,16 @@ INSERT INTO `account` (`userID`, `username`, `email`, `password`, `createdAt`) V
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `admin`
+-- Table structure for table `admin`
 --
 
 CREATE TABLE `admin` (
-  `userID` int(11) NOT NULL,
-  `role` varchar(20) DEFAULT NULL
+                         `userID` int(11) NOT NULL,
+                         `role` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Daten für Tabelle `admin`
+-- Dumping data for table `admin`
 --
 
 INSERT INTO `admin` (`userID`, `role`) VALUES
@@ -80,43 +80,53 @@ INSERT INTO `admin` (`userID`, `role`) VALUES
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `appointment`
+-- Table structure for table `appointment`
 --
 
 CREATE TABLE `appointment` (
-  `id` int(11) NOT NULL,
-  `userID` int(11) DEFAULT NULL,
-  `treatmentID` int(11) DEFAULT NULL,
-  `roomID` int(11) DEFAULT NULL,
-  `start` varchar(8) DEFAULT NULL,
-  `end` varchar(8) DEFAULT NULL,
-  `status` varchar(20) DEFAULT NULL,
-  `day` varchar(10) DEFAULT NULL
+                               `id` int(11) NOT NULL,
+                               `userID` int(11) DEFAULT NULL,
+                               `treatmentID` int(11) DEFAULT NULL,
+                               `roomID` int(11) DEFAULT NULL,
+                               `start` varchar(8) DEFAULT NULL,
+                               `end` varchar(8) DEFAULT NULL,
+                               `status` varchar(20) DEFAULT NULL,
+                               `day` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Daten für Tabelle `appointment`
+-- Dumping data for table `appointment`
 --
 
 INSERT INTO `appointment` (`id`, `userID`, `treatmentID`, `roomID`, `start`, `end`, `status`, `day`) VALUES
-(2, 1, 1, 1, '12:45:00', '13:00:00', 'wahrgenommen', '2020-12-12'),
+(2, 1, 1, 1, '12:45:00', '13:45:00', 'wahrgenommen', '2020-12-12'),
 (3, 3, 2, 2, '12:45:00', '13:00:00', 'wahrgenommen', '2020-12-12'),
-(4, 5, 3, 3, '12:45:00', '13:00:00', 'wahrgenommen', '2020-12-12'),
-(5, NULL, 3, 1, '12:45:00', '13:00:00', 'warten', '2020-12-12');
+(4, 5, 3, 3, '12:45:00', '13:00:00', 'wahrgenommen', '2020-07-06'),
+(10, 17, 2, 1, '12:00', '12:15', 'bestätigt', '2021-06-28'),
+(17, 17, 2, 1, '13:00', '13:15', 'abgelehnt', '2021-06-28'),
+(18, 17, 2, 1, '14:45', '15:00', 'abgelehnt', '2021-06-28'),
+(19, 17, 2, 1, '15:05', '15:20', 'abgelehnt', '2021-06-28'),
+(20, 17, 1, 1, '09:00', '09:30', 'abgelehnt', '2021-07-05'),
+(21, 17, 1, 1, '10:00', '10:30', 'abgelehnt', '2021-07-05'),
+(22, 17, 1, 1, '14:00', '14:30', 'abgelehnt', '2021-07-05'),
+(23, 17, 2, 1, '10:00', '10:15', 'abgelehnt', '2021-06-28'),
+(24, 17, 2, 1, '12:00', '12:15', 'abgelehnt', '2021-09-06'),
+(25, 17, 1, 1, '09:00', '09:30', 'warten', '2021-06-28'),
+(26, 17, 1, 1, '14:00', '14:30', 'warten', '2021-06-28');
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `appointment_admin`
+-- Table structure for table `appointment_admin`
 --
 
 CREATE TABLE `appointment_admin` (
-  `appointmentID` int(11) NOT NULL,
-  `adminID` int(11) NOT NULL
+                                     `appointmentID` int(11) NOT NULL,
+                                     `adminID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Daten für Tabelle `appointment_admin`
+-- Dumping data for table `appointment_admin`
 --
 
 INSERT INTO `appointment_admin` (`appointmentID`, `adminID`) VALUES
@@ -132,42 +142,42 @@ INSERT INTO `appointment_admin` (`appointmentID`, `adminID`) VALUES
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `appointment_typical`
+-- Table structure for table `appointment_typical`
 --
 
 CREATE TABLE `appointment_typical` (
-  `id` int(11) NOT NULL,
-  `treatment` int(11) DEFAULT NULL,
-  `day` varchar(32) NOT NULL,
-  `endTime` time NOT NULL,
-  `startTime` time NOT NULL
+                                       `id` int(11) NOT NULL,
+                                       `treatment` int(11) DEFAULT NULL,
+                                       `day` varchar(32) NOT NULL,
+                                       `endTime` time NOT NULL,
+                                       `startTime` time NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Daten für Tabelle `appointment_typical`
+-- Dumping data for table `appointment_typical`
 --
 
 INSERT INTO `appointment_typical` (`id`, `treatment`, `day`, `endTime`, `startTime`) VALUES
 (5, 2, 'Montag', '15:00:00', '12:00:00'),
-(6, 1, 'Montag', '14:00:00', '12:00:00'),
-(7, 4, 'Montag', '12:00:00', '11:00:00'),
-(8, 3, 'Montag', '10:00:00', '08:00:00');
+(8, 3, 'Montag', '10:00:00', '08:00:00'),
+(9, 1, 'Dienstag', '13:00:00', '12:00:00'),
+(10, 1, 'Montag', '12:00:00', '09:00:00');
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `notapproved`
+-- Table structure for table `notapproved`
 --
 
 CREATE TABLE `notapproved` (
-  `id` int(11) NOT NULL,
-  `userID` int(11) DEFAULT NULL,
-  `code` varchar(50) DEFAULT NULL,
-  `datetime` varchar(30) DEFAULT NULL
+                               `id` int(11) NOT NULL,
+                               `userID` int(11) DEFAULT NULL,
+                               `code` varchar(50) DEFAULT NULL,
+                               `datetime` varchar(30) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Daten für Tabelle `notapproved`
+-- Dumping data for table `notapproved`
 --
 
 INSERT INTO `notapproved` (`id`, `userID`, `code`, `datetime`) VALUES
@@ -189,18 +199,18 @@ INSERT INTO `notapproved` (`id`, `userID`, `code`, `datetime`) VALUES
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `opening_times`
+-- Table structure for table `opening_times`
 --
 
 CREATE TABLE `opening_times` (
-  `id` int(11) NOT NULL,
-  `day` varchar(32) DEFAULT NULL,
-  `opening` time NOT NULL,
-  `closing` time NOT NULL
+                                 `id` int(11) NOT NULL,
+                                 `day` varchar(32) DEFAULT NULL,
+                                 `opening` time NOT NULL,
+                                 `closing` time NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Daten für Tabelle `opening_times`
+-- Dumping data for table `opening_times`
 --
 
 INSERT INTO `opening_times` (`id`, `day`, `opening`, `closing`) VALUES
@@ -212,19 +222,19 @@ INSERT INTO `opening_times` (`id`, `day`, `opening`, `closing`) VALUES
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `passwordreset`
+-- Table structure for table `passwordreset`
 --
 
 CREATE TABLE `passwordreset` (
-  `id` int(11) NOT NULL,
-  `userID` int(11) DEFAULT NULL,
-  `code` varchar(50) DEFAULT NULL,
-  `datetime` datetime DEFAULT NULL,
-  `isUsed` tinyint(1) DEFAULT NULL
+                                 `id` int(11) NOT NULL,
+                                 `userID` int(11) DEFAULT NULL,
+                                 `code` varchar(50) DEFAULT NULL,
+                                 `datetime` datetime DEFAULT NULL,
+                                 `isUsed` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Daten für Tabelle `passwordreset`
+-- Dumping data for table `passwordreset`
 --
 
 INSERT INTO `passwordreset` (`id`, `userID`, `code`, `datetime`, `isUsed`) VALUES
@@ -233,16 +243,16 @@ INSERT INTO `passwordreset` (`id`, `userID`, `code`, `datetime`, `isUsed`) VALUE
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `room`
+-- Table structure for table `room`
 --
 
 CREATE TABLE `room` (
-  `id` int(11) NOT NULL,
-  `number` varchar(20) DEFAULT NULL
+                        `id` int(11) NOT NULL,
+                        `number` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Daten für Tabelle `room`
+-- Dumping data for table `room`
 --
 
 INSERT INTO `room` (`id`, `number`) VALUES
@@ -258,20 +268,20 @@ INSERT INTO `room` (`id`, `number`) VALUES
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `session`
+-- Table structure for table `session`
 --
 
 CREATE TABLE `session` (
-  `id` int(11) NOT NULL,
-  `userID` int(11) NOT NULL,
-  `token` varchar(64) NOT NULL,
-  `start` varchar(30) DEFAULT NULL,
-  `end` varchar(30) DEFAULT NULL,
-  `ip` varchar(255) DEFAULT NULL
+                           `id` int(11) NOT NULL,
+                           `userID` int(11) NOT NULL,
+                           `token` varchar(64) NOT NULL,
+                           `start` varchar(30) DEFAULT NULL,
+                           `end` varchar(30) DEFAULT NULL,
+                           `ip` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Daten für Tabelle `session`
+-- Dumping data for table `session`
 --
 
 INSERT INTO `session` (`id`, `userID`, `token`, `start`, `end`, `ip`) VALUES
@@ -308,51 +318,52 @@ INSERT INTO `session` (`id`, `userID`, `token`, `start`, `end`, `ip`) VALUES
 (31, 17, '2face22798cd84fbaed325b8acf0629eea30e58b8c99923aec', '2021/06/24 16:26:58', '2021/06/24 16:57:25', '::1'),
 (32, 17, '07d8f2f30c37c8eb01b5208a63f0acf1167ba31663790c3bec', '2021/06/24 16:27:25', '2021/06/24 16:57:39', '::1'),
 (33, 17, '75a2c5f0da68211ad5377ff8e1287bb88f485bc7346cd0dfd9', '2021/06/24 16:27:39', '2021/06/24 17:29:33', '::1'),
-(34, 17, '86561a33620179c5aefb06fbb944b8ad0b585993cb1d3554ad', '2021/06/24 19:22:09', NULL, '::1'),
-(35, 13, '2702f3ef55dee945f6424548ef7ee0935b91db5494cb9e8f47', '2021/06/24 21:55:35', NULL, '::1');
+(34, 17, '86561a33620179c5aefb06fbb944b8ad0b585993cb1d3554ad', '2021/06/24 19:22:09', '2021/06/25 03:05:15', '::1'),
+(35, 13, '2702f3ef55dee945f6424548ef7ee0935b91db5494cb9e8f47', '2021/06/24 21:55:35', NULL, '::1'),
+(36, 17, '705fdc64507f15723636dda343b4d5ed1d23a7be0b434cfb8b', '2021/06/25 03:08:56', NULL, '::1');
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `treatment`
+-- Table structure for table `treatment`
 --
 
 CREATE TABLE `treatment` (
-  `id` int(11) NOT NULL,
-  `name` varchar(50) DEFAULT NULL,
-  `duration` int(11) DEFAULT NULL,
-  `nrDoctors` int(11) DEFAULT NULL,
-  `nrNurses` int(11) DEFAULT NULL
+                             `id` int(11) NOT NULL,
+                             `name` varchar(50) DEFAULT NULL,
+                             `nrDoctors` int(11) DEFAULT NULL,
+                             `nrNurses` int(11) DEFAULT NULL,
+                             `duration` time DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Daten für Tabelle `treatment`
+-- Dumping data for table `treatment`
 --
 
-INSERT INTO `treatment` (`id`, `name`, dur, `nrDoctors`, `nrNurses`) VALUES
-(1, 'Vorsorgeuntersuchung', 30, 1, 1),
-(2, 'Sprechstunde', 15, 1, 0),
-(3, 'Operation', 60, 2, 3),
-(4, 'Untersuchung', 30, 1, 2);
+INSERT INTO `treatment` (`id`, `name`, `nrDoctors`, `nrNurses`, `duration`) VALUES
+(1, 'Vorsorgeuntersuchung', 1, 1, '00:30:00'),
+(2, 'Sprechstunde', 1, 0, '00:15:00'),
+(3, 'Operation', 2, 3, '01:00:00'),
+(4, 'Untersuchung', 1, 2, '00:30:00');
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
-  `firstname` varchar(50) DEFAULT NULL,
-  `lastname` varchar(50) DEFAULT NULL,
-  `salutation` varchar(20) DEFAULT NULL,
-  `insurance` varchar(20) DEFAULT NULL,
-  `birthday` varchar(10) DEFAULT NULL,
-  `patientID` varchar(30) DEFAULT NULL
+                         `id` int(11) NOT NULL,
+                         `firstname` varchar(50) DEFAULT NULL,
+                         `lastname` varchar(50) DEFAULT NULL,
+                         `salutation` varchar(20) DEFAULT NULL,
+                         `insurance` varchar(20) DEFAULT NULL,
+                         `birthday` varchar(10) DEFAULT NULL,
+                         `patientID` varchar(30) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Daten für Tabelle `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `firstname`, `lastname`, `salutation`, `insurance`, `birthday`, `patientID`) VALUES
@@ -377,289 +388,274 @@ INSERT INTO `users` (`id`, `firstname`, `lastname`, `salutation`, `insurance`, `
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `workhours`
+-- Table structure for table `workhours`
 --
 
 CREATE TABLE `workhours` (
-  `id` int(11) NOT NULL,
-  `patientID` int(11) DEFAULT NULL,
-  `day` varchar(20) DEFAULT NULL,
-  `start` varchar(8) DEFAULT NULL,
-  `end` varchar(8) DEFAULT NULL
+                             `id` int(11) NOT NULL,
+                             `patientID` int(11) DEFAULT NULL,
+                             `day` varchar(20) DEFAULT NULL,
+                             `start` varchar(8) DEFAULT NULL,
+                             `end` varchar(8) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Daten für Tabelle `workhours`
---
-
-INSERT INTO `workhours` (`id`, `patientID`, `day`, `start`, `end`) VALUES
-(1, 13, 'Montag', '08:00', '13:00');
 
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `workhoursblock`
+-- Table structure for table `workhoursblock`
 --
 
 CREATE TABLE `workhoursblock` (
-  `id` int(11) NOT NULL,
-  `patientID` int(11) DEFAULT NULL,
-  `day` varchar(20) DEFAULT NULL,
-  `start` varchar(8) DEFAULT NULL,
-  `end` varchar(8) DEFAULT NULL,
-  `isBlock` tinyint(1) DEFAULT NULL
+                                  `id` int(11) NOT NULL,
+                                  `patientID` int(11) DEFAULT NULL,
+                                  `day` varchar(20) DEFAULT NULL,
+                                  `start` varchar(8) DEFAULT NULL,
+                                  `end` varchar(8) DEFAULT NULL,
+                                  `isBlock` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Daten für Tabelle `workhoursblock`
---
-
-INSERT INTO `workhoursblock` (`id`, `patientID`, `day`, `start`, `end`, `isBlock`) VALUES
-(1, 13, '2021-06-28', '08:00:00', '13:00:00', 1),
-(2, 13, '2021-06-30', '08:00:00', '18:00:00', 0);
-
---
--- Indizes der exportierten Tabellen
+-- Indexes for dumped tables
 --
 
 --
--- Indizes für die Tabelle `account`
+-- Indexes for table `account`
 --
 ALTER TABLE `account`
-  ADD PRIMARY KEY (`userID`),
-  ADD UNIQUE KEY `username` (`username`),
-  ADD UNIQUE KEY `username_2` (`username`,`email`),
-  ADD KEY `email` (`email`);
+    ADD PRIMARY KEY (`userID`),
+    ADD UNIQUE KEY `username` (`username`),
+    ADD UNIQUE KEY `username_2` (`username`,`email`),
+    ADD KEY `email` (`email`);
 
 --
--- Indizes für die Tabelle `admin`
+-- Indexes for table `admin`
 --
 ALTER TABLE `admin`
-  ADD PRIMARY KEY (`userID`);
+    ADD PRIMARY KEY (`userID`);
 
 --
--- Indizes für die Tabelle `appointment`
+-- Indexes for table `appointment`
 --
 ALTER TABLE `appointment`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `userID` (`userID`),
-  ADD KEY `treatmentID` (`treatmentID`),
-  ADD KEY `roomID` (`roomID`);
+    ADD PRIMARY KEY (`id`),
+    ADD KEY `userID` (`userID`),
+    ADD KEY `treatmentID` (`treatmentID`),
+    ADD KEY `roomID` (`roomID`);
 
 --
--- Indizes für die Tabelle `appointment_admin`
+-- Indexes for table `appointment_admin`
 --
 ALTER TABLE `appointment_admin`
-  ADD PRIMARY KEY (`appointmentID`,`adminID`),
-  ADD KEY `adminID` (`adminID`);
+    ADD PRIMARY KEY (`appointmentID`,`adminID`),
+    ADD KEY `adminID` (`adminID`);
 
 --
--- Indizes für die Tabelle `appointment_typical`
+-- Indexes for table `appointment_typical`
 --
 ALTER TABLE `appointment_typical`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `appointment_typical_treatment_id_fk` (`treatment`);
+    ADD PRIMARY KEY (`id`),
+    ADD KEY `appointment_typical_treatment_id_fk` (`treatment`);
 
 --
--- Indizes für die Tabelle `notapproved`
+-- Indexes for table `notapproved`
 --
 ALTER TABLE `notapproved`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `code` (`code`),
-  ADD KEY `userID_2` (`userID`);
+    ADD PRIMARY KEY (`id`),
+    ADD UNIQUE KEY `code` (`code`),
+    ADD KEY `userID_2` (`userID`);
 
 --
--- Indizes für die Tabelle `opening_times`
+-- Indexes for table `opening_times`
 --
 ALTER TABLE `opening_times`
-  ADD PRIMARY KEY (`id`);
+    ADD PRIMARY KEY (`id`);
 
 --
--- Indizes für die Tabelle `passwordreset`
+-- Indexes for table `passwordreset`
 --
 ALTER TABLE `passwordreset`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `code` (`code`),
-  ADD KEY `userID` (`userID`);
+    ADD PRIMARY KEY (`id`),
+    ADD UNIQUE KEY `code` (`code`),
+    ADD KEY `userID` (`userID`);
 
 --
--- Indizes für die Tabelle `room`
+-- Indexes for table `room`
 --
 ALTER TABLE `room`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `number` (`number`);
+    ADD PRIMARY KEY (`id`),
+    ADD UNIQUE KEY `number` (`number`);
 
 --
--- Indizes für die Tabelle `session`
+-- Indexes for table `session`
 --
 ALTER TABLE `session`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `token` (`token`),
-  ADD KEY `session_ibfk_1` (`userID`);
+    ADD PRIMARY KEY (`id`),
+    ADD UNIQUE KEY `token` (`token`),
+    ADD KEY `session_ibfk_1` (`userID`);
 
 --
--- Indizes für die Tabelle `treatment`
+-- Indexes for table `treatment`
 --
 ALTER TABLE `treatment`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `name` (`name`);
+    ADD PRIMARY KEY (`id`),
+    ADD UNIQUE KEY `name` (`name`);
 
 --
--- Indizes für die Tabelle `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
+    ADD PRIMARY KEY (`id`);
 
 --
--- Indizes für die Tabelle `workhours`
+-- Indexes for table `workhours`
 --
 ALTER TABLE `workhours`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `patientID` (`patientID`);
+    ADD PRIMARY KEY (`id`),
+    ADD KEY `patientID` (`patientID`);
 
 --
--- Indizes für die Tabelle `workhoursblock`
+-- Indexes for table `workhoursblock`
 --
 ALTER TABLE `workhoursblock`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `patientID` (`patientID`);
+    ADD PRIMARY KEY (`id`),
+    ADD KEY `patientID` (`patientID`);
 
 --
--- AUTO_INCREMENT für exportierte Tabellen
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT für Tabelle `appointment`
+-- AUTO_INCREMENT for table `appointment`
 --
 ALTER TABLE `appointment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
--- AUTO_INCREMENT für Tabelle `appointment_typical`
+-- AUTO_INCREMENT for table `appointment_typical`
 --
 ALTER TABLE `appointment_typical`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT für Tabelle `notapproved`
+-- AUTO_INCREMENT for table `notapproved`
 --
 ALTER TABLE `notapproved`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
--- AUTO_INCREMENT für Tabelle `opening_times`
+-- AUTO_INCREMENT for table `opening_times`
 --
 ALTER TABLE `opening_times`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT für Tabelle `passwordreset`
+-- AUTO_INCREMENT for table `passwordreset`
 --
 ALTER TABLE `passwordreset`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT für Tabelle `room`
+-- AUTO_INCREMENT for table `room`
 --
 ALTER TABLE `room`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT für Tabelle `session`
+-- AUTO_INCREMENT for table `session`
 --
 ALTER TABLE `session`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
--- AUTO_INCREMENT für Tabelle `treatment`
+-- AUTO_INCREMENT for table `treatment`
 --
 ALTER TABLE `treatment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT für Tabelle `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
--- AUTO_INCREMENT für Tabelle `workhours`
+-- AUTO_INCREMENT for table `workhours`
 --
 ALTER TABLE `workhours`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT für Tabelle `workhoursblock`
+-- AUTO_INCREMENT for table `workhoursblock`
 --
 ALTER TABLE `workhoursblock`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- Constraints der exportierten Tabellen
+-- Constraints for dumped tables
 --
 
 --
--- Constraints der Tabelle `account`
+-- Constraints for table `account`
 --
 ALTER TABLE `account`
-  ADD CONSTRAINT `account_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`);
+    ADD CONSTRAINT `account_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`);
 
 --
--- Constraints der Tabelle `admin`
+-- Constraints for table `admin`
 --
 ALTER TABLE `admin`
-  ADD CONSTRAINT `admin_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`);
+    ADD CONSTRAINT `admin_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`);
 
 --
--- Constraints der Tabelle `appointment`
+-- Constraints for table `appointment`
 --
 ALTER TABLE `appointment`
-  ADD CONSTRAINT `appointment_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `appointment_ibfk_2` FOREIGN KEY (`treatmentID`) REFERENCES `treatment` (`id`),
-  ADD CONSTRAINT `appointment_ibfk_3` FOREIGN KEY (`roomID`) REFERENCES `room` (`id`);
+    ADD CONSTRAINT `appointment_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`),
+    ADD CONSTRAINT `appointment_ibfk_2` FOREIGN KEY (`treatmentID`) REFERENCES `treatment` (`id`),
+    ADD CONSTRAINT `appointment_ibfk_3` FOREIGN KEY (`roomID`) REFERENCES `room` (`id`);
 
 --
--- Constraints der Tabelle `appointment_admin`
+-- Constraints for table `appointment_admin`
 --
 ALTER TABLE `appointment_admin`
-  ADD CONSTRAINT `appointment_admin_ibfk_1` FOREIGN KEY (`appointmentID`) REFERENCES `appointment` (`id`),
-  ADD CONSTRAINT `appointment_admin_ibfk_2` FOREIGN KEY (`adminID`) REFERENCES `admin` (`userID`);
+    ADD CONSTRAINT `appointment_admin_ibfk_1` FOREIGN KEY (`appointmentID`) REFERENCES `appointment` (`id`),
+    ADD CONSTRAINT `appointment_admin_ibfk_2` FOREIGN KEY (`adminID`) REFERENCES `admin` (`userID`);
 
 --
--- Constraints der Tabelle `appointment_typical`
+-- Constraints for table `appointment_typical`
 --
 ALTER TABLE `appointment_typical`
-  ADD CONSTRAINT `appointment_typical_treatment_id_fk` FOREIGN KEY (`treatment`) REFERENCES `treatment` (`id`);
+    ADD CONSTRAINT `appointment_typical_treatment_id_fk` FOREIGN KEY (`treatment`) REFERENCES `treatment` (`id`);
 
 --
--- Constraints der Tabelle `notapproved`
+-- Constraints for table `notapproved`
 --
 ALTER TABLE `notapproved`
-  ADD CONSTRAINT `notapproved_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`);
+    ADD CONSTRAINT `notapproved_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`);
 
 --
--- Constraints der Tabelle `passwordreset`
+-- Constraints for table `passwordreset`
 --
 ALTER TABLE `passwordreset`
-  ADD CONSTRAINT `passwordreset_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`);
+    ADD CONSTRAINT `passwordreset_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`);
 
 --
--- Constraints der Tabelle `session`
+-- Constraints for table `session`
 --
 ALTER TABLE `session`
-  ADD CONSTRAINT `session_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`);
+    ADD CONSTRAINT `session_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`);
 
 --
--- Constraints der Tabelle `workhours`
+-- Constraints for table `workhours`
 --
 ALTER TABLE `workhours`
-  ADD CONSTRAINT `workhours_ibfk_1` FOREIGN KEY (`patientID`) REFERENCES `admin` (`userID`);
+    ADD CONSTRAINT `workhours_ibfk_1` FOREIGN KEY (`patientID`) REFERENCES `admin` (`userID`);
 
 --
--- Constraints der Tabelle `workhoursblock`
+-- Constraints for table `workhoursblock`
 --
 ALTER TABLE `workhoursblock`
-  ADD CONSTRAINT `workhoursblock_ibfk_1` FOREIGN KEY (`patientID`) REFERENCES `admin` (`userID`);
+    ADD CONSTRAINT `workhoursblock_ibfk_1` FOREIGN KEY (`patientID`) REFERENCES `admin` (`userID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
