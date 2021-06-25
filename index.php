@@ -22,7 +22,8 @@
     $routes->get('/user/appointments/new2', 'UserController@new2');
     $routes->get('/user/appointments/new3', 'UserController@new3');
     $routes->get('/user/appointments/overview', 'UserController@overview');
-
+    $routes->both('/user/appointments/custom', 'UserController@customAppointments');
+    $routes->both('/user/appointments/custom/order', 'UserController@orderCustomTime');
 
 
 

@@ -1,0 +1,15 @@
+{[ title=>Terminvereinbarung ]}
+{# extend general/template@main #}
+{% css/auth/form %}
+
+<div class="form-wrapper">
+    <h2>Benutzerdefinierter Zeitpunkt</h2>
+    <form action="/user/appointments/custom" method="POST">
+        <input type="hidden" name="treatment" value="{{ treatment }}">
+        <label>Bitte Tag auswählen</label>
+        <label>
+            <input type="date" name="date"/>
+        </label>
+        <input type="submit" name="submit" value="Weiter"/>
+    </form>
+</div>

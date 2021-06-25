@@ -5,6 +5,10 @@
 <div class="overview-wrapper">
     <div class="appointments">
         <h2 class="heading">Alle Termine</h2>
+        <form class="heading" action="/user/appointments/custom" method="GET">
+            <input type="hidden" name="treatment" value="{{ treatment }}">
+            <input class="large" type="submit" name="custom" value="Anderen Termin für {{ treatment }} wählen">
+        </form>
         <div class="appointments-list">
             <div class="appointments-list-item">
                 <div class="row">

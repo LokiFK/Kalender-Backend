@@ -329,7 +329,7 @@ CREATE TABLE `treatment` (
 -- Daten für Tabelle `treatment`
 --
 
-INSERT INTO `treatment` (`id`, `name`, `duration`, `nrDoctors`, `nrNurses`) VALUES
+INSERT INTO `treatment` (`id`, `name`, dur, `nrDoctors`, `nrNurses`) VALUES
 (1, 'Vorsorgeuntersuchung', 30, 1, 1),
 (2, 'Sprechstunde', 15, 1, 0),
 (3, 'Operation', 60, 2, 3),
