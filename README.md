@@ -102,3 +102,10 @@ Middleware is a set of restrictions that are checked, before the data is present
 - `statusEqualTo(int $status)`
 - `statusBiggerOrEqualTo(int $status)`
 - `statusSmallerOrEqualTo(int $status)`
+
+### HTMLTemplate
+At all our sites we are using a template. It lays in the general folder. The sites are loaded into it with the container tag. The Template sets the title to an element `title` from data. Then there is loaded in a file nav.html. It contains a php-tag that executes a function to interprete .nav files. If there is not set an element 'navContenLink'. It tries to interprete a nav.nav that is located in the same ordner than the file that loaded the template. 
+The nav-syntax is:
+
+Then there is a div content in which the file is loaded.
+In the end there is loaded in the footer from the general folder.
