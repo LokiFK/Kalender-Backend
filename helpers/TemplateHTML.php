@@ -512,7 +512,6 @@
             } else {
                 if ($this->inputType == "hidden") {
                     $returnVal .= "
-                        <label for='select-$this->name'>$this->label</label>
                         <input type='hidden' name='$this->name' value='$this->label'>
                     ";
                 } else if ($this->inputType == "submit") {

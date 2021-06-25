@@ -4,7 +4,6 @@
 
 <div class="overview-wrapper">
     <div class="form-wrapper">
-        Nachname:
         {?php
             return Form::create('/admin/treatment/change?type=new', 'POST',
                 new FormField('search', 'Nachname:', 'text', '{{ search }}'),
