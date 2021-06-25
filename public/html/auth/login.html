@@ -2,16 +2,22 @@
 {# extend general/template@main #}
 {% css/auth/form %}
 <div class="form-wrapper">
-    <form action="/auth/login" method="POST">
-        <label for="username">Benutzername</label>
-        <input type="text" name="username"><br>
-        <label for="password">Passwort</label>
-        <input type="text" name="password"><br>
-        <input type="checkbox" name="remember"><label for="remember">angemeldet bleiben</label><br>
-        <!--checkbox angemeldet bleiben-->
-        <a href="/auth/user/create">registrieren</a>    <br>
-        <a href="/auth/account/resetLink">Passwort vergessen</a>
-
-        <input type="submit" value="Anmelden">
-    </form>
+    {?php
+        return Form::create('/auth/login', 'POST',
+            new FormField('username', 'Benutzername', 'text'),
+            new FormField('password', 'Passwort', 'password'),
+            new FormField('remember', 'Angemeldet bleiben', 'checkbox'),
+            new FormField('submit', 'Anmelden', 'submit')
+        );
+     ?}
+     {?php
+        return Form::create('/auth/user/create', 'GET',
+            new FormField('submit', 'Registrieren', 'submit')
+        );
+     ?}
+     {?php
+        return Form::create('/auth/account/resetLink', 'GET',
+            new FormField('submit', 'Passwort vergessen', 'submit')
+        );
+     ?}
 </div>
