@@ -490,7 +490,7 @@
                     Form::validateDataType($data, ['isBlock','day'=>"date"]);
                     if($data['isBlock'] == 0){
                         $isBlock = false;
-                    } else if($data['isBlock'] == 0){
+                    } else if($data['isBlock'] == 1){
                         $isBlock = true;
                     } else {
                         ErrorUI::error(400, 'Bad request');

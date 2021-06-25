@@ -62,6 +62,8 @@
                     //todo
                 } else if($value == "date"){
                     //todo
+                } else if($value == "time"){
+                    //todo
                 } else if($value == "birthday"){
                     //todo
                 } else if($value == "insurance"){
