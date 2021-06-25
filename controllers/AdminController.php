@@ -453,8 +453,12 @@
             }
 
             $rooms = DB::query("SELECT * FROM room");
+            $appointments = array();
+            foreach($rooms as $key=>$room){
+                $appointments[$room['number']] = DB::query("SELECT * FROM appointment, users WHERE users.id=appointment.userID and day=:day and roomID=:roomID",[':roomID'=>$room['id'], ":day"=>$date]);
+            }
 
-            echo $res->view("admin/overview", [],[],["dates"=>$dates, "rooms"=>$rooms]);
+            echo $res->view("admin/overview", [],[],["dates"=>$dates, "appointments"=>$appointments]);
         }
         public static function workhours(Request $req, Response $res){
             Middleware::statusBiggerOrEqualTo(4);

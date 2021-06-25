@@ -17,9 +17,15 @@
 <br>
 <table id=table border=1>
     <tbody id=appointmentsTable>
-        {! rooms:
+        {! appointments:
             <tr>
-                <td>{{ rooms.number }}</td>
+                <td>{{ appointments.key }}</td>
+                {! appointments/inner: 
+                    <td>
+                        {{ appointments/inner.start }} bis {{ appointments/inner.end }}<br>
+                        {{ appointments/inner.salutation }} {{ appointments/inner.lastname }}
+                    </td>
+                 !}
             </tr>
          !}
     </tbody>
