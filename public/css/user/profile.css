@@ -15,3 +15,9 @@
 .end {
     text-align: center;
 }
+
+.profile-form-wrapper {
+    margin-top: 120px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    background-color: white;
+}
