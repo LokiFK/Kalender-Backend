@@ -38,7 +38,7 @@
             }
         }
 
-        public function hasTime($date, $start, $end){   //Date string("YYYY/MM/DD") TIME("HH:MM:SS")
+        public function hasTime($date, $start, $end) {   //Date string("YYYY/MM/DD") TIME("HH:MM:SS")
             $weekday = date("l",strtotime($date));
             foreach(Mitarbeiter::WEEKDAYS as $key=>$aWeekday){
                 if($weekday == $aWeekday){
@@ -49,7 +49,7 @@
             foreach($this->workhours as $day=>$workhours){
                 if($day==$wochentag){
                     foreach($workhours as $workhour){
-                        if($start>$workhours['start'] && $end<$workhours['end']){
+                        if($start>$workhour['start'] && $end<$workhour['end']){
                             return $this->isNotBlocked($date, $start, $end);
                         }
                     }

@@ -74,6 +74,7 @@
             }
             echo $res->view("admin/newAppointment", [], [], ["treatments"=>$treatments]);
         }
+
         public function newAppointment2(Request $req, Response $res){
             $data = Form::validateDataType($req->getBody(), ["date"=>"date", 'start'=>"time", 'end'=>"time", 'treatment']);
             $start = strtotime($req->getBody()['start']);
@@ -137,6 +138,7 @@
             }
             echo $res->view("admin/newAppointment2", ["start"=>$start, "end"=>$end, "date"=>$date, "treatment"=>$treatment], ["doctorsInputs"=>$doctorsInputs, "nursesInputs"=>$nursesInputs], ["rooms"=>$rooms, "patients"=>$patients, "patientsID"=>$patientsID, "doctors"=>$doctors, "doctorsID"=>$doctorsID, "nurses"=>$nurses, "nursesID"=>$nursesID]);
         }
+
         public function newAppointment3(Request $req, Response $res){
             $data = Form::validateDataType($req->getBody(), ["date"=>"date", 'start'=>"time", 'end'=>"time", 'treatment', 'room']);
             $start = strtotime($req->getBody()['start']);
@@ -144,6 +146,8 @@
             $end = strtotime($req->getBody()['end']);
             $end=date('H:i:s', $end);
             $date = $data['date'];
+            echo $data['treatment'];
+            exit;
             $treatment = DB::query("SELECT * FROM treatment WHERE name=:name", [":name"=>$data["treatment"]]);
             if(count($treatment)==0){
                 ErrorUI::error(400, 'Bad request');

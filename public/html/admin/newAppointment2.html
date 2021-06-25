@@ -4,10 +4,10 @@
 <div class="form-wrapper">
     {?php
         return Form::create('/admin/appointment/new3', 'POST',
-            new FormField('date', 'Datum', 'hidden', '{{ date }}'),
-            new FormField('start', 'Start', 'hidden', '{{ start }}'),
-            new FormField('end', 'Ende', 'hidden', '{{ end }}'),
-            new FormField('treatment', 'Behandlung', 'hidden', '{{ treatment }}'),
+            new FormField('date', '{{ date }}', 'hidden'),
+            new FormField('start', '{{ start }}', 'hidden'),
+            new FormField('end', '{{ end }}', 'hidden'),
+            new FormField('treatment', '{{ treatment }}', 'hidden'),
 
             new FormField('room', 'Raum', 'select', '', [], $replaceData->loopData["rooms"], false),
             new FormField('patient', 'Patient (nicht erforderlich)', 'select', '', [], $replaceData->loopData["patients"], false, $replaceData->loopData["patientsID"]),

@@ -17,7 +17,7 @@ Every method in a controller recieves two arguments being a `Request $req` and a
 Error management can be done using the `Response $res`. There are two different ways to send an error: a visual error page `$res->errorVisual($errCode, $msg)` or a json message `$res->errorJSON($errCode, $msg)`. The visual error refers to an error page living in `./public/html/general/error.html`.
 
 ### Template Engine
-#### Controller Part
+#### Controller: send data to HTML view
 Components are HTML files, that can be manipulated in terms of placing data from php into it. They can be served by a controller using the `$res->view(string $component, array $data = array(), array $safeData = array(), array $loopData = array(), array $stuff = array())` function.
 - `string $component`
     - This parameter is the path to the html component starting at `./public/html/`. This means, that a component living in `./public/html/auth/register.html` would be called `auth/register`.
@@ -30,7 +30,7 @@ Components are HTML files, that can be manipulated in terms of placing data from
 - `array $stuff = array()`
     - This parameter can be used to pass data to php-tags in the HTML. 
 
-#### HTML Part
+#### HTML: Manipulation of data
 There are tags that manipulate, load or insert data directly in HTML (Warning: every space is important, we work with indexes of different characters). It is important to understand the order of the interpretation. First the safeData is set in. That means it can trigger other tags. So there should never be userdata in safeData becouse it could kill the whoole server. Next all the tags are interpreted cronological. If a tag loads other HTML files, it is interpreted first and then the `cursor` jumps to the end of the inserted section. At the end data is interpreted, it could be triggered by userdata from other tags but it cant do harm to server. 
 - `{{ variable_name }}`
     - This tag creates a place, where your variable, inserted in `array $data = array()` or in safeData, can be inserted.
@@ -49,13 +49,26 @@ There are tags that manipulate, load or insert data directly in HTML (Warning: e
 - `{+ snippet_path +}`
     - This tag inserts HTML snippets. The path format follows the component naming.
 - `{[ variable_name=>variable_value ]}`
-    - This tag manipulates `array $data = array()` and `array $safeData = array()` by inserting another value. This is used to create different page titles for different pages or manage the navigationsbar.
+    - This tag manipulates `array $data = array()` and `array $safeData = array()` by inserting another value. This is used to create individual titles for different pages or to customize the path to different navigation bar scripts.
 - `{# create container_name #}`
     - This tag creates a container, which you can later extend using `{# extend path_to_container_file@container_name #}`
     - The file with the extend will be loadded in to the create tag of the other file. This is used for the template with general navigationbar and footer.
     - If more than one extend-tag is used. The whole content with the last container is set into the next.
 - `<?php ?>`
     - This tag allows you to write plain php inside of HTML. It shouldn't be used for a lot of logic. It has acess to the data, safeData, loopData and stuff as attributs of an object called replaceData. At the end data that is returned by the php-code is inserted into the place the php-tag has been.
+
+### HTML: Navigation bar
+There is an all new language integrated for building navigation bars. It bases on 3 major actions: Link, Dropdown and Flipside. Using these, you can recreate basically every navigation bar out there. The scripts, that create the navigation bars, live in `*.nav` files together in the same directory with the managed HTML content. In order to tell the program, which navigation bar you want to be shown, you have to set the navContentLink to your path: `{[ navContentLink=>your_path ]}`. 
+The syntax of our nav language is as following:
+- `@link[link_name(link_path), status*compare*nr]`
+    - link_name is later displayed as the inner HTML of the navbar link.
+    - link_path is the path, that the link points towards.
+    - *compare* is the comparator (=, >, >=, <=, <, <>).
+    - nr is the status number (ref. Auth)
+- `@dropdown[title=""; items=""; status*compare*nr`
+    - Using the dropdown, you can create a dropdown menu with a title and infinite items, that is only shown to people having a status compared to a number. `title` is a simple string, `items` are links, but only the inner part `link_name(link_path)`.
+- `@flipside[]`
+    - This tag simply flips from the left hand side to the right hand side.
 
 ### Auth
 The approach in this API uses the concept of sessions with Tokens, which are a 64 characters long, random string. When logged in, the token gets stored together with the user id, ip and a timestamp. If you save the token on the local machine of the frontend-computer, you can always access your user id which has a connection to all of your data. Normally tokens expire 30 min after the last request but they can also be set to an endless lifespan.
@@ -80,9 +93,9 @@ Adjustments for our specific programm is a variable status. At the beginning of 
 - 0: a guest with no session
 - 1: a user that has not approved his mail yet
 - 2: a normal user
-- 3: a admin
-- 4: a admin thats a nure
-- 5: a admin thats a doctor
+- 3: an admin
+- 4: a nurse
+- 5: a doctor
 
 ### DB
 Using DB, you can query databases without having to connect every time. There are two different methods:
@@ -103,15 +116,9 @@ Middleware is a set of restrictions that are checked, before the data is present
 - `statusBiggerOrEqualTo(int $status)`
 - `statusSmallerOrEqualTo(int $status)`
 
-### HTMLTemplate
-At all our sites we are using a template. It lays in the general folder. The sites are loaded into it with the container tag. The Template sets the title to an element `title` from data. Then there is loaded in a file nav.html. It contains a php-tag that executes a function to interprete .nav files. If there is not set an element 'navContenLink'. It tries to interprete a nav.nav that is located in the same ordner than the file that loaded the template. 
-The nav-syntax is:
-
-Then there is a div content in which the file is loaded.
-In the end there is loaded in the footer from the general folder.
-
 ### Error handling
-There is an Error class. IT takes an error-code and a message and gives it out with an alert from javascript. 
-There are also methods to controll form-input data.
-The most common method is from the class Form validateDataType($data, ["name"=>"datatype", ...]). As the data you give $res->getBody() as the array the columns you want as key and the datatype as its value.
-On the frontend form-data is created and controlled by Form::create...
+Errors are handled by the ErrorUI class. It contains a method `error()`, which takes an error code and a message. It changes the http response code and shows the user an alert.
+
+### Form
+Forms can be created using the `Form::create()` method, which takes the submit path, request method and infinite FormFields.
+Form validation is automatically done if you put a validation type into the $validation parameter.
