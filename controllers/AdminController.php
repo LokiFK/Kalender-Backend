@@ -305,15 +305,14 @@
                                 $endTime = $temp;
                             } else if (!(($start<=$startTime && $end<=$startTime) || ($start>=$endTime && $end>=$endTime))) {
                                 echo $res->view('admin/merge', ['day'=>$day, 'start'=>date('H:i', $start), 'end'=>date('H:i', $end), 'treatment'=>$treatment, 'result'=>$result]);
-                            } else {
-                                $start=date('H:i:s', $start);
-                                $startTime=date('H:i:s', $startTime);
-                                $end=date('H:i:s', $end);
-                                $endTime=date('H:i:s', $endTime);
-                                DB::query("UPDATE appointment_typical SET startTime = :start WHERE startTime = :startTime AND day = :day AND treatment = :treatment", [':start'=>$start, ':startTime'=>$startTime, ':day'=>$day, ':treatment'=>$treatment]);
-                                DB::query("UPDATE appointment_typical SET endTime = :end WHERE endTIme = :endTime AND day = :day AND treatment = :treatment", [':end'=>$end, ':endTime'=>$endTime, ':day'=>$day, ':treatment'=>$treatment]);
-                                Path::redirect(Path::ROOT . 'admin/generalPlaning');
                             }
+                            $start=date('H:i:s', $start);
+                            $startTime=date('H:i:s', $startTime);
+                            $end=date('H:i:s', $end);
+                            $endTime=date('H:i:s', $endTime);
+                            DB::query("UPDATE appointment_typical SET startTime = :start WHERE startTime = :startTime AND day = :day AND treatment = :treatment", [':start'=>$start, ':startTime'=>$startTime, ':day'=>$day, ':treatment'=>$treatment]);
+                            DB::query("UPDATE appointment_typical SET endTime = :end WHERE endTIme = :endTime AND day = :day AND treatment = :treatment", [':end'=>$end, ':endTime'=>$endTime, ':day'=>$day, ':treatment'=>$treatment]);
+                            Path::redirect(Path::ROOT . 'admin/generalPlaning');
                         }
                     }
                 }

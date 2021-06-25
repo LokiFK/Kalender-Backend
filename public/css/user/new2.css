@@ -46,7 +46,9 @@
     text-align: center;
 }
 
-
+.large {
+    font-size: medium;
+}
 
 .color-bestätigt {
     color: green;
