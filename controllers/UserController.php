@@ -91,6 +91,63 @@
             echo $view;
         }
 
+        public function customAppointments(Request $req, Response $res) {
+            if ($req->getMethod()=="GET") {
+                echo $res->view('/user/custom', ['treatment' => $req->getBody()['treatment']]);
+            } else {
+                $treatment = $req->getBody()['treatment'];
+                $translate = array("Monday" => "Montag", "Tuesday" => "Dienstag", "Wednesday" => "Mittwoch", "Thursday" => "Donnerstag", "Friday" => "Freitag", "Saturday" => "Samstag", "Sunday" => "Sonntag");
+                $date = date('l', strtotime($req->getBody()['date']));
+                $day = strtr($date, $translate);
+                $result = DB::query("SELECT * FROM appointment_typical JOIN treatment t on t.id = appointment_typical.treatment WHERE name = :treatment AND day = :day;", [':treatment'=>$treatment, ':day'=>$day]);
+                if ($result==null) {
+                    $result = DB::query("SELECT * FROM appointment_typical JOIN treatment t on t.id = appointment_typical.treatment WHERE name = :treatment;", [':treatment'=>$treatment]);
+                    $otherDays = "";
+                    if ($result==null) {
+                        ErrorUI::error(404, "Für den Behandlungstypen $treatment gibt es momentan keine Terminmöglichkeiten. Bitte kontaktieren Sie Ihre Praxis.");
+                    }
+                    foreach ($result as $row) {
+                        $otherDays .= $row['day'] . ", ";
+                    }
+                    ErrorUI::error(404, "Für $day gibt es leider keine Behandlungen des Typs $treatment. An folgenden Tagen gibt es $treatment: $otherDays");
+                } else {
+                    $duration = DB::query("SELECT * FROM treatment WHERE name = :treatment;", [':treatment'=>$treatment]);
+                    $times = [];
+                    foreach ($result as $row) {
+                        $start = strtotime($row['endTime']);
+                        $end = strtotime($duration[0]['duration']);
+                        $totaltime = ($end - $start)  ;
+                        $hours = intval($totaltime / 3600);
+                        $seconds_remain = ($totaltime - ($hours * 3600));
+                        $minutes = abs(intval($seconds_remain / 60));
+                        array_push($times, "Zeitfenster: " . date('H:i',strtotime($row['startTime'])) . $hours.":".$minutes);
+                    }
+                    echo $res->view('/user/availableTimeSlots', ['treatment'=>$treatment, 'date'=>$req->getBody()['date'], 'duration'=>$duration[0]['duration']], array(), ['times'=>$times]);
+                }
+            }
+        }
+
+        public function orderCustomTime(Request $req, Response $res) {
+            if ($req->getMethod()=="GET") {
+//                TODO
+            } else {
+                $userId = Auth::getUserID();
+                $start = $req->getBody()['time'];
+                $duration = $req->getBody()['duration'];
+                $seconds = strtotime($duration)-strtotime("00:00");
+                $end = date('H:i', strtotime($start)+$seconds);
+                $day = date('Y-m-d',strtotime($req->getBody()['date']));
+                echo $end . " " . $start . " " . $day;
+                $result = DB::query("SELECT * FROM appointment WHERE day = :day AND (start<:end OR end>:start) AND userID IS NOT NULL;", [':day'=>$day, ':end'=>$end, ':start'=>$start]);
+                $treatmentId = DB::query("SELECT * FROM treatment WHERE name=:treatment;", [':treatment'=>$req->getBody()['treatment']]);
+                if ($result==null) {
+                    echo "tsfa";
+                    DB::query("INSERT INTO appointment(userID, treatmentID, roomID, start, end, status, day) VALUES (:userId, :treatment, '1', :start, :end, 'warten', :day)", ['userId'=>$userId, ':treatment'=>$treatmentId[0]['id'], ':start'=>$start, ':end'=>$end, ':day'=>$day]);
+                    echo "20;:";
+                }
+            }
+        }
+
     }
 
 ?>
