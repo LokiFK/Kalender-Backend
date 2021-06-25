@@ -1,44 +1,47 @@
 window.onload=function() {
-    var appointments = {{ appointments }};
+    let termin;
+    let i;
+    let appointments = {{ appointments }};
 
-    var table = document.getElementById('appointmentsTable');
+    let table = document.getElementById('appointmentsTable');
 
-    var start = new Date('2019-06-11T08:00');
-    var start = start.getHours()*60+start.getMinutes();
-    var now = new Date();
-    var now = now.getHours()*60+now.getMinutes();
-    var end = new Date('2019-06-11T21:00');               //Beispielhaft
-    var end = end.getHours()*60+end.getMinutes();
-    var zeitleiste = document.createElement("tr"); 
-    
-    var intervall = 15;
-    var zeit = document.createElement("td"); 
+    let start = new Date('2019-06-11T08:00');
+    start = start.getHours() * 60 + start.getMinutes();
+    let now = new Date();
+    now = now.getHours() * 60 + now.getMinutes();
+    let end = new Date('2019-06-11T21:00');               //Beispielhaft
+    end = end.getHours() * 60 + end.getMinutes();
+    const zeitleiste = document.createElement("tr");
+
+    const interval = 15;
+    let zeit = document.createElement("td");
     zeit.classList.add("date");
     zeitleiste.appendChild(zeit);
-    for(var i=start; (i%intervall)!=0; i++){
-        var zeit = document.createElement("td"); 
+    for(i = start; (i%interval)!==0; i++){
+        zeit = document.createElement("td");
         zeit.classList.add("shortTd");
         zeitleiste.appendChild(zeit);
     }
-    for(var i=(start+intervall-1)-((start+intervall-1)%intervall); i<end; i=i+intervall){
-        var zeit = document.createElement("td");
-        zeit.colSpan=intervall;
+    for(i = (start+interval-1)-((start+interval-1)%interval); i<end; i=i+interval){
+        zeit = document.createElement("td");
+        zeit.colSpan=interval;
         zeit.classList.add("td");
         zeit.innerHTML = (Math.floor(i/60))+":"+(i%60);
         zeitleiste.appendChild(zeit);
     }
     table.appendChild(zeitleiste);
 
-    var date = null;
-    var eDate = document.createElement("tr");
-    var minutes=start;
-    for(var i = 0; i<appointments.length; i++){
-        var a=appointments[i];
-        var aDate = a.day;
-        if(date==null || date!=aDate){
+    let date = null;
+    let eDate = document.createElement("tr");
+    let minutes = start;
+    for(i = 0; i<appointments.length; i++){
+        let aStart;
+        const a = appointments[i];
+        const aDate = a.day;
+        if(date==null || date!==aDate){
             if(date!=null){
                 while(minutes<end){
-                    var termin = document.createElement("td"); 
+                    termin = document.createElement("td");
                     termin.classList.add("shortTd");
                     eDate.appendChild(termin);
                     minutes++;
@@ -48,23 +51,23 @@ window.onload=function() {
                 eDate = document.createElement("tr");
             }
             date=aDate;
-            var dateTd = document.createElement("td"); 
+            const dateTd = document.createElement("td");
             dateTd.classList.add("date");
             dateTd.innerHTML=date;
             eDate.appendChild(dateTd);
         }
-        var aStart = a.start;
-        var aEnd = a.end;
+        aStart = a.start;
+        let aEnd = a.end;
         aStart = parseInt(aStart.substring(0,2))*60+parseInt(aStart.substring(3).substring(0,2));
         aEnd = parseInt(aEnd.substring(0,2))*60+parseInt(aEnd.substring(3).substring(0,2));
         //alert("m: "+minutes+" s: "+aStart);
         while(minutes<aStart){
-            var termin = document.createElement("td"); 
+            termin = document.createElement("td");
             termin.classList.add("shortTd");
             eDate.appendChild(termin);
             minutes++;
         }
-        var termin = document.createElement("td");
+        termin = document.createElement("td");
         termin.colSpan = (aEnd-aStart);
         termin.className = "termin"
         termin.innerHTML="Raum: "+a.number+"<br>Patient: "+a.lastname+"<br>Behandlung: "+a.name;
@@ -73,7 +76,7 @@ window.onload=function() {
     }
     //alert("minutes: "+minutes+" end: "+end);
     while(minutes<end){
-        var termin = document.createElement("td");
+        termin = document.createElement("td");
         termin.classList.add("shortTd");
         eDate.appendChild(termin);
         minutes++;
