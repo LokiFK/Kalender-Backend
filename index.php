@@ -70,6 +70,8 @@
     $routes->both('/admin/treatments', 'AdminController@treatments');
     $routes->both('/admin/treatment/change', 'AdminController@treatmentChange');
     $routes->both('/admin/appointment/new', 'AdminController@newAppointment');
+    $routes->both('/admin/appointment/new2', 'AdminController@newAppointment2');
+    $routes->both('/admin/appointment/new3', 'AdminController@newAppointment3');
     $routes->both('/admin/pending', 'AdminController@pending');
     $routes->both('/admin/search/search', 'AdminController@search');
     $routes->both('/admin/search/user', 'AdminController@user');

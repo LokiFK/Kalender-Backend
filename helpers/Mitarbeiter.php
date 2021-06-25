@@ -45,6 +45,7 @@
                     $wochentag = Mitarbeiter::WOCHENTAGE[$key];
                 }
             }
+            if($this->workhours!=null){
             foreach($this->workhours as $day=>$workhours){
                 if($day==$wochentag){
                     foreach($workhours as $workhour){
@@ -54,6 +55,8 @@
                     }
                 }
             }
+            }
+            if($this->additionals!=null){
             foreach($this->additionals as $aDate=>$additionals){
                 if($date==$aDate){
                     foreach($additionals as $additional){
@@ -63,9 +66,11 @@
                     }
                 }
             }
+        }
             return false;
         }
         public function isNotBlocked($date, $start, $end){
+            if($this->blocks!=null){
             foreach($this->blocks as $aDate=>$blocks){
                 if($date==$aDate){
                     foreach($blocks as $block){
@@ -74,6 +79,7 @@
                         }
                     }
                 }
+            }
             }
             $appointments = DB::query("SELECT count(*) as Anzahl FROM appointment a,appointment_admin b WHERE a.id=b.appointmentID and b.adminID=:userID and day=:day and start<:end and end>:start", [":userID"=>$this->userID, ":day"=>$date, ":start"=>$start, ":end"=>$end]);
             if($appointments[0]['Anzahl']>0){

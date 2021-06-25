@@ -2,14 +2,26 @@
 {# extend general/template@main #}
 
 <div class="form-wrapper">
+    {?php
+        return Form::create('/admin/appointment/new2', 'POST',
+            new FormField('date', 'Datum', 'date'),
+            new FormField('start', 'Startzeit', 'time'),
+            new FormField('end', 'Endzeit', 'time'),
+            new FormField('treatment', 'Behandlung', 'select', '', [], $replaceData->loopData["treatments"], false),
+
+            new FormField('submit', 'weiter', 'submit')
+        );
+    ?}
+</div>
+<!--<div class="form-wrapper">
     <form action="/admin/appointment/new" method="POST">
         <label for="day">Tag:</label>
         <input type="date" name="day"><br>
         <label for="start">Startzeit:</label>
-        <input type="text" name="start"><br>
+        <input type="time" name="start"><br>
         
         <label for="end">Endzeit:</label>
-        <input type="text" name="end"><br>
+        <input type="time" name="end"><br>
         
         <label for="treatment">Behandlung:</label>
         <select name="treatment" id="treatment">
@@ -17,14 +29,7 @@
                 <option value="{{ treatments.id }}">{{ treatments.name }}</option>
             !}
         </select>
-        
-        <label for="room">Raum:</label>
-        <select name="room" id="room">
-            {! rooms:
-                <option value="{{ rooms.id }}">{{ rooms.number }}</option>
-            !}
-        </select>
 
-        <input type="submit" value="Hinzufügen">
+        <input type="submit" value="weiter">
     </form>
-</div>
+</div>-->

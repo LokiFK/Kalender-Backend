@@ -1,0 +1,18 @@
+{[ title=>neuer Termin, navContentLink=>admin/nav ]}
+{# extend general/template@main #}
+
+<div class="form-wrapper">
+    {?php
+        return Form::create('/admin/appointment/new3', 'POST',
+            new FormField('date', 'Datum', 'hidden', '{{ date }}'),
+            new FormField('start', 'Start', 'hidden', '{{ start }}'),
+            new FormField('end', 'Ende', 'hidden', '{{ end }}'),
+            new FormField('treatment', 'Behandlung', 'hidden', '{{ treatment }}'),
+
+            new FormField('room', 'Raum', 'select', '', [], $replaceData->loopData["rooms"], false),
+            new FormField('patient', 'Patient (nicht erforderlich)', 'select', '', [], $replaceData->loopData["patients"], false),
+
+            new FormField('submit', 'erstellen', 'submit')
+        );
+    ?}
+</div>
