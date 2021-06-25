@@ -109,3 +109,9 @@ The nav-syntax is:
 
 Then there is a div content in which the file is loaded.
 In the end there is loaded in the footer from the general folder.
+
+### Error handling
+There is an Error class. IT takes an error-code and a message and gives it out with an alert from javascript. 
+There are also methods to controll form-input data.
+The most common method is from the class Form validateDataType($data, ["name"=>"datatype", ...]). As the data you give $res->getBody() as the array the columns you want as key and the datatype as its value.
+On the frontend form-data is created and controlled by Form::create...
