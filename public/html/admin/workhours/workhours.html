@@ -2,49 +2,107 @@
 {# extend general/template@main #}
 {% styles %}
 
-übliche Arbeitszeiten: <br>
-<table border=1>
-{! workhours: 
-    <tr>
-    <td>am {{ workhours.key }}</td>
-    {! workhours/inner:
-        <td>
-            von {{ workhours/inner.start }} bis {{ workhours/inner.end }}<br>
-            <a href="/admin/workhours/workhoursDelete?type=workhours&id={{ workhours.id }}">löschen</a><br>
-        </td>
-     !}
-    </tr>
- !}
-</table>
-<a href="/admin/workhours/workhoursAdd?type=workhours">neu</a><br>
-<br><br>
-zusätzliche Arbeitszeiten: <br><br>
-<table broder=1>
-{! additionals:
-    <tr>
-    <td>am {{ additionals.key }}</td>
-    {! additionals/inner:
-        <td>
-            von {{ additionals/inner.start }} bis {{ additionals/inner.end }}<br>
-            <a href="/admin/workhours/workhoursDelete?type=block&id={{ blocks.id }}">löschen</a><br>
-        </td>
-     !}
-    </tr>
- !}
-</table>
-<br>
- abzügliche Arbeitszeiten Arbeitstage: <br>
-<table border=1>
-{! blocks:
-    <tr>
-    <td>am {{ blocks.key }}</td>
-    {! blocks/inner:
-        <td>
-            von {{ blocks/inner.start }} bis {{ blocks/inner.end }}<br>
-            <a href="/admin/workhours/workhoursDelete?type=block&id={{ blocks.id }}">löschen</a><br>
-        </td>
-     !}
- !}
- </table>
- <br>
- <a href="/admin/workhours/workhoursAdd?type=block">neu</a><br>
+<div class="workhours-wrapper">
+    <h3 class="heading">Alle Arbeitszeiten</h3>
+    <div style="text-align: center;">
+        {?php
+            return Form::create('/admin/workhours/workhoursAdd', 'GET',
+                new FormField('type', 'workhours', 'hidden'),
+                new FormField('submit', 'Neu', 'submit')
+            );
+        ?}
+    </div>
+    <div class="workhours-list">
+        <div class="workhours-list-item">
+            <div class="row">
+                <div class="row-item"><h4>Wochentag</h4></div>
+                <div class="row-item"><h4>Arbeitszeit</h4></div>
+            </div>
+        </div>
+        {! workhours: 
+            <form action="/user/workhours/new3" method="GET" id="form-{{ workhours.id }}">
+                <input type="hidden" name="id" value="{{ workhours.id }}">
+                <div class="workhours-list-item" onclick="confirm('Willst du wirklich diesen Termin buchen?') && document.getElementById('form-{{ workhours.id }}').submit();">
+                    <div class="row">
+                        <div class="row-item"><p>{{ workhours.key }}</p></div>
+                        <div class="row-item">
+                            {! workhours/inner:
+                                <p>von {{ workhours/inner.start }} bis {{ workhours/inner.end }} <a href="/admin/workhours/workhoursDelete?type=workhours&id={{ workhours.id }}">löschen</a></p>
+                            !}
+                        </div>
+                    </div>
+                </div>
+            </form>
+         !}
+    </div>
+
+    <br><br><br><hr><br><br><br>
+
+    <h3 class="heading">Zusätzliche Arbeitszeiten</h3>
+    <div style="text-align: center;">
+        {?php
+            return Form::create('/admin/workhours/workhoursAdd', 'GET',
+                new FormField('type', 'block', 'hidden'),
+                new FormField('submit', 'Neu', 'submit')
+            );
+        ?}
+    </div>
+    <div class="workhours-list">
+        <div class="workhours-list-item">
+            <div class="row">
+                <div class="row-item"><h4>Datum</h4></div>
+                <div class="row-item"><h4>Arbeitszeit</h4></div>
+            </div>
+        </div>
+        {! additionals: 
+            <form action="/user/workhours/new3" method="GET" id="form-{{ additionals.id }}">
+                <input type="hidden" name="id" value="{{ additionals.id }}">
+                <div class="workhours-list-item" onclick="confirm('Willst du wirklich diesen Termin buchen?') && document.getElementById('form-{{ additionals.id }}').submit();">
+                    <div class="row">
+                        <div class="row-item"><p>{{ additionals.key }}</p></div>
+                        <div class="row-item">
+                            {! additionals/inner:
+                                <p>von {{ additionals/inner.start }} bis {{ additionals/inner.end }} <a href="/admin/workhours/workhoursDelete?type=block&id={{ additionals.id }}">löschen</a></p>
+                            !}
+                        </div>
+                    </div>
+                </div>
+            </form>
+         !}
+    </div>
+
+    <br><br><br><hr><br><br><br>
+
+    <h3 class="heading">Abzügliche Arbeitszeiten</h3>
+    <div style="text-align: center;">
+        {?php
+            return Form::create('/admin/workhours/workhoursAdd', 'GET',
+                new FormField('type', 'block', 'hidden'),
+                new FormField('submit', 'Neu', 'submit')
+            );
+        ?}
+    </div>
+    <div class="workhours-list">
+        <div class="workhours-list-item">
+            <div class="row">
+                <div class="row-item"><h4>Datum</h4></div>
+                <div class="row-item"><h4>Arbeitszeit</h4></div>
+            </div>
+        </div>
+        {! blocks: 
+            <form action="/user/workhours/new3" method="GET" id="form-{{ blocks.id }}">
+                <input type="hidden" name="id" value="{{ blocks.id }}">
+                <div class="workhours-list-item" onclick="confirm('Willst du wirklich diesen Termin buchen?') && document.getElementById('form-{{ blocks.id }}').submit();">
+                    <div class="row">
+                        <div class="row-item"><p>{{ blocks.key }}</p></div>
+                        <div class="row-item">
+                            {! blocks/inner:
+                                <p>von {{ blocks/inner.start }} bis {{ blocks/inner.end }} <a href="/admin/workhours/workhoursDelete?type=block&id={{ workhours.id }}">löschen</a></p>
+                            !}
+                        </div>
+                    </div>
+                </div>
+            </form>
+         !}
+    </div>
+</div>

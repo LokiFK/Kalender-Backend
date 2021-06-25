@@ -1,3 +1,43 @@
-.workhours, .workhoursLi{
-    list-style: circle;
+
+.workhours {
+    width: 100%;
+}
+
+.workhours-list {
+    width: 100%;
+    list-style-type: none;
+    text-align: center;
+}
+
+.workhours-list-item {
+    cursor: pointer;
+    min-height: 50px;
+    line-height: 50px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    margin: 15px;
+    background-color: white;
+}
+
+.workhours-list-item .status {
+    text-align: end;
+}
+
+.workhours-list-item .type {
+    text-align: start;
+}
+
+.workhours-list-item p {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.workhours-list-item div.row {
+    justify-content: space-between;
+}
+
+.workhours-list-item:hover {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
 }

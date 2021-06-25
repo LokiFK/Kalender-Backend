@@ -3,7 +3,7 @@
 {% styles %}
 {% script %}
 
-<table id=datesTable border=1>
+<table id=datesTable style="border: 1px solid black;">
     <tbody id=datesTableBody>
         <tr>
             {! dates: 
@@ -15,9 +15,9 @@
     </tbody>
 </table>
 <br>
-<table id=table border=1>
+<table id=table style="border: 1px solid black;">
     <tbody id=appointmentsTable>
-        {! appointments:
+        {! appointments: 
             <tr>
                 <td>{{ appointments.key }}</td>
                 {! appointments/inner: 

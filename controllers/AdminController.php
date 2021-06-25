@@ -466,7 +466,8 @@
             $mitarbeiter = new Mitarbeiter(Auth::getUser()['id']);
 
             echo $res->view("admin/workhours/workhours", [],[],["workhours"=>$mitarbeiter->workhours, "additional"=>$mitarbeiter->additionals, "blocks"=>$mitarbeiter->blocks]);
-        }    
+        }
+        
         public static function workhoursAdd(Request $req, Response $res){
             Middleware::statusBiggerOrEqualTo(4);
             $data = $req->getBody();
