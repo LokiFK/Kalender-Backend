@@ -100,7 +100,15 @@
 
 }
 
+.textbox {
+    text-align: center;
+    width: fit-content;
+    padding: 2px;
+    margin-left: 10px;
+}
+
 #textbox {
+    text-align: center;
     width: fit-content;
     padding: 2px;
     margin-left: 10px;

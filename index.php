@@ -75,7 +75,7 @@
     $routes->both('/admin/search/userChange', 'AdminController@userChange');
     $routes->both('/admin/search/createUser', 'AdminController@createUser');
     $routes->both('/admin/generalPlaning', 'AdminController@generalPlaning');
-
+    $routes->both('/admin/merge', 'AdminController@merge');
 
 
     // --- FORM --- \\

@@ -1,5 +1,7 @@
 <?php
 
+    $day = "";
+
     class AdminController {
         
         public function __construct() {
@@ -225,19 +227,70 @@
             if ($req->getMethod()=="GET") {
                 $treatment = DB::query("SELECT DISTINCT * FROM treatment");
                 echo $res->view("admin/generalPlaning", array(), array(), ['treatment'=>$treatment]);
-            } else {
+            } else if ($req->getMethod()=="POST") {
                 $day = $req->getBody()['weekday'];
-                $start = $req->getBody()['startTime'];
-                $end = $req->getBody()['endTime'];
+                $start = strtotime($req->getBody()['startTime']);
+                $end = strtotime($req->getBody()['endTime']);
                 $treatment = $req->getBody()['treatment'];
                 $results = DB::query("SELECT * FROM appointment_typical JOIN treatment t on t.id = appointment_typical.treatment AND t.name = :treatment;", [':treatment' => $treatment]);
                 foreach ($results as $result) {
+                    $startTime = strtotime($result["startTime"]);
+                    $endTime = strtotime($result["endTime"]);
                     if ($result["day"] = $day) {
-                        if (strtotime($result["startTime"]) <= strtotime("24:00") && strtotime($result["startTime"]) >= strtotime("00:00")) {
-                            echo "1";
+//                        Zeitfenster muss innerhalb eines Tages liegen
+                        if ($startTime <= strtotime("24:00") && $startTime >= strtotime("00:00")) {
+                            if ($startTime > $endTime) {
+                                $temp = $startTime;
+                                $startTime = $endTime;
+                                $endTime = $temp;
+                            } else if (!(($start<=$startTime && $end<=$startTime) || ($start>=$endTime && $end>=$endTime))) {
+                                echo $res->view('admin/merge', ['day'=>$day, 'start'=>date('H:i', $start), 'end'=>date('H:i', $end), 'treatment'=>$treatment, 'result'=>$result]);
+                            } else {
+                                $start=date('H:i:s', $start);
+                                $startTime=date('H:i:s', $startTime);
+                                $end=date('H:i:s', $end);
+                                $endTime=date('H:i:s', $endTime);
+                                DB::query("UPDATE appointment_typical SET startTime = :start WHERE startTime = :startTime AND day = :day AND treatment = :treatment", [':start'=>$start, ':startTime'=>$startTime, ':day'=>$day, ':treatment'=>$treatment]);
+                                DB::query("UPDATE appointment_typical SET endTime = :end WHERE endTIme = :endTime AND day = :day AND treatment = :treatment", [':end'=>$end, ':endTime'=>$endTime, ':day'=>$day, ':treatment'=>$treatment]);
+                                Path::redirect(Path::ROOT . 'admin/generalPlaning');
+                            }
                         }
                     }
                 }
+            }
+        }
+
+        public static function merge(Request $req, Response $res) {
+            if($req->getMethod()=="GET") {
+                echo $res->view('/admin/merge');
+            } else {
+                $startTime = strtotime($req->getBody()['rstart']);
+                $endTime = strtotime($req->getBody()['rend']);
+                $start = strtotime($req->getBody()['start']);
+                $end = strtotime($req->getBody()['end']);
+                $day = $req->getBody()['day'];
+                $treatment = $req->getBody()['treatment'];
+                $treatmentId = DB::query("SELECT * FROM treatment WHERE name=:treatment", [':treatment'=>$treatment])[0]['id'];
+                if (isset($_POST['merge'])) {
+                    if ($startTime > $start) {
+                        $start=date('H:i:s', $start);
+                        $startTime=date('H:i:s', $startTime);
+                        DB::query("UPDATE appointment_typical SET startTime = :start WHERE startTime = :startTime AND day = :day AND treatment = :treatment", [':start'=>$start, ':startTime'=>$startTime, ':day'=>$day, ':treatment'=>$treatmentId]);
+                    }
+                    if ($endTime < $end) {
+                        $end=date('H:i:s', $end);
+                        $endTime=date('H:i:s', $endTime);
+                        DB::query("UPDATE appointment_typical SET endTime = :end WHERE endTIme = :endTime AND day = :day AND treatment = :treatment", [':end'=>$end, ':endTime'=>$endTime, ':day'=>$day, ':treatment'=>$treatmentId]);
+                    }
+                } else if(isset($_POST['overwrite'])) {
+                    $start=date('H:i:s', $start);
+                    $startTime=date('H:i:s', $startTime);
+                    DB::query("UPDATE appointment_typical SET startTime = :start WHERE startTime = :startTime AND day = :day AND treatment = :treatment", [':start'=>$start, ':startTime'=>$startTime, ':day'=>$day, ':treatment'=>$treatmentId]);
+                    $end=date('H:i:s', $end);
+                    $endTime=date('H:i:s', $endTime);
+                    DB::query("UPDATE appointment_typical SET endTime = :end WHERE endTIme = :endTime AND day = :day AND treatment = :treatment", [':end'=>$end, ':endTime'=>$endTime, ':day'=>$day, ':treatment'=>$treatmentId]);
+                }
+                Path::redirect(Path::ROOT . 'admin/generalPlaning');
             }
         }
 
