@@ -140,16 +140,19 @@
                 $result = DB::query("SELECT * FROM appointment WHERE day = :day AND ((start<=:end AND end>=:end) OR (start<=:start AND end>=:start)) AND userID IS NOT NULL;", [':day'=>$day, ':end'=>$end, ':start'=>$start]);
                 $treatmentId = DB::query("SELECT * FROM treatment WHERE name=:treatment;", [':treatment'=>$req->getBody()['treatment']]);
                 $results = DB::query("SELECT * FROM appointment_typical WHERE treatment=:treatment;", [':treatment' => $treatmentId[0]['id']]);
+//                echo $duration." ";
+//                echo $results[0]['endTime']." ";
                 foreach ($results as $r) {
                     $startTime = strtotime($r["startTime"]);
-                    $endTime = strtotime($r["endTime"]);
+//                    echo date('H:s:i', strtotime($r['endTime']));
                     if ($startTime <= strtotime("24:00") && $startTime >= strtotime("00:00")) {
-                        $str = $endTime;
+                        $sta = strtotime($r['endTime']);
                         $en = strtotime($duration);
-                        $totaltime = ($en - $str)  ;
+                        $totaltime = ($en - $sta)  ;
                         $hours = intval($totaltime / 3600);
                         $seconds_remain = ($totaltime - ($hours * 3600));
-                        $minutes = abs(intval($seconds_remain / 60));
+                        $minutes = intval($seconds_remain / 60);
+//                        echo $hours.':'.$minutes;
                         if ((strtotime($end) < $startTime) || strtotime($start) > strtotime(abs($hours).":".abs($minutes))) {
                             ErrorUI::error(404, "Bitte eine Uhrzeit im gültigen Zeitrahmen angeben.");
                         }
@@ -157,8 +160,9 @@
                 }
                 if ($result==null) {
                     DB::query("INSERT INTO appointment(userID, treatmentID, roomID, start, end, status, day) VALUES (:userId, :treatment, '1', :start, :end, 'warten', :day)", ['userId'=>$userId, ':treatment'=>$treatmentId[0]['id'], ':start'=>$start, ':end'=>$end, ':day'=>$day]);
-                    echo "works";
-                    ErrorUI::error(1, "Termin erfolgreich erstellt.");
+                    ErrorUI::error(1, "Termin wurde erflogreich erstellt.");
+                } else {
+                    ErrorUI::error(404, "Termin ist bereits belegt.");
                 }
             }
         }
