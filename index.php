@@ -81,6 +81,7 @@
     $routes->both('/admin/workhours/workhoursAdd', 'AdminController@workhoursAdd');
     $routes->both('/admin/workhours/workhoursDelete', 'AdminController@workhoursDelete');
 
+    $routes->both('/admin/merge', 'AdminController@merge');
 
 
     // --- FORM --- \\

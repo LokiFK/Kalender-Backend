@@ -1,0 +1,47 @@
+{[ title=>Behandlungen, navContentLink=>admin/nav ]}
+{% css/auth/form %}
+{# extend general/template@main #}
+{% script %}
+<div class="form-wrapper">
+<h3 class="textbox">Zwei Zeitfenster mit der selben Behandlung scheinen sich zu überschneiden. <br>Wollen Sie diese zusammenlegen, den anderen überschreiben oder abbrechen?</h3>
+<br>
+  <form action="/admin/merge" method="POST">
+    <h4>Termininfo:</h4><br>
+    <label>Behandlung:</label><br>
+    <label>
+      <input class="textbox" name="treatment" value="{{ treatment }}" readonly/>
+    </label><br>
+    <label>Wochentag:</label><br>
+    <label>
+      <input class="textbox" name="day" value="{{ day }}" readonly/>
+    </label><br>
+    <label>Startuhrzeit:</label><br>
+    <label>
+      <input class="textbox" name="start" value="{{ start }}" readonly/>
+    </label><br>
+    <label>Enduhrzeit:</label><br>
+    <label>
+      <input class="textbox" name="end" value="{{ end }}" readonly/>
+    </label><br>
+    <h4>In Konflikt:</h4><br>
+    <label>Behandlung:</label><br>
+    <label>
+      <input class="textbox" value="{{ treatment }}" readonly/>
+    </label><br>
+    <label>Wochentag:</label><br>
+    <label>
+      <input class="textbox" value="{{ day }}" readonly/>
+    </label><br>
+    <label>Startuhrzeit:</label><br>
+    <label>
+      <input class="textbox" name="rstart" value="{{ result.startTime }}" readonly/>
+    </label><br>
+    <label>Enduhrzeit:</label><br>
+    <label>
+      <input class="textbox" name="rend" value="{{ result.endTime }}" readonly/>
+    </label><br>
+    <input type="submit" name="merge" value="Zusammenlegen">
+    <input type="submit" name="overwrite" value="Überschreiben">
+    <input type="submit" name="cancel" value="Abbrechen">
+  </form>
+</div>

@@ -4,12 +4,14 @@
 <div class="form-wrapper">
   <form action="/admin/generalPlaning" method="POST">
     <label for="tr">Behandlungsart:</label><br>
-    <select>
-      <option selected hidden>Auswählen</option>
-      {! treatment:
-      <option>{{ treatment.name }}</option>
-      !}
-    </select><br>
+    <label>
+      <select name="treatment" id="treatment">
+        <option selected hidden>Auswählen</option>
+        {! treatment:
+        <option>{{ treatment.name }}</option>
+        !}
+      </select>
+    </label><br>
     <label for="weekday">Wochentag:</label><br>
     <label>
       <select name="weekday">
