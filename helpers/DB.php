@@ -13,12 +13,6 @@
         const username = 'root';
         const password = '';
 
-        
-        const hosting_host = '127.0.0.1';
-        const hosting_dbname = 'id11715633_calendar';
-        const hosting_username = 'id11715633_root';
-        const hosting_password = '+fZE$|M8hyZ8rvhV';
-
         private static function connect(): PDO
         {
             try {

@@ -65,7 +65,7 @@
                 } else if($value == "birthday"){
                     //todo
                 } else if($value == "insurance"){
-                    if (! ($formData[$key]=="gesetzlich" || $formData[$key]=="privat")) {
+                    if (! (strtolower($formData[$key]) == "gesetzlich" || strtolower($formData[$key]) == "privat")) {
                         return self::errorDataType('Bad request', $die);
                     } 
                 } else if($value == "role"){
@@ -182,91 +182,6 @@
             $html .= "</form>";
 
             return $html;
-        }
-    }
-
-    class FormField {
-        private $name;
-        private $inputType;
-        private $placeholder;
-        private $validation;
-        private $label;
-        private $selectOptions;
-        private $options;
-
-        public function __construct($name, $label, $inputType, $defaultValue="", array $validation=array(), array $selectOptions=array(), $options=array())
-        {
-            $this->name = $name;
-            $this->inputType = $inputType;
-            $this->defaultValue = $defaultValue;
-            $this->validation = $validation;
-            $this->label = $label;
-            if ($inputType == "select") {
-                $this->selectOptions = $selectOptions;
-            }
-            $this->options = $options;
-        }
-
-        public function getHTML(): string
-        {
-            $returnVal = "";
-            $validationString = "";
-            for ($i = 0; $i < count($this->validation); $i++) {
-                $validationString .= $this->validation[$i];
-                if (isset($this->validation[$i+1])) {
-                    $validationString .= ",";
-                }
-            }
-
-            $returnVal .= "
-                <input type='hidden' name='validation-$this->name' value='$validationString'>
-            ";
-
-            if ($this->inputType == "select") {
-                $returnVal .= "
-                    <label for='select-$this->name'>$this->label</label>
-                    <select class='form-input' id='select-$this->name' name='$this->name'>
-                ";
-
-                for ($i = 0; $i < count($this->selectOptions); $i++) {
-                    if ($i == 0) {
-                        $returnVal .= "<option value='" . $this->selectOptions[$i] . "'>" . $this->selectOptions[$i] . "</option>";
-                        continue;
-                    }
-                    $returnVal .= "<option value='" . $this->selectOptions[$i] . "'>" . $this->selectOptions[$i] . "</option>";
-                }
-                
-                $returnVal .= "
-                        <option value='sonstiges' id='sonstiges'>Sonstiges</option>
-                    </select>
-                    <input class='form-input' id='sonstigesFeld-$this->name' name='sonstigesFeld-$this->name' style='display: none;' type='text'></input>
-                ";
-            } else {
-                if ($this->inputType == "hidden") {
-                    $returnVal .= "
-                        <input type='hidden' name='$this->name' value='$this->label'>
-                    ";
-                } else if ($this->inputType == "submit") {
-                    $returnVal .= "
-                        <input type='submit' name='$this->name' value='$this->label'>
-                    ";
-                } else if ($this->inputType == "text" && !empty($this->defaultValue)) {
-                    $returnVal .= "
-                        <input type='text' name='$this->name' value='$this->defaultValue'>
-                    ";
-                } else {
-                    $returnVal .= "
-                        <label for='$this->name'>$this->label</label>
-                        <input class='form-input' id='$this->name' type='$this->inputType' name='$this->name' placeholder='$this->placeholder'><br>
-                    ";
-                }
-            }
-
-            $returnVal .= "
-                <p id='feedback-$this->name'></p>
-            ";
-
-            return $returnVal;
         }
     }
 

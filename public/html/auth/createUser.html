@@ -9,14 +9,12 @@
             new FormField('salutation', 'Anrede', 'select', '', [], ['Frau', 'Mann', 'keine Angabe']),
             new FormField('firstname', 'Vorname', 'text'),
             new FormField('lastname', 'Nachname', 'text'),
-            new FormField('insurance', 'Versicherung', 'select', '', [], ['Gesetzlich', 'Privat']),
+            new FormField('insurance', 'Versicherung', 'select', '', [], ['Gesetzlich', 'Privat'], false),
             new FormField('birthday', 'Geburtstag', 'date'),
             new FormField('username', 'Benutzername', 'text', '', ['unique(account)']),
             new FormField('email', 'E-Mail', 'email'),
             new FormField('password', 'Passwort', 'password', '', ['password']),
             new FormField('agb', 'Ich akzeptiere die <a href="/privacy">Datenschutzbedingungen</a> und <a href="/termsOfUse">Nutzungsbedingungen</a>', 'checkbox'),
-
-            new FormField('code', '{{ code }}', 'hidden'),
 
             new FormField('submit', 'Weiter', 'submit')
         );
