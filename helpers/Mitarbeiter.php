@@ -75,6 +75,18 @@
                     }
                 }
             }
+            $appointments = DB::query("SELECT count(*) as Anzahl FROM appointment a,appointment_admin b WHERE a.id=b.appointmentID and b.adminID=:userID and day=:day and start<:end and end>:start", [":userID"=>$userID, ":day"=>$date, ":start"=>$start, ":end"=>$end]);
+            if($appointments[0]['Anzahl']>0){
+                return false;
+            }
+            return true;
+        }
+
+        public static function isRoomFree($number, $date, $start, $end){
+            $appointments = DB::query("SELECT count(*) as Anzahl FROM appointment a,room b WHERE a.roomID=b.id and b.number=:number and day=:day and start<:end and end>:start", [":number"=>$number, ":day"=>$date, ":start"=>$start, ":end"=>$end]);
+            if($appointments[0]['Anzahl']>0){
+                return false;
+            }
             return true;
         }
     }
