@@ -68,15 +68,64 @@
         }
 
         public function newAppointment(Request $req, Response $res){
-            if ($req->getMethod() == "GET") {
-                $treatments = DB::query("SELECT * FROM treatment ORDER BY name");
-                $rooms = DB::query("SELECT * FROM room ORDER BY number");
-                echo $res->view("admin/newAppointment", [], [], ["treatments"=>$treatments, "rooms"=>$rooms]);
-            } else if ($req->getMethod() == "POST") {
-                $data = Form::validate($req->getBody(), ["day", 'start', 'end', 'room', 'treatment']);
-                DB::query("INSERT INTO appointment(treatmentID, roomID, start, end, day) VALUES (:treatment, :room, :start, :end, :day)", [":treatment"=>$data["treatment"], ":room"=>$data["room"], ":start"=>$data["start"], ":end"=>$data["end"], ":day"=>$data["day"]]);
-                Path::redirect(Path::ROOT."admin/appointment/new");
-            } 
+            $treatments = DB::query("SELECT * FROM treatment ORDER BY name");
+            foreach($treatments as $key=>$treatment){
+                $treatments[$key]=$treatment['name'];
+            }
+            echo $res->view("admin/newAppointment", [], [], ["treatments"=>$treatments]);
+        }
+        public function newAppointment2(Request $req, Response $res){
+            $data = Form::validateDataType($req->getBody(), ["date"=>"date", 'start'=>"time", 'end'=>"time", 'treatment']);
+            $start = strtotime($req->getBody()['start']);
+            $start=date('H:i:s', $start);
+            $end = strtotime($req->getBody()['end']);
+            $end=date('H:i:s', $end);
+            $date = $data['date'];
+            $treatment = DB::query("SELECT * FROM treatment WHERE name=:name", [":name"=>$data["treatment"]]);
+            if(count($treatment)==0){
+                ErrorUI::error(400, 'Bad request');
+                exit;
+            } else {
+                $treatment = $treatment[0]['name'];
+            }
+            $rooms = DB::query("SELECT * FROM room ORDER BY number");
+            foreach($rooms as $key=>$room){
+                if(!Mitarbeiter::isRoomFree($room['number'], $date, $start, $end)){
+                    unset($rooms[$key]);
+                } else {
+                    $rooms[$key]=$room['number'];
+                }
+            }
+            $patients = DB::query("SELECT * FROM users ORDER BY lastname");
+            foreach($patients as $key=>$patient){
+                $patients[$key]=$patient['salutation']." ".$patient['lastname'];
+            }
+            array_unshift($patients, "");
+            $doctors = DB::query("SELECT * FROM admin, users WHERE users.id=admin.userID AND role=:role ORDER BY lastname", [":role"=>"Arzt"]);
+            foreach($doctors as $key=>$doctor){
+                $mitarbeiter = new Mitarbeiter($doctor['userID']);
+                if(!$mitarbeiter->hasTime($date, $start, $end)){
+                    unset($doctors[$key]);
+                } else {
+                    $doctors[$key]=$doctor['salutation']." ".$doctor['lastname'];
+                }
+            }
+            $nurses = DB::query("SELECT * FROM admin, users Where users.id=admin.userID and role=:role ORDER BY lastname", [":role"=>"Arzthelfer"]);
+            foreach($nurses as $key=>$nurse){
+                $mitarbeiter = new Mitarbeiter($nurse['userID']);
+                if(!$mitarbeiter->hasTime($date, $start, $end)){
+                    unset($nurses[$key]);
+                } else {
+                    $nurses[$key]=$nurse['salutation']." ".$nurse['lastname'];
+                }
+            }
+            echo $res->view("admin/newAppointment2", ["start"=>$start, "end"=>$end, "date"=>$date, "treatment"=>$treatment], [], ["rooms"=>$rooms, "patients"=>$patients, "doctors"=>$doctors, "nurses"=>$nurses]);
+        }
+        public function newAppointment3(Request $req, Response $res){
+            //todo
+            $data = Form::validate($req->getBody(), ["day", 'start', 'end', 'treatment']);
+            DB::query("INSERT INTO appointment(treatmentID, roomID, start, end, day) VALUES (:treatment, :room, :start, :end, :day)", [":treatment"=>$data["treatment"], ":room"=>$data["room"], ":start"=>$data["start"], ":end"=>$data["end"], ":day"=>$data["day"]]);
+            Path::redirect(Path::ROOT."admin/appointment/new");
         }
 
         public function pending(Request $req, Response $res)

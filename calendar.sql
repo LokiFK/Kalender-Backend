@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 24. Jun 2021 um 22:17
+-- Erstellungszeit: 25. Jun 2021 um 15:17
 -- Server-Version: 10.4.19-MariaDB
 -- PHP-Version: 8.0.7
 
@@ -388,6 +388,13 @@ CREATE TABLE `workhours` (
   `end` varchar(8) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Daten für Tabelle `workhours`
+--
+
+INSERT INTO `workhours` (`id`, `patientID`, `day`, `start`, `end`) VALUES
+(1, 13, 'Montag', '08:00', '13:00');
+
 -- --------------------------------------------------------
 
 --
@@ -399,8 +406,17 @@ CREATE TABLE `workhoursblock` (
   `patientID` int(11) DEFAULT NULL,
   `day` varchar(20) DEFAULT NULL,
   `start` varchar(8) DEFAULT NULL,
-  `end` varchar(8) DEFAULT NULL
+  `end` varchar(8) DEFAULT NULL,
+  `isBlock` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Daten für Tabelle `workhoursblock`
+--
+
+INSERT INTO `workhoursblock` (`id`, `patientID`, `day`, `start`, `end`, `isBlock`) VALUES
+(1, 13, '2021-06-28', '08:00:00', '13:00:00', 1),
+(2, 13, '2021-06-30', '08:00:00', '18:00:00', 0);
 
 --
 -- Indizes der exportierten Tabellen
@@ -570,13 +586,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT für Tabelle `workhours`
 --
 ALTER TABLE `workhours`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT für Tabelle `workhoursblock`
 --
 ALTER TABLE `workhoursblock`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints der exportierten Tabellen
