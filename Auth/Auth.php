@@ -114,8 +114,11 @@
         public static function approveAccount($code) {
             $res = DB::table("notapproved")->where("`code` = :code", [":code"=>$code])->get([], ['userID']);
             if (count($res) == 1) {
-                Auth::specialApproveAccount($res[0]['userID']);
-                return $res[0]['userID'];
+                   $res2 = DB::query("SELECT * FROM notapproved WHERE userID=:userID ORDER BY datetime", [":userID"=>$res[0]["userID"]]);
+                   if($res2['code']==$code){
+                      Auth::specialApproveAccount($res[0]['userID']);
+                      return $res[0]['userID'];
+                   }
             }
             return null;
         }
