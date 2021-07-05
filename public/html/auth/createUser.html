@@ -6,7 +6,7 @@
 <div class="form-wrapper">
     {?php
         return Form::create('/auth/user/create', 'POST',
-            new FormField('salutation', 'Anrede', 'select', '', [], ['Frau', 'Mann', 'keine Angabe']),
+            new FormField('salutation', 'Anrede', 'select', '', [], ['Frau', 'Herr', 'keine Angabe']),
             new FormField('firstname', 'Vorname', 'text'),
             new FormField('lastname', 'Nachname', 'text'),
             new FormField('insurance', 'Versicherung', 'select', '', [], ['Gesetzlich', 'Privat'], false),

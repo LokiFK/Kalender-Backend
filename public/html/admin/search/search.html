@@ -5,7 +5,7 @@
 <div class="overview-wrapper">
     <div class="form-wrapper">
         {?php
-            return Form::create('/admin/treatment/change?type=new', 'POST',
+            return Form::create('/admin/search/search', 'POST',
                 new FormField('search', 'Nachname:', 'text', '{{ search }}'),
                 new FormField('submit', 'Suchen', 'submit')
             );

@@ -142,7 +142,7 @@
                     Path::redirect('');
                     */
                 } else {
-                    Path::redirect('');
+                    Path::redirect('/auth/account/resetLink');
                 }
             }    
         }

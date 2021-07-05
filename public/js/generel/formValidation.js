@@ -16,9 +16,9 @@ function checkInputField(inputField) {
         return;
     }
 
-    if (inputField.id == "sonstigesFeld-" + inputField.name) {
-        document.getElementById('select-'+inputField.name).children[document.getElementById('select-'+inputField.name).children.length-1].innerHTML = inputField.value;
-        document.getElementById('select-'+inputField.name).children[document.getElementById('select-'+inputField.name).children.length-1].value = inputField.value;
+    if (inputField.id.substring(0,14) == "sonstigesFeld-") {
+        document.getElementById('select-'+inputField.name.substring(14)).children[document.getElementById('select-'+inputField.name.substring(14)).children.length-1].innerHTML = inputField.value;
+        document.getElementById('select-'+inputField.name.substring(14)).children[document.getElementById('select-'+inputField.name.substring(14)).children.length-1].value = inputField.value;
     }
 
     console.log(inputField.name);

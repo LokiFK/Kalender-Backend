@@ -13,6 +13,9 @@
         public function __construct($userID)
         {
             $this->userID = $userID;
+            $this->workhours = array();
+            $this->additionals = array();
+            $this->blocks = array();
 
             $workhours = DB::query("SELECT * FROM workhours WHERE patientID=:userID ORDER BY day, start", [":userID"=>$userID]);
             $blocks = DB::query("SELECT * FROM workhoursblock WHERE patientID=:userID ORDER BY isBlock, day, start", [":userID"=>$userID]);
