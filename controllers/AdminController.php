@@ -503,7 +503,7 @@
                 }
                 Path::redirect(Path::ROOT . 'admin/workhours/workhours');
             }
-        }  
+        }
         public static function workhoursDelete(Request $req, Response $res){
             Middleware::statusBiggerOrEqualTo(4);
             $data = $req->getBody();

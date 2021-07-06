@@ -8,6 +8,11 @@
         public const ASC = 0;
         public const DESC = 1;
         
+        const server_host = 'localhost';
+        const server_dbname = 'id11715633_calendar';
+        const server_username = 'id11715633_root';
+        const server_password = 'admin100!BcD';
+        
         const host = '127.0.0.1';
         const dbname = 'calendar';
         const username = 'root';
@@ -16,10 +21,11 @@
         private static function connect(): PDO
         {
             try {
-                $pdo = new PDO('mysql:host=' . DB::host . ';dbname=' . DB::dbname . ';charset=utf8', DB::username, DB::password);
+                $pdo = new PDO('mysql:host=' . DB::server_host . ';dbname=' . DB::server_dbname . ';charset=utf8', DB::server_username, DB::server_password);
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 return $pdo;
             } catch (PDOException $e) {
+                $e->getMessage();
                 ErrorUI::error(500, 'Error connecting to DB');
                 exit;
             }

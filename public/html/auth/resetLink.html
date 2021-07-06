@@ -1,9 +1,11 @@
 {[ title=>Account bestätigt, navContentLink=>user/nav ]}
 {# extend general/template@main #}
 
-{?php
-    return Form::create('/auth/account/resetLink', 'POST',
-        new FormField('email', 'E-Mail ändern:', 'email'),
-        new FormField('submit', 'Weiter', 'submit')
-    );
- ?}
+<div class="form-wrapper">
+    {?php
+        return Form::create('/auth/account/resetLink', 'POST',
+            new FormField('email', 'E-Mail des zu ändernden Accounts', 'email'),
+            new FormField('submit', 'Weiter', 'submit')
+        );
+     ?}
+</div>

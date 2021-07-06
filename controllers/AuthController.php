@@ -38,21 +38,14 @@
                 $link =  $_SERVER['HTTP_HOST'].'/auth/account/approve?code='.$code;
                 echo "mail: <a href=\"$link\">".$link."</a><br>";
                 echo "<a href=../../../auth/account/notApproved>automatische Weiterleitung</a>";
-                    
-                /*$from = "FROM Terminplanung @noreply";
-                $subject = "Account bestätigen";
-                $msg = "BlaBlaBla Hier ihr anmelde Link: '.$link;
-                mail($account->email, $subject, $msg, $from);
-                    
-                Path::redirect('../../../auth/account/emailApproved');
-                */
             }
         }
 
         public function approve(Request $req, Response $res) {
+            echo "fjdso";
             $data = Form::validate($req->getBody(), ['code']);
             $id = Auth::approveAccount($data['code']);
-            if($id!=null){
+            if ($id != null) {
                 $token = Auth::specialLogin($id, false);
                 setcookie('token', $token, time() + 60 * 60 * 24 * 30, '/');
                 Auth::start();
@@ -144,14 +137,14 @@
                 } else {
                     Path::redirect('/auth/account/resetLink');
                 }
-            }    
+            }
         }
         public function resetPassword(Request $req, Response $res){
             if ($req->getMethod() == "GET") {
-                $data = Form::validate($req->getBody(), ['code'=>"resetCode"]);
+                $data = Form::validate($req->getBody(), ['code']);
                 echo $res->view('auth/resetPassword', ["code"=>$data['code']]);
             } else if ($req->getMethod() == "POST") {
-                $data = Form::validateDataType($req->getBody(), ['password', 'code'=>"resetCode"]); 
+                $data = Form::validateDataType($req->getBody(), ['password', 'code']);
                 $userID = Auth::resetPassword($data['code'], $data['password']);
                 if($userID!=null){
                     $token = Auth::specialLogin($userID, false);
@@ -162,7 +155,7 @@
                     exit(); 
                 }
             } 
-        }    
+        }
 
         public function resetUserdata(Request $req, Response $res) {
             if ($req->getMethod() == "GET") {

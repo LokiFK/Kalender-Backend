@@ -1,27 +1,17 @@
 {[ title=>Patient, navContentLink=>admin/nav ]}
 {# extend general/template@main #}
+{% styles %}
 
-<ul>
-    <li>
-        User: <br>
-        <ul>
-            <li>Anrede: {{ user.salutation }}</li>
-            <li>Vorname: {{ user.firstname }}</li>
-            <li>Nachname: {{ user.lastname }}</li>
-            <li>Geburtsdatum: {{ user.birthday }}</li>
-            <li>Versicherung: {{ user.insurance }}</li>
-            <li>PatientenID: {{ user.patientID }}</li>
-        </ul>
-    </li>
-    <br>
-    Account: <br>
-    <li>
-        {{ account }}
-    </li>
-    <br>
-    Adminstatus: <br>
-    <li>
-        {{ admin }}
-    </li>
-</ul>
-<a href="/admin/search/userChange?id={{ userID }}&type=dataChange">Daten ändern</a>
+<div class="wrapper-user-profile">
+    <div class="user-profile-section">
+        <p>Anrede: {{ user.salutation }}</p>
+        <p>Vorname: {{ user.firstname }}</p>
+        <p>Nachname: {{ user.lastname }}</p>
+        <p>Geburtsdatum: {{ user.birthday }}</p>
+        <p>Versicherung: {{ user.insurance }}</p>
+        <p>PatientenID: {{ user.patientID }}</p>
+    </div>
+    <div class="user-profile-section">{{ account }}</div>
+    <div class="user-profile-section">{{ admin }}</div>
+    <a href="/admin/search/userChange?id={{ userID }}&type=dataChange">Daten ändern</a>
+</div>

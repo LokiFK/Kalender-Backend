@@ -32,6 +32,9 @@
         }
 
         public function new(Request $req, Response $res) {
+            if (Auth::getStatus() < 1) {
+                Path::redirect(Path::ROOT . "auth/login");
+            }
             $treatments = DB::table("treatment")->get();
             $view = $res->view('user/new', array(), array(), [
                 'appointmentTypes' => $treatments
@@ -40,6 +43,9 @@
         }
 
         public function new2(Request $req, Response $res) {
+            if (Auth::getStatus() < 1) {
+                Path::redirect(Path::ROOT . "auth/login");
+            }
             $data = Form::validateDataType($req->getBody(), ['treatment'=>"existingTreatment"]);
             $treatment = $data['treatment'];
             if (DB::query("SELECT count(*) as Anzahl from treatment where name=:treatment;", [ ":treatment"=>$treatment ])[0]['Anzahl'] != 1) {
@@ -54,13 +60,17 @@
 
         public function new3(Request $req, Response $res)
         {
-            Middleware::statusBiggerOrEqualTo(2);                           //todo hier muss eine Anmelde möglichkeit geboten werden, die möglichst wieder flüssig zurückführt
+            if (Auth::getStatus() < 1) {
+                Path::redirect(Path::ROOT . "auth/login");
+            }
+            Middleware::statusBiggerOrEqualTo(2);
             
             $data = Form::validate($req->getBody(), ['id']);
             
             DB::query("UPDATE `appointment` SET `userID` = :userID WHERE `id` = :id", [':id' => $data['id'], ":userID"=>Auth::getUserID()]);
 
             Path::redirect(Path::ROOT . "user/appointments/overview");
+            
         }
 
         public function overview(Request $req, Response $res)

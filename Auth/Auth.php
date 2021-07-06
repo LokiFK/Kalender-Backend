@@ -124,8 +124,8 @@
         }
         public static function specialApproveAccount($userID){
             return DB::query(
-                "UPDATE `account` SET `createdAt` = :date WHERE `userID` = :userID AND createdAt IS null;",
-                [':userID' => $userID, ":date" => date(DB::DATE_FORMAT)]
+                "UPDATE `account` SET `createdAt` = :date WHERE `userID` = :userID AND `createdAt` IS null;",
+                [':userID' => $userID, ":date" => date(DB::DATE)]
             );
         }
 
@@ -136,16 +136,16 @@
                 
                 DB::query(
                     "INSERT INTO `passwordreset` (`userID`, `code`, `datetime`, `isUsed`) VALUES (:userID, :code, :date, :isUsed);",
-                    [':userID' => $res[0]['userID'], ':code' => $code, ':date' => date(DB::DATE_FORMAT), ':isUsed' => false]
+                    [':userID' => $res[0]['userID'], ':code' => $code, ':date' => date(DB::DATE_FORMAT), ':isUsed' => "0"]
                 );
                 return $code; 
             }
         }
 
         public static function resetPassword($code, $newPassword){
-            $res = DB::table("passwordreset")->where("`code` = :code", [":code" => $code])->get([], ['userID']);
-            if (count($res) == 1) {
-                DB::query("UPDATE `passwordreset` SET `isUsed` = false WHERE `code` = :code;", [':code' => $code]);
+            $res = DB::table("passwordreset")->where("`code` = :code", [":code" => $code])->get();
+            if (count($res) == 1 && ($res[0]['isUsed'] == "0")) {
+                DB::query("UPDATE `passwordreset` SET `isUsed` = 1 WHERE `code` = :code;", [':code' => $code]);
                 Auth::specialResetPassword($res[0]['userID'], $newPassword);
                 return $res[0]['userID'];
             }
@@ -194,13 +194,13 @@
             }
         }
 
-        public static function userExists($id): bool
+        public static function userExists($id)
         {
             $res = DB::table("users")->where("`id` = :id;", [':id' => $id])->get([], ['id']);
             return count($res) > 0;
         }
 
-        private static function isValidToken($token): bool
+        private static function isValidToken($token)
         {
             $erg = DB::table("session")->where("`token` = :token AND (`end` IS NULL OR `end` > :end);", [':token' => $token, ":end" => date(DB::DATE_FORMAT)])->get([], ['end']);
             if (count($erg) == 1) {
@@ -231,7 +231,7 @@
             }
         }
         
-        public static function getGivenToken(): string
+        public static function getGivenToken()
         {
             $token = "";
             if (isset($_POST['token'])) $token = $_POST['token'];
@@ -241,12 +241,12 @@
             return $token;
         }
 
-        public static function isLoggedIn(): bool
+        public static function isLoggedIn()
         {
             return self::getTokenWithUnapprovedUsers() != null;
         }
 
-        public static function getUsername(): string
+        public static function getUsername()
         {
             /*$token = Auth::getCheckedToken();
             $username = DB::query("SELECT `username` FROM `account`, `session` WHERE `account`.`userID` = `session`.`userID` AND `token` = :token;", [':token' => $token]);
@@ -261,13 +261,13 @@
             return "Default";
         }
 
-        public static function userIDExists($userID): bool
+        public static function userIDExists($userID)
         {
             $res = DB::query("SELECT count(*) AS 'Anzahl' FROM users WHERE id = :userid;", [':userid' => $userID]);
             return $res[0]['Anzahl'] > 0;
         }
 
-        public static function createRandomHash(): string
+        public static function createRandomHash()
         {
             try {
                 return bin2hex(random_bytes(25));
@@ -311,11 +311,11 @@
     }
 
     class User {
-        public string $firstname = "";
-        public string $lastname = "";
-        public string $salutation = "";
-        public string $birthday = "";
-        public string $insurance = "";
+        public $firstname = "";
+        public $lastname = "";
+        public $salutation = "";
+        public $birthday = "";
+        public $insurance = "";
         public $patientID = "";
 
         public function __construct($firstname, $lastname, $salutation, $birthday, $insurance, $patientID)
@@ -330,11 +330,11 @@
     }
 
     class Account {
-        public string $userID = "";
-        public string $username = "";
-        public string $email = "";
-        public string $password = "";
-        public string $approvalNeeded = "";
+        public $userID = "";
+        public $username = "";
+        public $email = "";
+        public $password = "";
+        public $approvalNeeded = "";
 
         public function __construct($userID, $username, $email, $password, $approvalNeeded)
         {
@@ -346,8 +346,8 @@
         }
     }
     class Admin{
-        public int $userID;
-        public string $role;
+        public $userID;
+        public $role;
 
         public function __construct($userID, $role)
         {

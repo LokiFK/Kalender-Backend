@@ -24,9 +24,9 @@
     }
 
     class ReplaceData {
-        public array $data;
-        public array $safeData;
-        public array $loopData;
+        public $data;
+        public $safeData;
+        public $loopData;
         public $stuff;
 
         public function __construct($data, $safeData, $loopData, $stuff)
